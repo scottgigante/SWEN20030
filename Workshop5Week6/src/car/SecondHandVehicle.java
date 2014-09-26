@@ -5,7 +5,7 @@ public class SecondHandVehicle extends Vehicle {
 	
 	public int getNumberOfOwners() {
 		return numberOfOwners;
-	} 
+	}  
 
 	public SecondHandVehicle(String registration, String make, int year,
 			int value, int numberOfOwners) {
