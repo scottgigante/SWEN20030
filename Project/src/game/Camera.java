@@ -13,7 +13,7 @@ import org.newdawn.slick.geom.Rectangle;
 public class Camera
 {	
     /** The unit this camera is following */
-    private Character unitFollow;
+    private GameObject unitFollow;
     /** The map that the camera will draw as a background */
     private Map map;
     
@@ -112,7 +112,7 @@ public class Camera
     /** Tells the camera to follow a given unit and updates to that position
      * @param unit The Character object to be followed
      */
-    public void followUnit(Character unit)
+    public void followUnit(GameObject unit)
     throws SlickException
     {
         unitFollow = unit;
