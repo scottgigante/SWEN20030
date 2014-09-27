@@ -8,9 +8,14 @@ package game;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.tiled.TiledMap;
 import org.newdawn.slick.geom.Vector2f;
+
 import java.util.ArrayList;
 
 public class Map extends TiledMap {
+	/** The location of the file containing map data */
+	private static final String MAP_LOC = "assets/map.tmx";
+	/** The location of the resources relating to the map */
+	private static final String RESOURCE_LOC = "assets";
 	/** Horizontal cost of movement */
 	public static final int H_COST = 10;
 	/** Diagonal cost of movement */
@@ -18,9 +23,10 @@ public class Map extends TiledMap {
 	
 	/** 2d list of nodes for easy construction of paths */
 	private Node[][] node_list;
+	
 	/** Constructor creates a new Map object */
-	public Map(String ref, String tileSetsLocation) throws SlickException {
-		super(ref, tileSetsLocation);
+	public Map() throws SlickException {
+		super(MAP_LOC, RESOURCE_LOC);
 		node_list = new Node[getWidth()][getHeight()];
 		for (int i = 0; i<getWidth(); i++) {
 			for (int j = 0; j<getHeight(); j++) {
@@ -53,7 +59,7 @@ public class Map extends TiledMap {
     public void render(Camera camera) {
     	// Calculate which tiles to start drawing from
     	int sx = camera.getMinX() / getTileWidth();
-    	int sy =camera. getMinY() / getTileHeight();
+    	int sy = camera. getMinY() / getTileHeight();
     	// Calculate the overhang off the edge of the screen
     	int x = sx * getTileWidth() - camera.getMinX();
     	int y = sy * getTileHeight() - camera.getMinY();
