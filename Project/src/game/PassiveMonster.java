@@ -4,8 +4,8 @@ import org.newdawn.slick.Image;
 
 public abstract class PassiveMonster extends Monster {
 
-	public PassiveMonster(int x, int y, float speed, Image sprite, Map map) {
-		super(x, y, speed, sprite, map);
+	public PassiveMonster(int x, int y, float speed, Image sprite, World world) {
+		super(x, y, speed, sprite, world);
 		// TODO Auto-generated constructor stub
 	}
 

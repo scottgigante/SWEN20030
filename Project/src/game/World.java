@@ -17,10 +17,7 @@ import java.util.ArrayList;
  * (Designed to be instantiated just once for the whole game).
  */
 public class World
-{
-	/** The location of the player image */
-	private static final String player_image = "assets/player.png";
-	
+{	
 	/** The map containing tiles, images etc */
 	private Map map;
 	/** Human player character */
@@ -35,8 +32,7 @@ public class World
     throws SlickException
     {
         map = new Map();
-        Image sprite = new Image(player_image);
-        player = new Player(sprite, map);
+        player = new Player(this);
         camera = new Camera(player, map, screenwidth, screenheight);
     }
 
