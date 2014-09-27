@@ -4,19 +4,17 @@
  */
 
 package game;
+
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Image;
+import java.util.ArrayList;
 
 /** Represents the entire game world.
  * (Designed to be instantiated just once for the whole game).
  */
 public class World
 {
-	/** The location of the file containing map data */
-	private static final String map_file = "assets/map.tmx";
-	/** The location of the resources relating to the map */
-	private static final String map_loc = "assets";
 	/** The location of the player image */
 	private static final String player_image = "assets/player.png";
 	
@@ -26,12 +24,14 @@ public class World
 	private Player player;
 	/** Camera to view the world */
 	private Camera camera;
+	/** List of all non-player GameObjects to be rendered, updated etc */
+	private ArrayList<GameObject> objectList;
 	
     /** Create a new World object. */
     public World(int screenwidth, int screenheight)
     throws SlickException
     {
-        map = new Map(map_file, map_loc);
+        map = new Map();
         Image sprite = new Image(player_image);
         player = new Player(sprite, map);
         camera = new Camera(player, map, screenwidth, screenheight);
