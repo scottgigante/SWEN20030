@@ -38,14 +38,30 @@ public abstract class Character extends GameObject {
 	 * @param sprite An Image for the character
 	 * @param map The map upon which it exists
 	 */
-	public Character(int x, int y, float speed, Image sprite, World world) {
+	public Character(int x, int y, Image sprite, World world, String name, float speed, int health, int damage, int cooldown) {
 		// Super constructor takes arguments to uppermost and rightmost coords, not centre
-		super(x - sprite.getWidth()/2, y-sprite.getHeight()/2, sprite.getWidth(), sprite.getHeight());
+		super(x, y, sprite, name, health, damage, cooldown);
 		sprite_nf = sprite;
 		sprite_f = sprite.getFlippedCopy(true, false);
-		setSprite(sprite_nf);
 		this.speed = speed;
 		this.world = world;
+	}
+	
+	/* Getters and setters */
+	public int getCurrentHealth() {
+		return currentHealth;
+	}
+
+	public void setCurrentHealth(int currentHealth) {
+		this.currentHealth = currentHealth;
+	}
+
+	public int getCurrentCooldown() {
+		return currentCooldown;
+	}
+
+	public void setCurrentCooldown(int currentCooldown) {
+		this.currentCooldown = currentCooldown;
 	}
 	
 	/** Move the character in any direction specified either by keyboard or predefined path.
@@ -110,7 +126,7 @@ public abstract class Character extends GameObject {
 			setCenterY(getCenterY() + (float)(speed*y_dir*delta));	
 		}
 	}
-	
+
 	/** Set the path of the character to reach position x,y on the map
 	 * @param x Float representing mouse x-position
 	 * @param y Float representing mouse y-position

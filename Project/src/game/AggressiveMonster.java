@@ -4,8 +4,8 @@ import org.newdawn.slick.Image;
 
 public abstract class AggressiveMonster extends Monster {
 
-	public AggressiveMonster(int x, int y, float speed, Image sprite, World world) {
-		super(x, y, speed, sprite, world);
+	public AggressiveMonster(int x, int y, Image sprite, World world, String name, float speed, int health, int damage, int cooldown) {
+		super(x, y, sprite, world, name, speed, health, damage, cooldown);
 		// TODO Auto-generated constructor stub
 	}
 

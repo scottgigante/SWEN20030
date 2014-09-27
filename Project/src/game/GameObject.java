@@ -11,15 +11,53 @@ public abstract class GameObject extends Rectangle {
 	private Image sprite;
 	private String name;
 	
-	public GameObject(float x, float y, float width, float height) {
-		super(x, y, width, height);
+	/** Constructor creates a GameObject
+	 * @param x The central x coordinate
+	 * @param y The central y coordinate
+	 * @param sprite Image of the object
+	 */
+	public GameObject(float x, float y, Image sprite, String name, int health, int damage, int cooldown) {
+		super(x - sprite.getWidth()/2, y-sprite.getHeight()/2, sprite.getWidth(), sprite.getHeight());
+		this.sprite = sprite;
+		this.name = name;
+		this.health = health;
+		this.damage = damage;
+		this.cooldown = cooldown;
 		// TODO Auto-generated constructor stub
 	}
 	
+	/* Getters and setters */	
+	public int getHealth() {
+		return health;
+	}
+	public void setHealth(int health) {
+		this.health = health;
+	}
+	
+	public int getDamage() {
+		return damage;
+	}
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+	public int getCooldown() {
+		return cooldown;
+	}
+	public void setCooldown(int cooldown) {
+		this.cooldown = cooldown;
+	}
+
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public Image getSprite() {
 		return sprite;
 	}
-
 	public void setSprite(Image sprite) {
 		this.sprite = sprite;
 	}

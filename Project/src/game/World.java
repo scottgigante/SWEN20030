@@ -32,7 +32,7 @@ public class World
     throws SlickException
     {
         map = new Map();
-        player = new Player(Player.getImage(), this);
+        player = new Player(this);
         camera = new Camera(player, map, screenwidth, screenheight);
     }
 
@@ -45,21 +45,24 @@ public class World
     throws SlickException
     {
         player.update(dir_x, dir_y, delta);
-        camera.update();
     }
     
     /** Update the game state for a frame when the mouse button is pressed
      * @param dir_x The player's movement in the x axis (-1, 0 or 1).
      * @param dir_y The player's movement in the y axis (-1, 0 or 1).
      * @param delta Time passed since last frame (milliseconds).
-     * @param mouse_x The x position of the mouse.
-     * @param mouse_y The y position of the mouse.
+     * @param mouseX The x position of the mouse.
+     * @param mouseY The y position of the mouse.
      */
-    public void update(float dir_x, float dir_y, int delta, int mouse_x, int mouse_y)
+    public void update(float dirX, float dirY, int delta, boolean mousePressed, int mouseX, int mouseY, boolean aPressed, boolean tPressed)
     throws SlickException
     {
-    	player.setPath(camera.getMinX()+mouse_x, camera.getMinY()+mouse_y);
-        update(dir_x, dir_y, delta);
+    	if (mousePressed) {
+    		player.update(dirX, dirY, delta, camera.getMinX()+mouseX, camera.getMinY()+mouseY, aPressed, tPressed);
+    	} else {
+    		player.update(dirX, dirY, delta, aPressed, tPressed);
+        }
+    	camera.update();
     }
 
     /** Render the entire screen, so it reflects the current game state.

@@ -71,11 +71,7 @@ public class RPG extends BasicGame
             dir_x += 1;
 
         // Let World.update decide what to do with this data.
-        if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON))
-        	// The mouse button is pressed, send its location to World.update
-        	world.update(dir_x, dir_y, delta, input.getMouseX(), input.getMouseY());
-        else
-        	world.update(dir_x, dir_y, delta);
+        world.update(dir_x, dir_y, delta, input.isMousePressed(Input.MOUSE_LEFT_BUTTON), input.getMouseX(), input.getMouseY(), input.isKeyPressed(Input.KEY_A), input.isKeyPressed(Input.KEY_T));
     }
 
     /** Render the entire screen, so it reflects the current game state.
