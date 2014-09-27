@@ -6,6 +6,7 @@
 
 package game;
 import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Graphics;
@@ -23,6 +24,11 @@ public class RPG extends BasicGame
     private static final int SCREEN_WIDTH = 800;
     /** Screen height, in pixels. */
     private static final int SCREEN_HEIGHT = 600;
+    /** Location of font file */
+    private static final String FONT_LOC = "assets/DejaVuSans-Bold.ttf";
+    
+    /** Font to display character names, etc */
+    Font font;
 
     /** Create a new RPG object. */
     public RPG()
@@ -37,6 +43,7 @@ public class RPG extends BasicGame
     public void init(GameContainer gc)
     throws SlickException
     {
+    	// TODO load font
         world = new World(SCREEN_WIDTH, SCREEN_HEIGHT);
     }
 
@@ -79,6 +86,7 @@ public class RPG extends BasicGame
     throws SlickException
     {
         // Let World.render handle the rendering.
+    	// TODO set font
         world.render(g);
     }
 
