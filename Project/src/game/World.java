@@ -8,6 +8,9 @@ package game;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Vector2f;
+
 import java.util.ArrayList;
 
 /** Represents the entire game world.
@@ -71,5 +74,33 @@ public class World
     {
     	map.render(camera);
     	player.render(camera);
+    }
+    
+    /** Passes on to map's find path algorithm
+     * @param start The starting position of the path
+     * @param stop The ending position of the path
+     * @return Vector2f[] describing path
+     */
+    public Vector2f[] findPath(Vector2f start, Vector2f stop) {
+    	return map.findPath(start, stop);
+    }
+    
+    /** Checks if a rectangle can legally move in a direction
+     * @param rect The rectangle to be moved
+     * @param x Float to be moved in the x direction
+     * @param y Float to be moved in the y direction
+     * @return Boolean whether or not the rectangle can legally move
+     */
+    public boolean canMove(Rectangle rect, float x, float y) {
+		if (x != 0 || y != 0) {
+			// check map legality
+			if (!map.canMove(rect,x,y)) {
+				return false;
+			}
+			
+			// TODO check collisions
+		}
+
+		return true;
     }
 }

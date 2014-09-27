@@ -16,9 +16,23 @@ public abstract class GameObject extends Rectangle {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void render(Graphics g) {
-		// TODO stub
+	public Image getSprite() {
+		return sprite;
 	}
+
+	public void setSprite(Image sprite) {
+		this.sprite = sprite;
+	}
+
+	/** Render an object within the scope of the camera
+     * @param camera The viewport in which to draw
+     */
+    public void render(Camera camera) {
+    	if (camera.isOnScreen(this)) {
+    		// character is on-screen, draw it
+    		sprite.draw(getMinX()-camera.getMinX(),getMinY()-camera.getMinY());
+    	}
+    }
 	
 	public void destroy() {
 		// TODO stub

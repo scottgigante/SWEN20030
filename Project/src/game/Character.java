@@ -8,17 +8,20 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.Image;
 
-public class Character extends Rectangle {
+public abstract class Character extends GameObject {
 	private static final long serialVersionUID = -3778466348827433489L;
-	/** The map upon which the character exists */
-	private Map map;
-	/** The image representing the character */
-	private Image sprite;
+	/** The world in which the character exists */
+	private World world;
+	/** The image representing the character, not flipped */
+	private Image sprite_nf;
 	/** The image facing the opposite direction */
 	private Image sprite_f;
-	private Boolean sprite_flipped = false;
 	/** Max speed in pixels per millisecond */
 	private float speed;
+	/** Amount of health remaining */
+	private int currentHealth;
+	/** Time left before next possible attack */
+	private int currentCooldown;
 	/** The path currently being followed, if any */
 	private Vector2f[] path;
 	/** The position in the path array we have reached */
@@ -35,13 +38,13 @@ public class Character extends Rectangle {
 	 * @param sprite An Image for the character
 	 * @param map The map upon which it exists
 	 */
-	public Character(int x, int y, float speed, Image sprite, Map map) {
+	public Character(int x, int y, float speed, Image sprite, World world) {
 		// Super constructor takes arguments to uppermost and rightmost coords, not centre
 		super(x - sprite.getWidth()/2, y-sprite.getHeight()/2, sprite.getWidth(), sprite.getHeight());
-		this.sprite = sprite;
+		this.sprite_nf = sprite;
 		sprite_f = sprite.getFlippedCopy(true, false);
 		this.speed = speed;
-		this.map = map;
+		this.world = world;
 	}
 	
 	/** Move the character in any direction specified either by keyboard or predefined path.
@@ -84,40 +87,26 @@ public class Character extends Rectangle {
 			}
 		}
 		
-		float x=0, y=0;
 		// Find coords for the corner in the direction of movement, and flip sprite where necessary
 		if (x_dir > 0) {
 			x = getMaxX();
-			if (sprite_flipped == true) {
-			sprite_flipped = false;
+			if (getSprite() == sprite_f) {
+			setSprite(sprite_nf);
 			}
 		} else if (x_dir < 0) {
 			x = getMinX();
-			if (sprite_flipped == false) {
-				sprite_flipped = true;
+			if (getSprite() == sprite_nf) {
+				setSprite(sprite_f);
 			}
 		}
-		if (y_dir > 0) {
-			y = getMaxY();
-		} else if (y_dir < 0) {
-			y = getMinY();
+		
+		if (world.canMove(this,speed*x_dir*delta,0)) {
+			// Movement okay in x direction
+			setCenterX(getCenterX() + (float)(speed*x_dir*delta));		
 		}
-		// Check for terrain blocking
-		if (x_dir != 0 || y_dir != 0) {
-			float x_new = x+speed*x_dir*delta;
-			if (x_new < map.getWidth()*map.getTileWidth()) {
-				if ((map.isWalkable(x_new, getMinY()) && map.isWalkable(x_new, getMaxY())) || !terrain_blocking) {
-					// Movement okay in x direction
-					setCenterX(getCenterX() + (float)(speed*x_dir*delta));		
-				}
-			}
-			float y_new = y+speed*y_dir*delta;
-			if (y_new < map.getHeight()*map.getTileHeight()) {
-				if ((map.isWalkable(getMinX(), y_new) && map.isWalkable(getMaxX(), y_new)) || !terrain_blocking) {
-					// Movement okay in y direction
-					setCenterY(getCenterY() + (float)(speed*y_dir*delta));				
-				}
-			}
+		if (world.canMove(this,0,speed*y_dir*delta)) {
+			// Movement okay in y direction
+			setCenterY(getCenterY() + (float)(speed*y_dir*delta));	
 		}
 	}
 	
@@ -129,7 +118,7 @@ public class Character extends Rectangle {
 		// Find a path to position x,y
 		Vector2f start = new Vector2f((float)getCenterX(),(float)getCenterY());
 		Vector2f stop = new Vector2f(x,y);
-		Vector2f[] new_path = map.findPath(start, stop);
+		Vector2f[] new_path = world.findPath(start, stop);
 		if (new_path != null) {
 			path = new_path;
 			if (new_path.length > 1) {
@@ -140,20 +129,4 @@ public class Character extends Rectangle {
 			}
 		}
 	}	
-	
-	
-	/** Render a character within the scope of the camera
-     * @param camera The viewport in which to draw
-     */
-    public void render(Camera camera) {
-    	if (camera.isOnScreen(this)) {
-    		// character is on-screen, draw it
-    		// Check whether to draw original or flipped sprite
-    		if (sprite_flipped) {
-    			sprite_f.draw(getMinX()-camera.getMinX(),getMinY()-camera.getMinY());
-    		} else {
-    			sprite.draw(getMinX()-camera.getMinX(),getMinY()-camera.getMinY());
-    		}
-    	}
-    }
 }

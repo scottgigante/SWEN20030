@@ -6,6 +6,7 @@
 package game;
 
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.tiled.TiledMap;
 import org.newdawn.slick.geom.Vector2f;
 
@@ -35,6 +36,12 @@ public class Map extends TiledMap {
 		}
 	}
 	
+	public int getPixelWidth() {
+		return getWidth()*getTileWidth();
+	}
+	public int getPixelHeight() {
+		return getHeight()*getTileHeight();
+	}
 	/** Checks if the tile at x, y is walkable or not
 	 * @param x Integer representing tile grid position
 	 * @param y Integer representing tile grid position
@@ -45,14 +52,35 @@ public class Map extends TiledMap {
 	}
 	
 	/** Checks if the tile at x, y is walkable or not
-	 * @param x Double representing map position
-	 * @param y Double representing map position
+	 * @param x Float representing map position
+	 * @param y Float representing map position
 	 * @return True, tile is walkable. False, tile is not walkable.
 	 */
 	public boolean isWalkable(float x, float y) {
 		return isWalkable((int)(x/getTileWidth()), (int)(y/getTileHeight()));
 	}
 	
+	/** Check all four corners of a rectangle moving a particular distance are walkable
+	 * and if the rectangle will still be on the map
+	 * @param rect The rectangle to be moved
+	 * @param x Float to be moved in x direction
+	 * @param y float to be moved in y direction
+	 * @return True, rectangle can move legally. False, it cannot
+	 */
+	public boolean canMove(Rectangle rect, float x, float y) {
+		if (rect.getMinX() + x < 0 || rect.getMaxX() + x > getPixelWidth() || rect.getMinY()+y < 0 || rect.getMaxY() + y > getPixelHeight()) {
+			// walking off the map
+			return false;
+		}
+
+    	// Check for terrain blocking
+		if (!isWalkable(rect.getMinX()+x, rect.getMinY()+y) || !isWalkable(rect.getMaxX()+x, rect.getMaxY()+y) || !isWalkable(rect.getMinX()+x,rect.getMaxY()+y) || !isWalkable(rect.getMaxX()+x, rect.getMinY()+y)) {
+			// any one of the four corners is unwalkable
+			return false;
+		}
+		
+		return true;
+	}
 	/** Renders a tiled map behind within the constraints of the camera's view.
 	 * @param camera The viewport in which to draw
      */
