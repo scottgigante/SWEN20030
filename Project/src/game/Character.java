@@ -12,10 +12,6 @@ public abstract class Character extends GameObject {
 	private static final long serialVersionUID = -3778466348827433489L;
 	/** The world in which the character exists */
 	private World world;
-	/** The image representing the character, not flipped */
-	private Image sprite_nf;
-	/** The image facing the opposite direction */
-	private Image sprite_f;
 	/** Max speed in pixels per millisecond */
 	private float speed;
 	/** Amount of health remaining */
@@ -41,8 +37,6 @@ public abstract class Character extends GameObject {
 	public Character(int x, int y, Image sprite, World world, String name, float speed, int health, int damage, int cooldown) {
 		// Super constructor takes arguments to uppermost and rightmost coords, not centre
 		super(x, y, sprite, name, health, damage, cooldown);
-		sprite_nf = sprite;
-		sprite_f = sprite.getFlippedCopy(true, false);
 		this.speed = speed;
 		this.world = world;
 	}
@@ -107,13 +101,13 @@ public abstract class Character extends GameObject {
 		// Find coords for the corner in the direction of movement, and flip sprite where necessary
 		if (x_dir > 0) {
 			x = getMaxX();
-			if (getSprite() == sprite_f) {
-			setSprite(sprite_nf);
+			if (getSprite() == getSpriteF()) {
+			setSprite(getSpriteNf());
 			}
 		} else if (x_dir < 0) {
 			x = getMinX();
-			if (getSprite() == sprite_nf) {
-				setSprite(sprite_f);
+			if (getSprite() == getSpriteNf()) {
+				setSprite(getSpriteF());
 			}
 		}
 		

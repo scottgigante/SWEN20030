@@ -33,6 +33,10 @@ public class World
     {
         map = new Map();
         player = new Player(this);
+        objectList = new ArrayList<GameObject>();
+        objectList.add(new Aldric());
+        objectList.add(new Elvira());
+        objectList.add(new Garth());
         camera = new Camera(player, map, screenwidth, screenheight);
     }
 
@@ -73,6 +77,9 @@ public class World
     {
     	map.render(camera);
     	player.render(camera);
+    	for (GameObject o:objectList) {
+    		o.render(camera);
+    	}
     }
     
     /** Passes on to map's find path algorithm

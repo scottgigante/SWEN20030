@@ -19,7 +19,7 @@ public class Player extends Character {
 	/** Beginning y position */
 	private static final int SPAWN_Y_POS = 684;
 	/** The location of the player image */
-	private static final String IMAGE_LOC = "assets/player.png";
+	private static final String IMAGE_LOC = "assets/units/player.png";
 	
 	/* Player's stats */
 	private static final String NAME = "Player";
@@ -42,18 +42,24 @@ public class Player extends Character {
 	 * @return Image for the player's sprite
 	 * @throws SlickException
 	 */
-	private static Image getImage() throws SlickException {
-		if (image == null) {
-			image = new Image(IMAGE_LOC);
+	private static Image getImage() {
+		try {
+			if (image == null) {
+				image = new Image(IMAGE_LOC);
+			}
+			return image;
+		} catch (SlickException e) {
+			System.out.println(e.getMessage());
+			System.exit(1);
+			return null;
 		}
-		return image;
 	}
 	
 	/** Constructor for the player class
 	 * @param world The world in which the player lives
 	 * @throws SlickException 
 	 */
-	public Player(World world) throws SlickException {
+	public Player(World world) {
 		super(SPAWN_X_POS, SPAWN_Y_POS, getImage(), world, NAME, MAX_SPEED, HEALTH, DAMAGE, COOLDOWN);
 		setHealth(HEALTH);
 		setDamage(DAMAGE);

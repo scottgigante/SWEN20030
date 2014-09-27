@@ -9,6 +9,10 @@ public abstract class GameObject extends Rectangle {
 	private int damage;
 	private int cooldown;
 	private Image sprite;
+	/** The image representing the character, not flipped */
+	private Image spriteNf;
+	/** The image facing the opposite direction */
+	private Image spriteF;
 	private String name;
 	
 	/** Constructor creates a GameObject
@@ -19,6 +23,8 @@ public abstract class GameObject extends Rectangle {
 	public GameObject(float x, float y, Image sprite, String name, int health, int damage, int cooldown) {
 		super(x - sprite.getWidth()/2, y-sprite.getHeight()/2, sprite.getWidth(), sprite.getHeight());
 		this.sprite = sprite;
+		spriteNf = sprite;
+		spriteF = sprite.getFlippedCopy(true, false);
 		this.name = name;
 		this.health = health;
 		this.damage = damage;
@@ -60,6 +66,13 @@ public abstract class GameObject extends Rectangle {
 	}
 	public void setSprite(Image sprite) {
 		this.sprite = sprite;
+	}
+	
+	public Image getSpriteNf() {
+		return spriteNf;
+	}
+	public Image getSpriteF() {
+		return spriteF;
 	}
 
 	/** Render an object within the scope of the camera
