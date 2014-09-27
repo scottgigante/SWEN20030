@@ -87,7 +87,7 @@ public class Map extends TiledMap {
     public void render(Camera camera) {
     	// Calculate which tiles to start drawing from
     	int sx = camera.getMinX() / getTileWidth();
-    	int sy = camera. getMinY() / getTileHeight();
+    	int sy = camera.getMinY() / getTileHeight();
     	// Calculate the overhang off the edge of the screen
     	int x = sx * getTileWidth() - camera.getMinX();
     	int y = sy * getTileHeight() - camera.getMinY();

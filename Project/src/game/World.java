@@ -32,7 +32,7 @@ public class World
     throws SlickException
     {
         map = new Map();
-        player = new Player(this);
+        player = new Player(Player.getImage(), this);
         camera = new Camera(player, map, screenwidth, screenheight);
     }
 

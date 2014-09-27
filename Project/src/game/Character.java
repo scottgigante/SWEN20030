@@ -41,8 +41,9 @@ public abstract class Character extends GameObject {
 	public Character(int x, int y, float speed, Image sprite, World world) {
 		// Super constructor takes arguments to uppermost and rightmost coords, not centre
 		super(x - sprite.getWidth()/2, y-sprite.getHeight()/2, sprite.getWidth(), sprite.getHeight());
-		this.sprite_nf = sprite;
+		sprite_nf = sprite;
 		sprite_f = sprite.getFlippedCopy(true, false);
+		setSprite(sprite_nf);
 		this.speed = speed;
 		this.world = world;
 	}

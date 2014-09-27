@@ -22,13 +22,25 @@ public class Player extends Character {
 	/** The location of the player image */
 	private static final String IMAGE_LOC = "assets/player.png";
 	
+	private static Image image;
+	public static Image getImage() {
+		if (image == null) {
+			try {
+			image = new Image(IMAGE_LOC);
+			} catch (SlickException e) {
+				System.out.print(e.getMessage());
+				System.exit(1);
+			}
+		}
+		return image;
+	}
+	
 	/** Constructor for the player class
 	 * @param sprite The Image to be used as the player's sprite
 	 * @param map The map upon which the player exists
-	 * @throws SlickException uhhhhhh..
 	 */
-	public Player(World world) throws SlickException {
-		super(SPAWN_X_POS, SPAWN_Y_POS, MAX_SPEED, new Image(IMAGE_LOC), world);
+	public Player(Image image, World world) {
+		super(SPAWN_X_POS, SPAWN_Y_POS, MAX_SPEED, image, world);
 	}
 	
 	public void interact(GameObject o) {
