@@ -23,7 +23,7 @@ public abstract class Character extends GameObject {
 	/** The position in the path array we have reached */
 	private int path_index;
 	/** Allows debugging removal of terrain blocking (or perhaps flying creatures) */
-	private boolean terrain_blocking = true;
+	private boolean terrainBlocking = true;
 	
 	/** Tolerance, relative to speed, which will be accepted in a radius around the destination of a path */
 	private static final double PATH_TOLERANCE = 20;
@@ -34,9 +34,9 @@ public abstract class Character extends GameObject {
 	 * @param sprite An Image for the character
 	 * @param map The map upon which it exists
 	 */
-	public Character(int x, int y, Image sprite, World world, String name, float speed, int health, int damage, int cooldown) {
+	public Character(Vector2f pos, Image sprite, World world, String name, float speed, int health, int damage, int cooldown) {
 		// Super constructor takes arguments to uppermost and rightmost coords, not centre
-		super(x, y, sprite, name, health, damage, cooldown);
+		super(pos, sprite, name, health, damage, cooldown);
 		this.speed = speed;
 		this.world = world;
 	}
@@ -61,11 +61,11 @@ public abstract class Character extends GameObject {
 	/** Move the character in any direction specified either by keyboard or predefined path.
 	 * Check first that movement is not blocked by terrain
 	 * Updates whether or not to use flipped sprite
-	 * @param x_dir Number of units to move along the x axis
-	 * @param y_dir Number of units to move along the y axis
+	 * @param dirX Number of units to move along the x axis
+	 * @param dirY Number of units to move along the y axis
 	 * @param delta Number of milliseconds since last movement
 	 */
-	public void update(float x_dir, float y_dir, int delta) {
+	public void update(float dirX, float dirY, int delta) {
 		// Check if a current path exists
 		if (path != null) { 
 			// Check if the current waypoint has been reached
@@ -79,45 +79,45 @@ public abstract class Character extends GameObject {
 			}
 		}
 		if (path != null) {
-			if (x_dir != 0 || y_dir != 0) {
+			if (dirX != 0 || dirY != 0) {
 				// Keyboard interrupts pathfinding
 				path = null;
 			} else {
 				// Set phantom keyboard input to reach next waypoint
 				// Use PATH_TOLERANCE/2 to avoid having to use sqrt(2)
 				if (getCenterX() < path[path_index].x-PATH_TOLERANCE*speed/2) {
-					x_dir = 1;
+					dirX = 1;
 				} else if (getCenterX() > path[path_index].x+PATH_TOLERANCE*speed/2) {
-					x_dir = -1;
+					dirX = -1;
 				}
 				if (getCenterY() < path[path_index].y-PATH_TOLERANCE*speed/2) {
-					y_dir = 1;
+					dirY = 1;
 				} else if (getCenterY() > path[path_index].y+PATH_TOLERANCE*speed/2) {
-					y_dir = -1;
+					dirY = -1;
 				}				
 			}
 		}
 		
 		// Find coords for the corner in the direction of movement, and flip sprite where necessary
-		if (x_dir > 0) {
+		if (dirX > 0) {
 			x = getMaxX();
 			if (getSprite() == getSpriteF()) {
 			setSprite(getSpriteNf());
 			}
-		} else if (x_dir < 0) {
+		} else if (dirX < 0) {
 			x = getMinX();
 			if (getSprite() == getSpriteNf()) {
 				setSprite(getSpriteF());
 			}
 		}
 		
-		if (world.canMove(this,speed*x_dir*delta,0)) {
+		if (world.canMove(this,speed*dirX*delta,0)) {
 			// Movement okay in x direction
-			setCenterX(getCenterX() + (float)(speed*x_dir*delta));		
+			setCenterX(getCenterX() + (float)(speed*dirX*delta));		
 		}
-		if (world.canMove(this,0,speed*y_dir*delta)) {
+		if (world.canMove(this,0,speed*dirY*delta)) {
 			// Movement okay in y direction
-			setCenterY(getCenterY() + (float)(speed*y_dir*delta));	
+			setCenterY(getCenterY() + (float)(speed*dirY*delta));	
 		}
 	}
 
@@ -129,10 +129,10 @@ public abstract class Character extends GameObject {
 		// Find a path to position x,y
 		Vector2f start = new Vector2f((float)getCenterX(),(float)getCenterY());
 		Vector2f stop = new Vector2f(x,y);
-		Vector2f[] new_path = world.findPath(start, stop);
-		if (new_path != null) {
-			path = new_path;
-			if (new_path.length > 1) {
+		Vector2f[] newPath = world.findPath(start, stop);
+		if (newPath != null) {
+			path = newPath;
+			if (newPath.length > 1) {
 				// we're already at the first node on the path, don't need to go there.
 				path_index = 1;
 			} else {

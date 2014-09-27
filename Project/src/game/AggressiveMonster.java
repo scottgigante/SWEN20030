@@ -1,11 +1,19 @@
 package game;
 
 import org.newdawn.slick.Image;
+import org.newdawn.slick.geom.Vector2f;
 
 public abstract class AggressiveMonster extends Monster {
-
-	public AggressiveMonster(int x, int y, Image sprite, World world, String name, float speed, int health, int damage, int cooldown) {
-		super(x, y, sprite, world, name, speed, health, damage, cooldown);
+	
+	private static final float MAX_SPEED = 0.25f;
+	
+	public AggressiveMonster(Vector2f pos, Image sprite, World world, String name, int health, int damage, int cooldown) {
+		super(pos, sprite, world, name, MAX_SPEED, health, damage, cooldown);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public AggressiveMonster(Vector2f pos, Image sprite, World world, String name, float speed, int health, int damage, int cooldown) {
+		super(pos, sprite, world, name, speed, health, damage, cooldown);
 		// TODO Auto-generated constructor stub
 	}
 

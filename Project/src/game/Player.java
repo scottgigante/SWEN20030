@@ -7,6 +7,8 @@ package game;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Vector2f;
+
 import java.util.ArrayList;
 
 /** Player-character class.
@@ -15,9 +17,9 @@ import java.util.ArrayList;
 public class Player extends Character {	
 	private static final long serialVersionUID = 8734732098037662995L;
 	/** Beginning x position */
-	private static final int SPAWN_X_POS = 756;
+	private static final float SPAWN_X_POS = 756;
 	/** Beginning y position */
-	private static final int SPAWN_Y_POS = 684;
+	private static final float SPAWN_Y_POS = 684;
 	/** The location of the player image */
 	private static final String IMAGE_LOC = "assets/units/player.png";
 	
@@ -40,7 +42,6 @@ public class Player extends Character {
 	
 	/** Fetches the pre-generated image for the class, or if it has not yet been generated, does so.
 	 * @return Image for the player's sprite
-	 * @throws SlickException
 	 */
 	private static Image getImage() {
 		try {
@@ -60,7 +61,7 @@ public class Player extends Character {
 	 * @throws SlickException 
 	 */
 	public Player(World world) {
-		super(SPAWN_X_POS, SPAWN_Y_POS, getImage(), world, NAME, MAX_SPEED, HEALTH, DAMAGE, COOLDOWN);
+		super(new Vector2f(SPAWN_X_POS,SPAWN_X_POS), getImage(), world, NAME, MAX_SPEED, HEALTH, DAMAGE, COOLDOWN);
 		setHealth(HEALTH);
 		setDamage(DAMAGE);
 		setCooldown(COOLDOWN);

@@ -2,6 +2,7 @@ package game;
 
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.Graphics;
 
 public abstract class GameObject extends Rectangle {
@@ -20,8 +21,8 @@ public abstract class GameObject extends Rectangle {
 	 * @param y The central y coordinate
 	 * @param sprite Image of the object
 	 */
-	public GameObject(float x, float y, Image sprite, String name, int health, int damage, int cooldown) {
-		super(x - sprite.getWidth()/2, y-sprite.getHeight()/2, sprite.getWidth(), sprite.getHeight());
+	public GameObject(Vector2f pos, Image sprite, String name, int health, int damage, int cooldown) {
+		super(pos.x - sprite.getWidth()/2, pos.y-sprite.getHeight()/2, sprite.getWidth(), sprite.getHeight());
 		this.sprite = sprite;
 		spriteNf = sprite;
 		spriteF = sprite.getFlippedCopy(true, false);

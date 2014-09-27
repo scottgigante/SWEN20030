@@ -37,6 +37,11 @@ public class World
         objectList.add(new Aldric());
         objectList.add(new Elvira());
         objectList.add(new Garth());
+        objectList.addAll(Bandit.spawnAll(this));
+        objectList.addAll(Zombie.spawnAll(this));
+        objectList.addAll(Skeleton.spawnAll(this));
+        objectList.addAll(Bat.spawnAll(this));
+        objectList.add(new Draelic(this));
         camera = new Camera(player, map, screenwidth, screenheight);
     }
 

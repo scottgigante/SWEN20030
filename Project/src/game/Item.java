@@ -2,11 +2,12 @@ package game;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.geom.Vector2f;
 
 public abstract class Item extends GameObject {
 
-	public Item(float x, float y, Image sprite, String name, int health, int damage, int cooldown) {
-		super(x, y, sprite, name, health, damage, cooldown);
+	public Item(Vector2f pos, Image sprite, String name, int health, int damage, int cooldown) {
+		super(pos, sprite, name, health, damage, cooldown);
 		// TODO Auto-generated constructor stub
 	}
 	

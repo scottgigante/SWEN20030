@@ -2,6 +2,7 @@ package game;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Vector2f;
 
 public class Aldric extends NPC {
 
@@ -21,7 +22,6 @@ public class Aldric extends NPC {
 	
 	/** Fetches the pre-generated image for the class, or if it has not yet been generated, does so.
 	 * @return Image for Aldric's sprite
-	 * @throws SlickException
 	 */
 	private static Image getImage() {
 		try {
@@ -38,7 +38,7 @@ public class Aldric extends NPC {
 	
 	/** Constructor creates Aldric */
 	public Aldric() {
-		super(SPAWN_X_POS, SPAWN_Y_POS, getImage(), NAME, DIALOGUE_LOC);
+		super(new Vector2f(SPAWN_X_POS, SPAWN_Y_POS), getImage(), NAME, DIALOGUE_LOC);
 	}
 
 	@Override
