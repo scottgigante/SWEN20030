@@ -12,8 +12,6 @@ import org.newdawn.slick.Image;
 
 public abstract class Character extends GameObject {
 	private static final long serialVersionUID = -3778466348827433489L;
-	/** The world in which the character exists */
-	private World world;
 	/** Max speed in pixels per millisecond */
 	private float speed;
 	/** Amount of health remaining */
@@ -38,9 +36,8 @@ public abstract class Character extends GameObject {
 	 */
 	public Character(Vector2f pos, Image sprite, World world, String name, float speed, int health, int damage, int cooldown) {
 		// Super constructor takes arguments to uppermost and rightmost coords, not centre
-		super(pos, sprite, name, health, damage, cooldown);
+		super(pos, sprite, world, name, health, damage, cooldown);
 		this.speed = speed;
-		this.world = world;
 		currentHealth = getHealth();
 		currentCooldown = 0;
 	}
@@ -62,6 +59,23 @@ public abstract class Character extends GameObject {
 		this.currentCooldown = currentCooldown;
 	}
 	
+	public void attack(Character o) {
+		System.out.print(getName());
+		if (getCurrentCooldown() <= 0) {
+			o.takeDamage((int)(Math.random()*getDamage()));
+			currentCooldown = getCooldown();
+		}
+	}
+	
+	public void takeDamage(int damage) {
+		System.out.print(" attacks "+getName()+"for "+damage+" HP");
+		currentHealth -= damage;
+		if (currentHealth <= 0) {
+			destroy();
+			return;
+		}		
+	}
+	
 	/** Move the character in any direction specified either by keyboard or predefined path.
 	 * Check first that movement is not blocked by terrain
 	 * Updates whether or not to use flipped sprite
@@ -70,6 +84,9 @@ public abstract class Character extends GameObject {
 	 * @param delta Number of milliseconds since last movement
 	 */
 	public void update(float dirX, float dirY, int delta) {
+		if (currentCooldown > 0) {
+			currentCooldown -= delta;
+		}
 		// Check if a current path exists
 		if (path != null) { 
 			// Check if the current waypoint has been reached
@@ -158,7 +175,7 @@ public abstract class Character extends GameObject {
 		Rectangle bar = new Rectangle(getCenterX() - barWidth/2, getMinY()-barHeight*3/2, barWidth, barHeight);
 		if (camera.isOnScreen(bar) && !(this instanceof Player)) {
 			
-			float healthPercent = getCurrentHealth()/getHealth(); // TODO: HP / Max-HP
+			float healthPercent = (float)getCurrentHealth()/getHealth();
 	        int hpBarWidth = (int) (barWidth * healthPercent);
 	        
 	        g.setColor(BAR_BG);

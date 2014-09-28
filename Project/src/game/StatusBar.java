@@ -52,7 +52,7 @@ public class StatusBar {
         bar_y = RPG.SCREEN_HEIGHT - RPG.PANEL_HEIGHT + 20;
         bar_width = 90;
         bar_height = 30;
-        health_percent = player.getCurrentHealth()/player.getHealth(); // TODO: HP / Max-HP
+        health_percent = (float)player.getCurrentHealth()/player.getHealth(); // TODO: HP / Max-HP
         hp_bar_width = (int) (bar_width * health_percent);
         text_x = bar_x + (bar_width - g.getFont().getWidth(text)) / 2;
         g.setColor(BAR_BG);

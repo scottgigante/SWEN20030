@@ -6,10 +6,16 @@ import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.Graphics;
 
 public abstract class GameObject extends Rectangle {
+	
+	/** Proximity, in pixels, to be considered 'near' */
+	private static final int NEAR_DISTANCE = 30;
+	
 	private int health;
 	private int damage;
 	private int cooldown;
 	private Image sprite;
+	/** The world in which the character exists */
+	protected World world;
 	/** The image representing the character, not flipped */
 	private Image spriteNf;
 	/** The image facing the opposite direction */
@@ -21,11 +27,12 @@ public abstract class GameObject extends Rectangle {
 	 * @param y The central y coordinate
 	 * @param sprite Image of the object
 	 */
-	public GameObject(Vector2f pos, Image sprite, String name, int health, int damage, int cooldown) {
+	public GameObject(Vector2f pos, Image sprite, World world, String name, int health, int damage, int cooldown) {
 		super(pos.x - sprite.getWidth()/2, pos.y-sprite.getHeight()/2, sprite.getWidth(), sprite.getHeight());
 		this.sprite = sprite;
 		spriteNf = sprite;
 		spriteF = sprite.getFlippedCopy(true, false);
+		this.world = world;
 		this.name = name;
 		this.health = health;
 		this.damage = damage;
@@ -87,7 +94,11 @@ public abstract class GameObject extends Rectangle {
     }
 	
 	public void destroy() {
-		// TODO stub
+		world.removeObject(this);
+	}
+	
+	public boolean near(GameObject o) {
+		return Math.sqrt(Math.pow(getCenterX()-o.getCenterX(), 2) + Math.pow(getCenterY()-o.getCenterY(), 2)) <= NEAR_DISTANCE;
 	}
 	
 	public abstract void interact(GameObject o);

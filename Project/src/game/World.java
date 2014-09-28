@@ -29,6 +29,8 @@ public class World
 	private Camera camera;
 	/** List of all non-player GameObjects to be rendered, updated etc */
 	private ArrayList<GameObject> objectList;
+	/** List of all GameObjects to be destroyed this frame */
+	private ArrayList<GameObject> destroyList;
 	
     /** Create a new World object. */
     public World(int screenwidth, int screenheight)
@@ -38,6 +40,7 @@ public class World
         player = new Player(this);
         status = new StatusBar(player);
         objectList = new ArrayList<GameObject>();
+        destroyList = new ArrayList<GameObject>();
         objectList.add(new Aldric(this));
         objectList.add(new Elvira(this));
         objectList.add(new Garth(this));
@@ -47,17 +50,6 @@ public class World
         objectList.addAll(Bat.spawnAll(this));
         objectList.add(new Draelic(this));
         camera = new Camera(player, map, screenwidth, screenheight);
-    }
-
-    /** Update the game state for a frame.
-     * @param dir_x The player's movement in the x axis (-1, 0 or 1).
-     * @param dir_y The player's movement in the y axis (-1, 0 or 1).
-     * @param delta Time passed since last frame (milliseconds).
-     */
-    public void update(float dir_x, float dir_y, int delta)
-    throws SlickException
-    {
-        player.update(dir_x, dir_y, delta);
     }
     
     /** Update the game state for a frame when the mouse button is pressed
@@ -76,6 +68,16 @@ public class World
     		player.update(dirX, dirY, delta, aPressed, tPressed);
         }
     	camera.update();
+    	for (GameObject o:objectList) {
+    		if (o.near(player)) {
+    			player.interact(o);
+    			if (o instanceof AggressiveMonster) {
+    				o.interact(player);
+    			}
+    		}
+    	}
+    	objectList.removeAll(destroyList);
+    	destroyList.clear();
     }
 
     /** Render the entire screen, so it reflects the current game state.
@@ -118,5 +120,12 @@ public class World
 		}
 
 		return true;
+    }
+    
+    /** Remove an object from the object list
+     * @param o GameObject to be removed
+     */
+    public void removeObject(GameObject o) {
+    	destroyList.add(o);
     }
 }

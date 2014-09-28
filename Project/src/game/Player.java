@@ -68,7 +68,13 @@ public class Player extends Character {
 	}
 	
 	public void interact(GameObject o) {
-		// TODO stub
+		if (isAttack && o instanceof Monster) {
+			attack((Character) o);
+		} else if (isSpeak && o instanceof NPC) {
+			
+		} else if (o instanceof Item) {
+			
+		}
 	}
 	
 	/** Updates the player with a mouse press
@@ -93,8 +99,11 @@ public class Player extends Character {
 	 * @param tPressed Whether or not T has been pressed
 	 */
 	public void update(float dirX, float dirY, int delta, boolean aPressed, boolean tPressed) {
-		isSpeak = aPressed;
-		isAttack = tPressed;
+		isSpeak = tPressed;
+		isAttack = aPressed;
+		if (isAttack) {
+			this.getName();
+		}
 		update(dirX,dirY,delta);
 	}
 	
