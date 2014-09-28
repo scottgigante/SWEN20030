@@ -19,11 +19,13 @@ import org.newdawn.slick.SlickException;
 public class RPG extends BasicGame
 {
     private World world;
-
+    
+    /** Height of the display panel, in pixels */
+    public static final int PANEL_HEIGHT = 70;
     /** Screen width, in pixels. */
-    private static final int SCREEN_WIDTH = 800;
+    protected static final int SCREEN_WIDTH = 800;
     /** Screen height, in pixels. */
-    private static final int SCREEN_HEIGHT = 600;
+    protected static final int SCREEN_HEIGHT = 600;
     /** Location of font file */
     private static final String FONT_LOC = "assets/DejaVuSans-Bold.ttf";
     

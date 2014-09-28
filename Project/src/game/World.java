@@ -5,6 +5,7 @@
 
 package game;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Image;
@@ -22,6 +23,8 @@ public class World
 	private Map map;
 	/** Human player character */
 	private Player player;
+	/** Status bar displays player stats */
+	private StatusBar status;
 	/** Camera to view the world */
 	private Camera camera;
 	/** List of all non-player GameObjects to be rendered, updated etc */
@@ -33,6 +36,7 @@ public class World
     {
         map = new Map();
         player = new Player(this);
+        status = new StatusBar(player);
         objectList = new ArrayList<GameObject>();
         objectList.add(new Aldric());
         objectList.add(new Elvira());
@@ -85,6 +89,7 @@ public class World
     	for (GameObject o:objectList) {
     		o.render(camera);
     	}
+    	status.render(g);
     }
     
     /** Passes on to map's find path algorithm
