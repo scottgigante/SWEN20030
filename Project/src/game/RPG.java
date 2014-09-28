@@ -46,7 +46,7 @@ public class RPG extends BasicGame
     throws SlickException
     {
     	// TODO load font
-        world = new World(SCREEN_WIDTH, SCREEN_HEIGHT);
+        world = new World(SCREEN_WIDTH, SCREEN_HEIGHT-PANEL_HEIGHT);
     }
 
     /** Update the game state for a frame.

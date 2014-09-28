@@ -6,6 +6,8 @@
 package game;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
 public abstract class Character extends GameObject {
@@ -19,7 +21,7 @@ public abstract class Character extends GameObject {
 	/** Time left before next possible attack */
 	private int currentCooldown;
 	/** The path currently being followed, if any */
-	private Vector2f[] path;
+	private Vector2f[] path; // TODO replace with class Path
 	/** The position in the path array we have reached */
 	private int path_index;
 	/** Allows debugging removal of terrain blocking (or perhaps flying creatures) */
@@ -39,6 +41,8 @@ public abstract class Character extends GameObject {
 		super(pos, sprite, name, health, damage, cooldown);
 		this.speed = speed;
 		this.world = world;
+		currentHealth = getHealth();
+		currentCooldown = 0;
 	}
 	
 	/* Getters and setters */
@@ -139,5 +143,31 @@ public abstract class Character extends GameObject {
 				path_index = 0;
 			}
 		}
-	}	
+	}
+
+	@Override
+	public void render(Graphics g, Camera camera) {
+        Color BAR = new Color(0.8f, 0.0f, 0.0f, 0.8f);      // Red, transp
+        Color VALUE = new Color(1.0f, 1.0f, 1.0f);          // White
+        Color BAR_BG = new Color(0.0f, 0.0f, 0.0f, 0.8f);   // Black, transp
+        
+        String text = getName();
+        int textWidth = g.getFont().getWidth(text);
+        int barWidth = Math.max(textWidth+6, 70);
+        int barHeight = g.getFont().getLineHeight();
+		Rectangle bar = new Rectangle(getCenterX() - barWidth/2, getMinY()-barHeight*3/2, barWidth, barHeight);
+		if (camera.isOnScreen(bar) && !(this instanceof Player)) {
+			
+			float healthPercent = getCurrentHealth()/getHealth(); // TODO: HP / Max-HP
+	        int hpBarWidth = (int) (barWidth * healthPercent);
+	        
+	        g.setColor(BAR_BG);
+	        g.fillRect(bar.getMinX()-camera.getMinX(), bar.getMinY()-camera.getMinY(), bar.getWidth(), bar.getHeight());
+	        g.setColor(BAR);
+	        g.fillRect(bar.getMinX()-camera.getMinX(), bar.getMinY()-camera.getMinY(), hpBarWidth, bar.getHeight());
+	        g.setColor(VALUE);
+	        g.drawString(getName(), getCenterX()-textWidth/2-camera.getMinX(), getMinY()-g.getFont().getLineHeight()*3/2-camera.getMinY());
+		}
+		super.render(g, camera);
+	}
 }

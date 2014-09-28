@@ -37,8 +37,8 @@ public class Aldric extends NPC {
 	}
 	
 	/** Constructor creates Aldric */
-	public Aldric() {
-		super(new Vector2f(SPAWN_X_POS, SPAWN_Y_POS), getImage(), NAME, DIALOGUE_LOC);
+	public Aldric(World world) {
+		super(new Vector2f(SPAWN_X_POS, SPAWN_Y_POS), getImage(), world, NAME, DIALOGUE_LOC);
 	}
 
 	@Override

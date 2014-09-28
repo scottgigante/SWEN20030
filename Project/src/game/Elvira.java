@@ -37,8 +37,8 @@ public class Elvira extends NPC {
 	}
 	
 	/** Constructor creates Elvira */
-	public Elvira() {
-		super(new Vector2f(SPAWN_X_POS, SPAWN_Y_POS), getImage(), NAME, DIALOGUE_LOC);
+	public Elvira(World world) {
+		super(new Vector2f(SPAWN_X_POS, SPAWN_Y_POS), getImage(), world,  NAME, DIALOGUE_LOC);
 	}
 
 	@Override

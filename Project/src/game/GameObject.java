@@ -79,7 +79,7 @@ public abstract class GameObject extends Rectangle {
 	/** Render an object within the scope of the camera
      * @param camera The viewport in which to draw
      */
-    public void render(Camera camera) {
+    public void render(Graphics g, Camera camera) {
     	if (camera.isOnScreen(this)) {
     		// character is on-screen, draw it
     		sprite.draw(getMinX()-camera.getMinX(),getMinY()-camera.getMinY());

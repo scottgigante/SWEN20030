@@ -37,8 +37,8 @@ public class Garth extends NPC {
 	}
 	
 	/** Constructor creates Garth */
-	public Garth() {
-		super(new Vector2f(SPAWN_X_POS, SPAWN_Y_POS), getImage(), NAME, DIALOGUE_LOC);
+	public Garth(World world) {
+		super(new Vector2f(SPAWN_X_POS, SPAWN_Y_POS), getImage(), world, NAME, DIALOGUE_LOC);
 	}
 
 	@Override

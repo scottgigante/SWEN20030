@@ -38,9 +38,9 @@ public class World
         player = new Player(this);
         status = new StatusBar(player);
         objectList = new ArrayList<GameObject>();
-        objectList.add(new Aldric());
-        objectList.add(new Elvira());
-        objectList.add(new Garth());
+        objectList.add(new Aldric(this));
+        objectList.add(new Elvira(this));
+        objectList.add(new Garth(this));
         objectList.addAll(Bandit.spawnAll(this));
         objectList.addAll(Zombie.spawnAll(this));
         objectList.addAll(Skeleton.spawnAll(this));
@@ -85,9 +85,9 @@ public class World
     throws SlickException
     {
     	map.render(camera);
-    	player.render(camera);
+    	player.render(g, camera);
     	for (GameObject o:objectList) {
-    		o.render(camera);
+    		o.render(g, camera);
     	}
     	status.render(g);
     }
