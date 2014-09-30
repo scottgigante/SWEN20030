@@ -19,6 +19,9 @@ import java.util.ArrayList;
  */
 public class World
 {	
+	/** Proximity, in pixels, to be considered 'near' */
+	private static final int NEAR_DISTANCE = 30;
+			
 	/** The map containing tiles, images etc */
 	private Map map;
 	/** Human player character */
@@ -67,9 +70,14 @@ public class World
     	} else {
     		player.update(dirX, dirY, delta, aPressed, tPressed);
         }
+    	for (GameObject o:objectList) {
+    		if (o instanceof Monster) {
+    			((Monster) o).update(player, delta);
+    		}
+    	}
     	camera.update();
     	for (GameObject o:objectList) {
-    		if (o.near(player)) {
+    		if (o.dist(player) <= NEAR_DISTANCE) {
     			player.interact(o);
     			if (o instanceof AggressiveMonster) {
     				o.interact(player);
@@ -120,6 +128,37 @@ public class World
 		}
 
 		return true;
+    }
+    
+    /** Checks whether one GameObject has a direct line of sight to another
+     * @param o1 The first GameObject
+     * @param o2 The second GameObject - if terrainBlocking is false, this will nearly always return true
+     * @return True or false
+     */
+    public boolean hasLineOfSight(GameObject o1, GameObject o2) {
+    	if (o1.dist(o2) < NEAR_DISTANCE) {
+    		// no point, they're already on top of each other
+    		return false;
+    	}
+    	boolean success = true;
+    	float distX = o1.getCenterX()-o2.getCenterX(), distY = o1.getCenterY()-o2.getCenterY();
+		float x=o2.getCenterX(),y=o2.getCenterY();
+		while (Math.abs(o1.getCenterX()-x) > map.getTileWidth()) {
+			if (distX > distY) {
+				// x is the bounding coordinate, scale the y
+				x += map.getTileWidth()*Math.signum(distX);
+				y += map.getTileHeight()*Math.signum(distY)*distY/distX;
+			} else {
+				// y is the bounding coordinate
+				x += map.getTileWidth()*Math.signum(distX)*distX/distY;
+				y += map.getTileHeight()*Math.signum(distY);						
+			}
+			if (!map.canMove(o2, x, y)) {
+				success = false;
+				break;
+			}
+		}
+		return success;
     }
     
     /** Remove an object from the object list

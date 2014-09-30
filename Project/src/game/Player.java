@@ -76,7 +76,7 @@ public class Player extends Character {
 	
 	public void interact(GameObject o) {
 		if (isAttack && o instanceof Monster) {
-			attack((Character) o);
+			attack((Monster) o);
 		} else if (isSpeak && o instanceof NPC) {
 			
 		} else if (o instanceof Item) {
@@ -113,12 +113,17 @@ public class Player extends Character {
 		}
 		update(dirX,dirY,delta);
 	}
-	
+
+	/* (non-Javadoc)
+	 * Rather than destroying the player, it respawns
+	 * @see game.GameObject#destroy()
+	 */
 	public void destroy() {
-		this.x = SPAWN_X_POS;
-		this.y = SPAWN_Y_POS;
+		setCenterX(SPAWN_X_POS);
+		setCenterY(SPAWN_Y_POS);
 		setCurrentHealth(getHealth());
 		setCurrentCooldown(0);
+		lastDamage = 0;
 	}
 	
 	/* (non-Javadoc)

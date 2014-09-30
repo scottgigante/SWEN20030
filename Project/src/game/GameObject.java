@@ -7,8 +7,6 @@ import org.newdawn.slick.Graphics;
 
 public abstract class GameObject extends Rectangle {
 	
-	/** Proximity, in pixels, to be considered 'near' */
-	private static final int NEAR_DISTANCE = 30;
 	
 	private int health;
 	private int damage;
@@ -102,8 +100,8 @@ public abstract class GameObject extends Rectangle {
 	 * @param o The GameObject to be checked
 	 * @return True or false.
 	 */
-	public boolean near(GameObject o) {
-		return Math.sqrt(Math.pow(getCenterX()-o.getCenterX(), 2) + Math.pow(getCenterY()-o.getCenterY(), 2)) <= NEAR_DISTANCE;
+	public double dist(GameObject o) {
+		return Math.sqrt(Math.pow(getCenterX()-o.getCenterX(), 2) + Math.pow(getCenterY()-o.getCenterY(), 2));
 	}
 	
 	public abstract void interact(GameObject o);

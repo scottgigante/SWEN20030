@@ -45,11 +45,4 @@ public class Draelic extends AggressiveMonster {
 		super(new Vector2f(SPAWN_X_POS, SPAWN_Y_POS), getImage(), world, NAME, MAX_SPEED, HEALTH, DAMAGE, COOLDOWN);
 		// TODO Auto-generated constructor stub
 	}
-
-	@Override
-	public void interact(GameObject o) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

@@ -71,11 +71,4 @@ public class Skeleton extends AggressiveMonster {
 		super(pos, getImage(), world, NAME, HEALTH, DAMAGE, COOLDOWN);
 		// TODO Auto-generated constructor stub
 	}
-
-	@Override
-	public void interact(GameObject o) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

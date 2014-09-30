@@ -123,14 +123,12 @@ public abstract class Character extends GameObject {
 			}
 		}
 		
-		// Find coords for the corner in the direction of movement, and flip sprite where necessary
+		// flip sprite where necessary
 		if (dirX > 0) {
-			x = getMaxX();
 			if (getSprite() == getSpriteF()) {
 			setSprite(getSpriteNf());
 			}
 		} else if (dirX < 0) {
-			x = getMinX();
 			if (getSprite() == getSpriteNf()) {
 				setSprite(getSpriteF());
 			}
