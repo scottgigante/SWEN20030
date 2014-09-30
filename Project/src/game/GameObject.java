@@ -93,10 +93,15 @@ public abstract class GameObject extends Rectangle {
     	}
     }
 	
+	/** Object removes itself from the world and disappears */
 	public void destroy() {
 		world.removeObject(this);
 	}
 	
+	/** Checks if an object is within a certain distance of another, for interaction purposes
+	 * @param o The GameObject to be checked
+	 * @return True or false.
+	 */
 	public boolean near(GameObject o) {
 		return Math.sqrt(Math.pow(getCenterX()-o.getCenterX(), 2) + Math.pow(getCenterY()-o.getCenterY(), 2)) <= NEAR_DISTANCE;
 	}

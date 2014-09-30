@@ -39,6 +39,8 @@ public class Player extends Character {
 	private boolean isSpeak;
 	/** Whether or not the player will attack a monster it interacts with */
 	private boolean isAttack;
+	/** Last random amount of damage inflicted held for display purposes */
+	private int lastDamage=0;
 	
 	/** Fetches the pre-generated image for the class, or if it has not yet been generated, does so.
 	 * @return Image for the player's sprite
@@ -54,6 +56,11 @@ public class Player extends Character {
 			System.exit(1);
 			return null;
 		}
+	}
+	
+
+	public int getLastDamage() {
+		return lastDamage;
 	}
 	
 	/** Constructor for the player class
@@ -112,5 +119,17 @@ public class Player extends Character {
 		this.y = SPAWN_Y_POS;
 		setCurrentHealth(getHealth());
 		setCurrentCooldown(0);
+	}
+	
+	/* (non-Javadoc)
+	 * @see game.Character#attack(game.Character)
+	 */
+	@Override
+	public void attack(Character o) {
+		if (getCurrentCooldown() <= 0) {
+			lastDamage = (int)(Math.random()*getDamage());
+			o.takeDamage(lastDamage);
+			setCurrentCooldown(getCooldown());
+		}
 	}
 }

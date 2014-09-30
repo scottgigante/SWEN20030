@@ -59,16 +59,20 @@ public abstract class Character extends GameObject {
 		this.currentCooldown = currentCooldown;
 	}
 	
+	/** Attacks the given Character if possible
+	 * @param o A charecter to be attacked
+	 */
 	public void attack(Character o) {
-		System.out.print(getName());
 		if (getCurrentCooldown() <= 0) {
 			o.takeDamage((int)(Math.random()*getDamage()));
 			currentCooldown = getCooldown();
 		}
 	}
 	
+	/** Takes damage from an attack and checks for death
+	 * @param damage The amount of damage inflicted
+	 */
 	public void takeDamage(int damage) {
-		System.out.print(" attacks "+getName()+"for "+damage+" HP");
 		currentHealth -= damage;
 		if (currentHealth <= 0) {
 			destroy();

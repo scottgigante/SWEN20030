@@ -33,10 +33,10 @@ public class StatusBar {
         int text_x, text_y;         // Coordinates to draw text
         int bar_x, bar_y;           // Coordinates to draw rectangles
         int bar_width, bar_height;  // Size of rectangle to draw
-        int hp_bar_width;           // Size of red (HP) rectangle
+        int percentage_bar_width;           // Size of red (HP) rectangle
         int inv_x, inv_y;           // Coordinates to draw inventory item
 
-        float health_percent;       // Player's health, as a percentage
+        float percent;       // Player's health/cooldown, as a percentage
 
         // Panel background image
         panel.draw(0, RPG.SCREEN_HEIGHT - RPG.PANEL_HEIGHT);
@@ -52,43 +52,62 @@ public class StatusBar {
         bar_y = RPG.SCREEN_HEIGHT - RPG.PANEL_HEIGHT + 20;
         bar_width = 90;
         bar_height = 30;
-        health_percent = (float)player.getCurrentHealth()/player.getHealth(); // TODO: HP / Max-HP
-        hp_bar_width = (int) (bar_width * health_percent);
+        percent = (float)player.getCurrentHealth()/player.getHealth(); // TODO: HP / Max-HP
+        percentage_bar_width = (int) (bar_width * percent);
         text_x = bar_x + (bar_width - g.getFont().getWidth(text)) / 2;
         g.setColor(BAR_BG);
         g.fillRect(bar_x, bar_y, bar_width, bar_height);
         g.setColor(BAR);
-        g.fillRect(bar_x, bar_y, hp_bar_width, bar_height);
+        g.fillRect(bar_x, bar_y, percentage_bar_width, bar_height);
         g.setColor(VALUE);
         g.drawString(text, text_x, text_y);
 
         // Display the player's damage and cooldown
-        text_x = 200;
+        text_x = 190;
         g.setColor(LABEL);
         g.drawString("Damage:", text_x, text_y);
-        text_x += 80;
-        text = ((Integer)player.getDamage()).toString(); // TODO: Damage
+        text = ((Integer)player.getDamage()).toString(); // TODO: Damagebar_x = text_x+55;
+        bar_x = text_x+70;
+        bar_width = g.getFont().getWidth(text)+30;
+        percent = (float)player.getLastDamage()/player.getDamage(); // TODO: HP / Max-HP
+        percentage_bar_width = (int) (bar_width * percent);
+        text_x = bar_x + (bar_width - g.getFont().getWidth(text)) / 2;
+        g.setColor(BAR_BG);
+        g.fillRect(bar_x, bar_y, bar_width, bar_height);
+        g.setColor(BAR);
+        g.fillRect(bar_x, bar_y, percentage_bar_width, bar_height);
         g.setColor(VALUE);
         g.drawString(text, text_x, text_y);
-        text_x += 40;
+        
+        text_x += 45;
         g.setColor(LABEL);
         g.drawString("Rate:", text_x, text_y);
-        text_x += 55;
-        text = ((Integer)player.getCooldown()).toString(); // TODO: Cooldown
+        
+        text = ((Integer)player.getCooldown()).toString();
+        bar_x = text_x+55;
+        bar_width = g.getFont().getWidth(text)+30;
+        percent = (float)player.getCurrentCooldown()/player.getCooldown(); // TODO: HP / Max-HP
+        percentage_bar_width = (int) (bar_width * percent);
+        text_x = bar_x + (bar_width - g.getFont().getWidth(text)) / 2;
+        g.setColor(BAR_BG);
+        g.fillRect(bar_x, bar_y, bar_width, bar_height);
+        g.setColor(BAR);
+        g.fillRect(bar_x, bar_y, percentage_bar_width, bar_height);
         g.setColor(VALUE);
         g.drawString(text, text_x, text_y);
 
         // Display the player's inventory
+        text_x += 50;
         g.setColor(LABEL);
-        g.drawString("Items:", 420, text_y);
-        bar_x = 490;
+        g.drawString("Items:", text_x, text_y);
+        bar_x = text_x + 60;
         bar_y = RPG.SCREEN_HEIGHT - RPG.PANEL_HEIGHT + 10;
         bar_width = 288;
         bar_height = bar_height + 20;
         g.setColor(BAR_BG);
         g.fillRect(bar_x, bar_y, bar_width, bar_height);
 
-        inv_x = 490;
+        inv_x = bar_x;
         inv_y = RPG.SCREEN_HEIGHT - RPG.PANEL_HEIGHT
             + ((RPG.PANEL_HEIGHT - 72) / 2);
         // for (each item in the player's inventory)                // TODO
