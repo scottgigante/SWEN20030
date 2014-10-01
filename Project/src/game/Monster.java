@@ -7,7 +7,7 @@ public abstract class Monster extends Character {
 	private static final long serialVersionUID = 3035618347609591153L;
 	/** Total length of monsters' sight line */
 	private static int SEE_DISTANCE = 800;
-	private static int WANDER_TIME = 3000;
+	private static int WANDER_TIME = 1000;
 	private int currentWanderTime=0;
 	private Vector2f wanderDir;
 	
@@ -37,10 +37,9 @@ public abstract class Monster extends Character {
 		Vector2f dir;
 		if (dist(player) < SEE_DISTANCE && world.hasLineOfSight(player, this)) {
 			// player is close enough to be seen and has line of sight
-			// TODO don't know why, sometimes doesn't work
 			dir = see(player);
 		} else {
-			dir = new Vector2f(0,0);//TODO wander();
+			dir = wander();
 		}
 		// scale to size
 		float len = dir.length();

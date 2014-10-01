@@ -22,7 +22,7 @@ public abstract class PassiveMonster extends Monster {
 		if (currentFleeTime > 0) {
 			return new Vector2f(getCenterX()-player.getCenterX(), getCenterY()-player.getCenterY());
 		} else {
-			return new Vector2f(0,0);//TODO wander();
+			return wander();
 		}
 	}
 	
