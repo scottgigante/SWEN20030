@@ -140,17 +140,20 @@ public class World
     	}
     	boolean success = true;
     	float distX = o1.getCenterX()-o2.getCenterX(), distY = o1.getCenterY()-o2.getCenterY();
-		float x=o2.getCenterX(),y=o2.getCenterY();
-		while (Math.abs(o1.getCenterX()-x) > map.getTileWidth()) {
-			if (distX > distY) {
-				// x is the bounding coordinate, scale the y
-				x += map.getTileWidth()*Math.signum(distX);
-				y += map.getTileHeight()*Math.signum(distY)*distY/distX;
-			} else {
-				// y is the bounding coordinate
-				x += map.getTileWidth()*Math.signum(distX)*distX/distY;
-				y += map.getTileHeight()*Math.signum(distY);						
-			}
+		float x=0,y=0;
+		float scaleX, scaleY;
+		if (Math.abs(distX) > Math.abs(distY)) {
+			// x is the bounding coordinate, scale the y
+			scaleX = 1;
+			scaleY = Math.abs(distY/distX);
+		} else {
+			// y is the bounding coordinate
+			scaleX = Math.abs(distX/distY);
+			scaleY = 1;
+		}
+		while (Math.abs(o1.getCenterX()-o2.getCenterX()-x) > map.getTileWidth()) {
+			x += map.getTileWidth()*Math.signum(distX)*scaleX;
+			y += map.getTileHeight()*Math.signum(distY)*scaleY;
 			if (!map.canMove(o2, x, y)) {
 				success = false;
 				break;
