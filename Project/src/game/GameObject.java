@@ -6,8 +6,7 @@ import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.Graphics;
 
 public abstract class GameObject extends Rectangle {
-	
-	
+	private static final long serialVersionUID = -7779997954127083405L;
 	private int health;
 	private int damage;
 	private int cooldown;

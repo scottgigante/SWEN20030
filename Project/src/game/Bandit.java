@@ -8,6 +8,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
 public class Bandit extends AggressiveMonster {
+	private static final long serialVersionUID = -3640967800947380589L;
 	/** Location of file description spawn positions */
 	private static final String SPAWN_FILE = "assets/spawn/bandit.txt";
 	/** The location of the image */

@@ -8,6 +8,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
 public class Bat extends PassiveMonster {
+	private static final long serialVersionUID = 7096260413252608499L;
 	/** Location of file description spawn positions */
 	private static final String SPAWN_FILE = "assets/spawn/bat.txt";
 	/** The location of the image */
@@ -69,11 +70,4 @@ public class Bat extends PassiveMonster {
 		super(pos, getImage(), world, NAME, HEALTH);
 		// TODO Auto-generated constructor stub
 	}
-
-	@Override
-	public void interact(GameObject o) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

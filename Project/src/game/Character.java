@@ -59,12 +59,16 @@ public abstract class Character extends GameObject {
 		this.currentCooldown = currentCooldown;
 	}
 	
+	public boolean isTerrainBlocking() {
+		return terrainBlocking;
+	}
+
 	/** Attacks the given Character if possible
 	 * @param o A charecter to be attacked
 	 */
 	public void attack(Character o) {
 		if (getCurrentCooldown() <= 0) {
-			o.takeDamage((int)(Math.random()*getDamage()));
+			o.takeDamage((int)(Math.random()*getDamage()), this);
 			currentCooldown = getCooldown();
 		}
 	}
@@ -72,7 +76,7 @@ public abstract class Character extends GameObject {
 	/** Takes damage from an attack and checks for death
 	 * @param damage The amount of damage inflicted
 	 */
-	public void takeDamage(int damage) {
+	public void takeDamage(int damage, Character attacker) {
 		currentHealth -= damage;
 		if (currentHealth <= 0) {
 			destroy();

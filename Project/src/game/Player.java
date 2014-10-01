@@ -133,7 +133,7 @@ public class Player extends Character {
 	public void attack(Character o) {
 		if (getCurrentCooldown() <= 0) {
 			lastDamage = (int)(Math.random()*getDamage());
-			o.takeDamage(lastDamage);
+			o.takeDamage(lastDamage, this);
 			setCurrentCooldown(getCooldown());
 		}
 	}

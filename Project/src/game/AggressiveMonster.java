@@ -4,9 +4,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Vector2f;
 
 public abstract class AggressiveMonster extends Monster {
-	
-	
-	
+	private static final long serialVersionUID = 8814099892146069366L;
 	private static final float MAX_SPEED = 0.25f;
 	
 	public AggressiveMonster(Vector2f pos, Image sprite, World world, String name, int health, int damage, int cooldown) {

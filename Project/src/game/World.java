@@ -5,10 +5,8 @@
 
 package game;
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
@@ -120,7 +118,7 @@ public class World
     public boolean canMove(Rectangle rect, float x, float y) {
 		if (x != 0 || y != 0) {
 			// check map legality
-			if (!map.canMove(rect,x,y)) {
+			if (!map.canMove(rect,x,y) && (!(rect instanceof Character) || ((Character)rect).isTerrainBlocking())) {
 				return false;
 			}
 			
@@ -138,7 +136,7 @@ public class World
     public boolean hasLineOfSight(GameObject o1, GameObject o2) {
     	if (o1.dist(o2) < NEAR_DISTANCE) {
     		// no point, they're already on top of each other
-    		return false;
+    		return true;
     	}
     	boolean success = true;
     	float distX = o1.getCenterX()-o2.getCenterX(), distY = o1.getCenterY()-o2.getCenterY();

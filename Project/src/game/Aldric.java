@@ -5,7 +5,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
 public class Aldric extends NPC {
-
+	private static final long serialVersionUID = 2029250095185699382L;
 	/** Beginning x position */
 	private static final float SPAWN_X_POS = 467;
 	/** Beginning y position */
