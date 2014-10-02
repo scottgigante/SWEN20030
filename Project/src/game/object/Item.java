@@ -2,6 +2,7 @@ package game.object;
 
 import game.framework.Camera;
 import game.framework.GameObject;
+import game.framework.TextRenderer;
 import game.framework.World;
 
 import org.newdawn.slick.Color;
@@ -20,19 +21,9 @@ public abstract class Item extends GameObject {
 	@Override
 	public void render(Graphics g, Camera camera) {
 		super.render(g, camera);
-        Color VALUE = new Color(1.0f, 1.0f, 1.0f);          // White
-        Color BAR_BG = new Color(0.0f, 0.0f, 0.0f, 0.8f);   // Black, transp
         
-        String text = getName();
-        int textWidth = g.getFont().getWidth(text);
-        int barWidth = Math.max(textWidth+6, 70);
-        int barHeight = g.getFont().getLineHeight();
-		Rectangle bar = new Rectangle(getCenterX() - barWidth/2, getMinY()-barHeight*3/2, barWidth, barHeight);
-		if (camera.isOnScreen(bar)) {	        
-	        g.setColor(BAR_BG);
-	        g.fillRect(bar.getMinX()-camera.getMinX(), bar.getMinY()-camera.getMinY(), bar.getWidth(), bar.getHeight());
-	        g.setColor(VALUE);
-	        g.drawString(getName(), getCenterX()-textWidth/2-camera.getMinX(), getMinY()-g.getFont().getLineHeight()*3/2-camera.getMinY());
+		if (camera.isOnScreen(this)) {	        
+			TextRenderer.renderText(g, getCenterX()-camera.getMinX(), getMinY()-camera.getMinY(), 0, getName());
 		}
 	}
 	

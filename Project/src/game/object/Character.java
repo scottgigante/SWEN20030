@@ -7,6 +7,7 @@ package game.object;
 import game.framework.Camera;
 import game.framework.GameObject;
 import game.framework.Path;
+import game.framework.TextRenderer;
 import game.framework.World;
 
 import org.newdawn.slick.geom.Rectangle;
@@ -169,22 +170,8 @@ public abstract class Character extends GameObject {
         Color VALUE = new Color(1.0f, 1.0f, 1.0f);          // White
         Color BAR_BG = new Color(0.0f, 0.0f, 0.0f, 0.8f);   // Black, transp
         
-        String text = getName();
-        int textWidth = g.getFont().getWidth(text);
-        int barWidth = Math.max(textWidth+6, 70);
-        int barHeight = g.getFont().getLineHeight();
-		Rectangle bar = new Rectangle(getCenterX() - barWidth/2, getMinY()-barHeight*3/2, barWidth, barHeight);
-		if (camera.isOnScreen(bar) && !(this instanceof Player)) {
-			
-			float healthPercent = (float)getCurrentHealth()/getHealth();
-	        int hpBarWidth = (int) (barWidth * healthPercent);
-	        
-	        g.setColor(BAR_BG);
-	        g.fillRect(bar.getMinX()-camera.getMinX(), bar.getMinY()-camera.getMinY(), bar.getWidth(), bar.getHeight());
-	        g.setColor(BAR);
-	        g.fillRect(bar.getMinX()-camera.getMinX(), bar.getMinY()-camera.getMinY(), hpBarWidth, bar.getHeight());
-	        g.setColor(VALUE);
-	        g.drawString(getName(), getCenterX()-textWidth/2-camera.getMinX(), getMinY()-g.getFont().getLineHeight()*3/2-camera.getMinY());
-		}
+        if (camera.isOnScreen(this) && !(this instanceof Player)) {
+			TextRenderer.renderText(g, getCenterX()-camera.getMinX(), getMinY()-camera.getMinY(), (float)getCurrentHealth()/getHealth(), getName());
+        }
 	}
 }
