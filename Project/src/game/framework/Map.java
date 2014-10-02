@@ -103,10 +103,10 @@ public class Map extends TiledMap {
 	 * @param stop Vector2f representing path's end, in pixels
 	 * @return An array of Vector2f as the path of tiles to visit
 	 */
-	public Vector2f[] findPath(Vector2f start, Vector2f stop) {
+	public Path findPath(Vector2f start, Vector2f stop) {
 		// initial check that the destination tile is walkable
 		if (!isWalkable(stop.x, stop.y)) {
-			return null;
+			return new Path();
 		}
 		
 		ArrayList<Node> closed = new ArrayList<Node>();
@@ -198,20 +198,15 @@ public class Map extends TiledMap {
 		}
 		
 		// found the best path, now to return it
-		int count = 1;
-		next = current;
-		while (next != node_list[(int)start_block.x][(int)start_block.y]) {
-			next = next.getParent();
-			count++;
-		}
-		
-		Vector2f[] path = new Vector2f[count];
-		for (int i = count-1; i >= 0; i--) {
-			path[i] = new Vector2f((float)((current.getX()+0.5)*getTileWidth()),(float)((current.getY()+0.5)*getTileHeight()));
+		Path path = new Path();
+		// skip first and last tiles, don't need to actually go to them
+		current = current.getParent();
+		while (current != null && current != node_list[(int)start_block.x][(int)start_block.y]) {
+			path.addAtStart(new Vector2f((float)((current.getX()+0.5)*getTileWidth()),(float)((current.getY()+0.5)*getTileHeight())));
 			current = current.getParent();
 		}
 		// finally, reach the actual point clicked rather than the corresponding grid square
-		path[count-1] = stop;
+		path.addAtEnd(stop);
 		return path;
 	}
 	

@@ -12,6 +12,7 @@ import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Vector2f;
 
 /** Main class for the Role-Playing Game engine.
  * Handles initialisation, input and rendering.
@@ -64,19 +65,18 @@ public class RPG extends BasicGame
         Input input = gc.getInput();
 
         // Update the player's movement direction based on keyboard presses.
-        float dir_x = 0;
-        float dir_y = 0;
+        Vector2f dir = new Vector2f(0,0);
         if (input.isKeyDown(Input.KEY_DOWN))
-            dir_y += 1;
+            dir.y += 1;
         if (input.isKeyDown(Input.KEY_UP))
-            dir_y -= 1;
+            dir.y -= 1;
         if (input.isKeyDown(Input.KEY_LEFT))
-            dir_x -= 1;
+            dir.x -= 1;
         if (input.isKeyDown(Input.KEY_RIGHT))
-            dir_x += 1;
+            dir.x += 1;
 
         // Let World.update decide what to do with this data.
-        world.update(dir_x, dir_y, delta, input.isMousePressed(Input.MOUSE_LEFT_BUTTON), input.getMouseX(), input.getMouseY(), input.isKeyPressed(Input.KEY_A), input.isKeyPressed(Input.KEY_T));
+        world.update(dir, delta, input.isMousePressed(Input.MOUSE_LEFT_BUTTON), input.getMouseX(), input.getMouseY(), input.isKeyPressed(Input.KEY_A), input.isKeyPressed(Input.KEY_T));
     }
 
     /** Render the entire screen, so it reflects the current game state.

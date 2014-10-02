@@ -81,13 +81,13 @@ public class World
      * @param mouseX The x position of the mouse.
      * @param mouseY The y position of the mouse.
      */
-    public void update(float dirX, float dirY, int delta, boolean mousePressed, int mouseX, int mouseY, boolean aPressed, boolean tPressed)
+    public void update(Vector2f dir, int delta, boolean mousePressed, int mouseX, int mouseY, boolean aPressed, boolean tPressed)
     throws SlickException
     {
     	if (mousePressed) {
-    		player.update(dirX, dirY, delta, camera.getMinX()+mouseX, camera.getMinY()+mouseY, aPressed, tPressed);
+    		player.update(dir, delta, camera.getMinX()+mouseX, camera.getMinY()+mouseY, aPressed, tPressed);
     	} else {
-    		player.update(dirX, dirY, delta, aPressed, tPressed);
+    		player.update(dir, delta, aPressed, tPressed);
         }
     	for (GameObject o:objectList) {
     		if (o instanceof Monster) {
@@ -126,7 +126,7 @@ public class World
      * @param stop The ending position of the path
      * @return Vector2f[] describing path
      */
-    public Vector2f[] findPath(Vector2f start, Vector2f stop) {
+    public Path findPath(Vector2f start, Vector2f stop) {
     	return map.findPath(start, stop);
     }
     

@@ -79,6 +79,10 @@ public abstract class GameObject extends Rectangle {
 	public Image getSpriteF() {
 		return spriteF;
 	}
+	
+	public Vector2f getVectorCenter() {
+		return new Vector2f(getCenterX(), getCenterY());
+	}
 
 	/** Render an object within the scope of the camera
      * @param camera The viewport in which to draw

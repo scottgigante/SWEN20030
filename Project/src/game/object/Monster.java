@@ -47,6 +47,6 @@ public abstract class Monster extends Character {
 		float len = dir.length();
 		dir.x /= len;
 		dir.y /= len;
-		super.update(dir.x, dir.y, delta);
+		super.update(dir, delta);
 	}
 }

@@ -23,7 +23,7 @@ public abstract class NPC extends Character {
 	}
 	
 	public void speak(int line) {
-		// TODO stub
+		
 	}
 
 }

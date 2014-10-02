@@ -6,6 +6,7 @@
 package game.object;
 import game.framework.Camera;
 import game.framework.GameObject;
+import game.framework.Path;
 import game.framework.World;
 
 import org.newdawn.slick.geom.Rectangle;
@@ -23,9 +24,7 @@ public abstract class Character extends GameObject {
 	/** Time left before next possible attack */
 	private int currentCooldown;
 	/** The path currently being followed, if any */
-	private Vector2f[] path; // TODO replace with class Path
-	/** The position in the path array we have reached */
-	private int path_index;
+	private Path path;
 	/** Allows debugging removal of terrain blocking (or perhaps flying creatures) */
 	private boolean terrainBlocking = true;
 	
@@ -44,6 +43,7 @@ public abstract class Character extends GameObject {
 		this.speed = speed;
 		currentHealth = getHealth();
 		currentCooldown = 0;
+		path = new Path();
 	}
 	
 	/* Getters and setters */
@@ -69,6 +69,28 @@ public abstract class Character extends GameObject {
 
 	public void setTerrainBlocking(boolean terrainBlocking) {
 		this.terrainBlocking = terrainBlocking;
+	}
+	
+	public Path getPath() {
+		return path;
+	}
+
+	/** Set the path of the character to reach position x,y on the map
+	 * @param x Float representing mouse x-position
+	 * @param y Float representing mouse y-position
+	 */
+	public void setPath(float x, float y) {		
+		// Find a path to position x,y
+		Vector2f start = new Vector2f((float)getCenterX(),(float)getCenterY());
+		Vector2f stop = new Vector2f(x,y);
+		Path newPath = world.findPath(start, stop);
+		if (newPath.hasPath()) {
+			path = newPath;
+			if (newPath.length() > 1) {
+				// we're already at the first node on the path, don't need to go there.
+				path.next();
+			}
+		}
 	}
 
 	/** Attacks the given Character if possible
@@ -103,80 +125,40 @@ public abstract class Character extends GameObject {
 	 * @param dirY Number of units to move along the y axis
 	 * @param delta Number of milliseconds since last movement
 	 */
-	public void update(float dirX, float dirY, int delta) {
+	public void update(Vector2f dir, int delta) {
 		if (currentCooldown > 0) {
 			currentCooldown -= delta;
 		}
 		// Check if a current path exists
-		if (path != null) { 
-			// Check if the current waypoint has been reached
-			if (path[path_index].distance(new Vector2f(getCenterX(), getCenterY())) < PATH_TOLERANCE*speed) {
-				if (path_index < path.length-1) {
-					path_index++;
-				} else {
-					// Path complete!
-					path = null;
-				}
-			}
-		}
-		if (path != null) {
-			if (dirX != 0 || dirY != 0) {
+		path.update(getVectorCenter());
+		if (path.hasPath()) {
+			if (dir.x != 0 || dir.y != 0) {
 				// Keyboard interrupts pathfinding
-				path = null;
+				path.clear();
 			} else {
 				// Set phantom keyboard input to reach next waypoint
-				// Use PATH_TOLERANCE/2 to avoid having to use sqrt(2)
-				if (getCenterX() < path[path_index].x-PATH_TOLERANCE*speed/2) {
-					dirX = 1;
-				} else if (getCenterX() > path[path_index].x+PATH_TOLERANCE*speed/2) {
-					dirX = -1;
-				}
-				if (getCenterY() < path[path_index].y-PATH_TOLERANCE*speed/2) {
-					dirY = 1;
-				} else if (getCenterY() > path[path_index].y+PATH_TOLERANCE*speed/2) {
-					dirY = -1;
-				}				
+				dir = path.getDir(getVectorCenter());
 			}
 		}
 		
 		// flip sprite where necessary
-		if (dirX > 0) {
+		if (dir.x > 0) {
 			if (getSprite() == getSpriteF()) {
 			setSprite(getSpriteNf());
 			}
-		} else if (dirX < 0) {
+		} else if (dir.x < 0) {
 			if (getSprite() == getSpriteNf()) {
 				setSprite(getSpriteF());
 			}
 		}
 		
-		if (world.canMove(this,speed*dirX*delta,0)) {
+		if (world.canMove(this,speed*dir.x*delta,0)) {
 			// Movement okay in x direction
-			setCenterX(getCenterX() + (float)(speed*dirX*delta));		
+			setCenterX(getCenterX() + (float)(speed*dir.x*delta));		
 		}
-		if (world.canMove(this,0,speed*dirY*delta)) {
+		if (world.canMove(this,0,speed*dir.y*delta)) {
 			// Movement okay in y direction
-			setCenterY(getCenterY() + (float)(speed*dirY*delta));	
-		}
-	}
-
-	/** Set the path of the character to reach position x,y on the map
-	 * @param x Float representing mouse x-position
-	 * @param y Float representing mouse y-position
-	 */
-	public void setPath(float x, float y) {		
-		// Find a path to position x,y
-		Vector2f start = new Vector2f((float)getCenterX(),(float)getCenterY());
-		Vector2f stop = new Vector2f(x,y);
-		Vector2f[] newPath = world.findPath(start, stop);
-		if (newPath != null) {
-			path = newPath;
-			if (newPath.length > 1) {
-				// we're already at the first node on the path, don't need to go there.
-				path_index = 1;
-			} else {
-				path_index = 0;
-			}
+			setCenterY(getCenterY() + (float)(speed*dir.y*delta));	
 		}
 	}
 

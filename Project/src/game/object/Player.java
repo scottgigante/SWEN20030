@@ -111,9 +111,9 @@ public class Player extends Character {
 	 * @param aPressed Whether or not A has been pressed
 	 * @param tPressed Whether or not T has been pressed
 	 */
-	public void update(float dirX, float dirY, int delta, int mouseX, int mouseY, boolean aPressed, boolean tPressed) {
+	public void update(Vector2f dir, int delta, int mouseX, int mouseY, boolean aPressed, boolean tPressed) {
 		setPath(mouseX, mouseY);
-		update(dirX,dirY,delta, aPressed,tPressed);
+		update(dir,delta, aPressed,tPressed);
 	}
 	
 	/** Updates the player for key presses
@@ -123,10 +123,10 @@ public class Player extends Character {
 	 * @param aPressed Whether or not A has been pressed
 	 * @param tPressed Whether or not T has been pressed
 	 */
-	public void update(float dirX, float dirY, int delta, boolean aPressed, boolean tPressed) {
+	public void update(Vector2f dir, int delta, boolean aPressed, boolean tPressed) {
 		isSpeak = tPressed;
 		isAttack = aPressed;
-		update(dirX,dirY,delta);
+		update(dir,delta);
 	}
 	
 	/* (non-Javadoc)
@@ -165,5 +165,6 @@ public class Player extends Character {
 		setCurrentHealth(getHealth());
 		setCurrentCooldown(0);
 		lastDamage = 0;
+		getPath().clear();
 	}
 }
