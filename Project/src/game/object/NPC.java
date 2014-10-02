@@ -1,4 +1,7 @@
-package game;
+package game.object;
+
+import game.framework.FileReader;
+import game.framework.World;
 
 import java.util.List;
 

@@ -1,4 +1,7 @@
-package game;
+package game.object;
+
+import game.framework.GameObject;
+import game.framework.World;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Vector2f;
@@ -35,9 +38,9 @@ public abstract class PassiveMonster extends Monster {
 	}
 	
 	@Override
-	public void takeDamage(int damage, Character attacker) {
+	public boolean takeDamage(int damage, Character attacker) {
 		interact(attacker);
-		super.takeDamage(damage, attacker);
+		return super.takeDamage(damage, attacker);
 	}
 
 	@Override

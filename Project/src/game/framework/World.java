@@ -3,12 +3,29 @@
  * Author: Scott Gigante <gigantes>
  */
 
-package game;
+package game.framework;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
+
+import game.object.AggressiveMonster;
+import game.object.Character;
+import game.object.Monster;
+import game.object.Player;
+import game.object.item.Amulet;
+import game.object.item.Elixir;
+import game.object.item.Sword;
+import game.object.item.Tome;
+import game.object.monster.Bandit;
+import game.object.monster.Bat;
+import game.object.monster.Draelic;
+import game.object.monster.Skeleton;
+import game.object.monster.Zombie;
+import game.object.npc.Aldric;
+import game.object.npc.Elvira;
+import game.object.npc.Garth;
 
 import java.util.ArrayList;
 
@@ -18,7 +35,7 @@ import java.util.ArrayList;
 public class World
 {	
 	/** Proximity, in pixels, to be considered 'near' */
-	private static final int NEAR_DISTANCE = 30;
+	private static final int NEAR_DISTANCE = 20;
 			
 	/** The map containing tiles, images etc */
 	private Map map;
@@ -50,6 +67,10 @@ public class World
         objectList.addAll(Skeleton.spawnAll(this));
         objectList.addAll(Bat.spawnAll(this));
         objectList.add(new Draelic(this));
+        objectList.add(new Amulet(this));
+        objectList.add(new Sword(this));
+        objectList.add(new Tome(this));
+        objectList.add(new Elixir(this));
         camera = new Camera(player, map, screenwidth, screenheight);
     }
     
@@ -144,14 +165,14 @@ public class World
 		float scaleX, scaleY;
 		if (Math.abs(distX) > Math.abs(distY)) {
 			// x is the bounding coordinate, scale the y
-			scaleX = 1;
-			scaleY = Math.abs(distY/distX);
+			scaleX = 1/2;
+			scaleY = Math.abs(distY/distX)/2;
 		} else {
 			// y is the bounding coordinate
-			scaleX = Math.abs(distX/distY);
-			scaleY = 1;
+			scaleX = Math.abs(distX/distY)/2;
+			scaleY = 1/2;
 		}
-		while (Math.abs(o1.getCenterX()-o2.getCenterX()-x) > map.getTileWidth()) {
+		while (Math.abs(o1.getCenterX()-o2.getCenterX()-x) > map.getTileWidth() || Math.abs(o1.getCenterY()-o2.getCenterY()-y) > map.getTileHeight()) {
 			x += map.getTileWidth()*Math.signum(distX)*scaleX;
 			y += map.getTileHeight()*Math.signum(distY)*scaleY;
 			if (!map.canMove(o2, x, y)) {

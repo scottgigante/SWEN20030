@@ -3,11 +3,16 @@
  * Author: Scott Gigante <gigantes>
  */
 
-package game;
+package game.object;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
+
+import game.framework.GameObject;
+import game.framework.RPG;
+import game.framework.World;
+import game.object.item.Elixir;
 
 import java.util.ArrayList;
 
@@ -26,11 +31,12 @@ public class Player extends Character {
 	/* Player's stats */
 	private static final String NAME = "Player";
 	private static final float MAX_SPEED = 0.25f;
+	private static final float DEBUG_SPEED = 0.75f;
 	private static final int HEALTH = 100;
 	private static final int DAMAGE = 26;
 	private static final int COOLDOWN = 600;
 	
-	/** Image file imported one and then stored statically */
+	/** Image file imported once and then stored statically */
 	private static Image image;
 	
 	/** Player's inventory, consisting of up to four items */
@@ -58,9 +64,32 @@ public class Player extends Character {
 		}
 	}
 	
-
 	public int getLastDamage() {
 		return lastDamage;
+	}
+	
+	public ArrayList<Item> getItemList() {
+		return itemList;
+	}
+	
+	public void addItem(Item o) {
+		itemList.add(o);
+		setHealth(getHealth()+o.getHealth());
+		setCooldown(getCooldown()+o.getCooldown());
+		setDamage(getDamage()+o.getDamage());
+	}
+	
+	/** Checks if the player has the Elixir, and if so, takes it
+	 * @return True or false
+	 */
+	public boolean hasElixir() {
+		for (Item o:itemList) {
+			if (o instanceof Elixir) {
+				itemList.remove(o);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/** Constructor for the player class
@@ -68,20 +97,9 @@ public class Player extends Character {
 	 * @throws SlickException 
 	 */
 	public Player(World world) {
-		super(new Vector2f(SPAWN_X_POS,SPAWN_X_POS), getImage(), world, NAME, MAX_SPEED, HEALTH, DAMAGE, COOLDOWN);
-		setHealth(HEALTH);
-		setDamage(DAMAGE);
-		setCooldown(COOLDOWN);
-	}
-	
-	public void interact(GameObject o) {
-		if (isAttack && o instanceof Monster) {
-			attack((Monster) o);
-		} else if (isSpeak && o instanceof NPC) {
-			
-		} else if (o instanceof Item) {
-			
-		}
+		super(new Vector2f(SPAWN_X_POS,SPAWN_X_POS), getImage(), world, NAME, (RPG.DEBUG ? DEBUG_SPEED : MAX_SPEED), HEALTH, DAMAGE, COOLDOWN);
+		itemList = new ArrayList<Item>();
+		setTerrainBlocking(!RPG.DEBUG);
 	}
 	
 	/** Updates the player with a mouse press
@@ -108,12 +126,35 @@ public class Player extends Character {
 	public void update(float dirX, float dirY, int delta, boolean aPressed, boolean tPressed) {
 		isSpeak = tPressed;
 		isAttack = aPressed;
-		if (isAttack) {
-			this.getName();
-		}
 		update(dirX,dirY,delta);
 	}
-
+	
+	/* (non-Javadoc)
+	 * Interacts with GameObjects depending on their subclass
+	 * @see game.GameObject#interact(game.GameObject)
+	 */
+	public void interact(GameObject o) {
+		if (isAttack && o instanceof Monster) {
+			attack((Monster) o);
+		} else if (isSpeak && o instanceof NPC) {
+			
+		} else if (o instanceof Item) {
+			o.interact(this);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see game.Character#attack(game.Character)
+	 */
+	@Override
+	public boolean attack(Character o) {
+		if (getCurrentCooldown() <= 0 || getCurrentCooldown() == getCooldown()) {
+			lastDamage = (int)(Math.random()*getDamage());
+			setCurrentCooldown(getCooldown());
+			return o.takeDamage(lastDamage, this);
+		}
+		return false;
+	}
 	/* (non-Javadoc)
 	 * Rather than destroying the player, it respawns
 	 * @see game.GameObject#destroy()
@@ -124,17 +165,5 @@ public class Player extends Character {
 		setCurrentHealth(getHealth());
 		setCurrentCooldown(0);
 		lastDamage = 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see game.Character#attack(game.Character)
-	 */
-	@Override
-	public void attack(Character o) {
-		if (getCurrentCooldown() <= 0) {
-			lastDamage = (int)(Math.random()*getDamage());
-			o.takeDamage(lastDamage, this);
-			setCurrentCooldown(getCooldown());
-		}
 	}
 }

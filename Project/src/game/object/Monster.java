@@ -1,4 +1,6 @@
-package game;
+package game.object;
+
+import game.framework.World;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Vector2f;

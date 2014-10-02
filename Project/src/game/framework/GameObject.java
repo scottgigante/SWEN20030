@@ -1,4 +1,4 @@
-package game;
+package game.framework;
 
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.Image;
@@ -100,7 +100,7 @@ public abstract class GameObject extends Rectangle {
 	 * @return True or false.
 	 */
 	public double dist(GameObject o) {
-		return Math.sqrt(Math.pow(getCenterX()-o.getCenterX(), 2) + Math.pow(getCenterY()-o.getCenterY(), 2));
+		return Math.sqrt(Math.pow(Math.max(Math.abs(getCenterX()-o.getCenterX())-getBoundingCircleRadius()-o.getBoundingCircleRadius(),0), 2) + Math.pow(Math.max(Math.abs(getCenterY()-o.getCenterY())-getBoundingCircleRadius()-o.getBoundingCircleRadius(),0), 2));
 	}
 	
 	public abstract void interact(GameObject o);

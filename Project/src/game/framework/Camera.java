@@ -3,7 +3,9 @@
  * Author: Scott Gigante <gigantes>
  */
 
-package game;
+package game.framework;
+
+import game.object.Character;
 
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;

@@ -1,4 +1,7 @@
-package game;
+package game.framework;
+
+import game.object.Item;
+import game.object.Player;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -110,9 +113,9 @@ public class StatusBar {
         inv_x = bar_x;
         inv_y = RPG.SCREEN_HEIGHT - RPG.PANEL_HEIGHT
             + ((RPG.PANEL_HEIGHT - 72) / 2);
-        // for (each item in the player's inventory)                // TODO
+        for (Item o:player.getItemList())
         {
-            // Render the item to (inv_x, inv_y)
+            o.render(inv_x, inv_y);
             inv_x += 72;
         }
     }

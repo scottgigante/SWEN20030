@@ -1,4 +1,8 @@
-package game;
+package game.object.npc;
+
+import game.framework.GameObject;
+import game.framework.World;
+import game.object.NPC;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;

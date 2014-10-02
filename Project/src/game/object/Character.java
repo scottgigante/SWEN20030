@@ -3,7 +3,11 @@
  * Author: Scott Gigante <gigantes>
  */
 
-package game;
+package game.object;
+import game.framework.Camera;
+import game.framework.GameObject;
+import game.framework.World;
+
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.Color;
@@ -63,25 +67,33 @@ public abstract class Character extends GameObject {
 		return terrainBlocking;
 	}
 
+	public void setTerrainBlocking(boolean terrainBlocking) {
+		this.terrainBlocking = terrainBlocking;
+	}
+
 	/** Attacks the given Character if possible
-	 * @param o A charecter to be attacked
+	 * @param o A character to be attacked
+	 * @return whether or not the attack was lethal
 	 */
-	public void attack(Character o) {
+	public boolean attack(Character o) {
 		if (getCurrentCooldown() <= 0) {
-			o.takeDamage((int)(Math.random()*getDamage()), this);
 			currentCooldown = getCooldown();
+			return o.takeDamage((int)(Math.random()*getDamage())+1, this);
 		}
+		return false;
 	}
 	
 	/** Takes damage from an attack and checks for death
 	 * @param damage The amount of damage inflicted
+	 * @return Whether or not the damage was lethal
 	 */
-	public void takeDamage(int damage, Character attacker) {
+	public boolean takeDamage(int damage, Character attacker) {
 		currentHealth -= damage;
 		if (currentHealth <= 0) {
 			destroy();
-			return;
+			return true;
 		}		
+		return false;
 	}
 	
 	/** Move the character in any direction specified either by keyboard or predefined path.
@@ -170,6 +182,7 @@ public abstract class Character extends GameObject {
 
 	@Override
 	public void render(Graphics g, Camera camera) {
+		super.render(g, camera);
         Color BAR = new Color(0.8f, 0.0f, 0.0f, 0.8f);      // Red, transp
         Color VALUE = new Color(1.0f, 1.0f, 1.0f);          // White
         Color BAR_BG = new Color(0.0f, 0.0f, 0.0f, 0.8f);   // Black, transp
@@ -191,6 +204,5 @@ public abstract class Character extends GameObject {
 	        g.setColor(VALUE);
 	        g.drawString(getName(), getCenterX()-textWidth/2-camera.getMinX(), getMinY()-g.getFont().getLineHeight()*3/2-camera.getMinY());
 		}
-		super.render(g, camera);
 	}
 }

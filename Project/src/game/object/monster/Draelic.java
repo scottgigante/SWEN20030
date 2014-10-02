@@ -1,10 +1,15 @@
-package game;
+package game.object.monster;
+
+import game.framework.World;
+import game.object.AggressiveMonster;
+import game.object.Character;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
 public class Draelic extends AggressiveMonster {
+	private static final long serialVersionUID = -7883804689005203936L;
 	/** Location of file description spawn positions */
 	private static final int SPAWN_X_POS = 2069;
 	private static final int SPAWN_Y_POS = 510;
@@ -20,6 +25,9 @@ public class Draelic extends AggressiveMonster {
 	
 	/** Image file imported one and then stored statically */
 	private static Image image;
+	
+	/** Marks whether or not Draelic is chasing the player */
+	private Character chase = null;
 	
 	/** Fetches the pre-generated image for the class, or if it has not yet been generated, does so.
 	 * @return Image for the draelic's sprite
@@ -43,6 +51,32 @@ public class Draelic extends AggressiveMonster {
 	 */
 	public Draelic(World world) {
 		super(new Vector2f(SPAWN_X_POS, SPAWN_Y_POS), getImage(), world, NAME, MAX_SPEED, HEALTH, DAMAGE, COOLDOWN);
-		// TODO Auto-generated constructor stub
+	}
+	
+	/* (non-Javadoc)
+	 * Has seen the player, now chase until it is dead.
+	 * @see game.Character#attack(game.Character)
+	 */
+	@Override
+	public boolean attack(Character o) {
+		chase = o;
+		if (super.attack(o)) {
+			setPath(SPAWN_X_POS, SPAWN_Y_POS);
+			chase = null;
+			return true;
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * Either chase the player until it is dead, or stay put.
+	 * @see game.Monster#wander()
+	 */
+	@Override
+	public Vector2f wander() {
+		if (chase != null) {
+			setPath(chase.getCenterX(), chase.getCenterY());
+		}
+		return new Vector2f(0,0);
 	}
 }

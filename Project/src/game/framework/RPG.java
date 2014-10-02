@@ -4,7 +4,7 @@
  * Modified: Scott Gigante <gigantes>
  */
 
-package game;
+package game.framework;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
@@ -19,6 +19,9 @@ import org.newdawn.slick.SlickException;
 public class RPG extends BasicGame
 {
     private World world;
+    
+    /** Controls various debug features */
+    public static final boolean DEBUG = false;
     
     /** Height of the display panel, in pixels */
     public static final int PANEL_HEIGHT = 70;
@@ -95,8 +98,7 @@ public class RPG extends BasicGame
     throws SlickException
     {
         AppGameContainer app = new AppGameContainer(new RPG());
-        // setShowFPS(true), to show frames-per-second.
-        app.setShowFPS(true);
+        app.setShowFPS(DEBUG);
         app.setDisplayMode(SCREEN_WIDTH, SCREEN_HEIGHT, false);
         app.start();
     }

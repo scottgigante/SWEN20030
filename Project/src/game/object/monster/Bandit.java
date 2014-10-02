@@ -1,4 +1,8 @@
-package game;
+package game.object.monster;
+
+import game.framework.FileReader;
+import game.framework.World;
+import game.object.AggressiveMonster;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,27 +11,29 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
-public class Bat extends PassiveMonster {
-	private static final long serialVersionUID = 7096260413252608499L;
+public class Bandit extends AggressiveMonster {
+	private static final long serialVersionUID = -3640967800947380589L;
 	/** Location of file description spawn positions */
-	private static final String SPAWN_FILE = "assets/spawn/bat.txt";
+	private static final String SPAWN_FILE = "assets/spawn/bandit.txt";
 	/** The location of the image */
-	private static final String IMAGE_LOC = "assets/units/dreadbat.png";
+	private static final String IMAGE_LOC = "assets/units/bandit.png";
 	
 	/* Stats */
-	private static final String NAME = "Giant Bat";
+	private static final String NAME = "Bandit";
 	private static final int HEALTH = 40;
+	private static final int DAMAGE = 8;
+	private static final int COOLDOWN = 200;
 	
 	/** Image file imported one and then stored statically */
 	private static Image image;
 	
-	/** Load spawn locations from a file and create as many bats as appropriate
-	 * @param world The world in which the bats live
-	 * @return An arraylist of the created bats
+	/** Load spawn locations from a file and create as many bandits as appropriate
+	 * @param world The world in which the bandits live
+	 * @return An arraylist of the created bandits
 	 */
-	public static ArrayList<Bat> spawnAll(World world) {
+	public static ArrayList<Bandit> spawnAll(World world) {
 		List<String> spawnList = FileReader.readFile(SPAWN_FILE);
-		ArrayList<Bat> result = new ArrayList<Bat>();
+		ArrayList<Bandit> result = new ArrayList<Bandit>();
 		for (String s:spawnList) {
 			String[] coords = s.split(",");
 			Vector2f pos = new Vector2f();
@@ -41,13 +47,13 @@ public class Bat extends PassiveMonster {
 				System.out.print(e.getMessage());
 				continue;			
 			}
-			result.add(new Bat(pos, world));
+			result.add(new Bandit(pos, world));
 		}
 		return result;
 	}
 	
 	/** Fetches the pre-generated image for the class, or if it has not yet been generated, does so.
-	 * @return Image for the bat's sprite
+	 * @return Image for the bandit's sprite
 	 */
 	private static Image getImage() {
 		try {
@@ -66,8 +72,8 @@ public class Bat extends PassiveMonster {
 	 * @param pos Position at which it is created
 	 * @param world The world in which it lives
 	 */
-	public Bat(Vector2f pos, World world) {
-		super(pos, getImage(), world, NAME, HEALTH);
+	public Bandit(Vector2f pos, World world) {
+		super(pos, getImage(), world, NAME, HEALTH, DAMAGE, COOLDOWN);
 		// TODO Auto-generated constructor stub
 	}
 }

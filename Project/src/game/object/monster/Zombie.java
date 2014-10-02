@@ -1,4 +1,8 @@
-package game;
+package game.object.monster;
+
+import game.framework.FileReader;
+import game.framework.World;
+import game.object.AggressiveMonster;
 
 import java.util.ArrayList;
 import java.util.List;
