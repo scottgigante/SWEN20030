@@ -59,7 +59,7 @@ public class StatusBar {
         percent = (float)player.getLastDamage()/player.getDamage();
         TextRenderer.renderText(g, bar_x, bar_y, bar_width, percent, text);
         
-        text_x += 45;
+        text_x = bar_x + 60;
         TextRenderer.renderLabel(g, text_x, text_y, "Rate:");
         
         text = ((Integer)player.getCooldown()).toString();
@@ -69,7 +69,7 @@ public class StatusBar {
         TextRenderer.renderText(g, bar_x, bar_y, bar_width, percent, text);
 
         // Display the player's inventory
-        text_x += 50;
+        text_x = bar_x + 65;
         TextRenderer.renderLabel(g, text_x, text_y, "Items:");
         bar_x = text_x + 60;
         bar_y = RPG.SCREEN_HEIGHT - RPG.PANEL_HEIGHT + 10;
