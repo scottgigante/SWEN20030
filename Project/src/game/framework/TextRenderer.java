@@ -12,16 +12,26 @@ public class TextRenderer {
     
     private static final int TEXT_OFFSET = 5;
     
-	public static void renderBar(Graphics g, int x, int y, int width, float percent, String text) {
-        int percentage_bar_width = (int) (width * percent);
-        int text_x = x + (width - g.getFont().getWidth(text)) / 2;
-        int text_y = y + TEXT_OFFSET;
-        int height = g.getFont().getLineHeight();
-        g.setColor(BAR_BG);
-        g.fillRect(x, y, width, height);
-        g.setColor(BAR);
-        g.fillRect(x, y, percentage_bar_width, height);
-        g.setColor(VALUE);
-        g.drawString(text, text_x, text_y);
+	public static void renderBar(Graphics g, int x, int y, int width, int height, float percent) {
+		int percentage_bar_width = (int) (width * percent);
+		g.setColor(BAR_BG);
+	    g.fillRect(x, y, width, height);
+	    g.setColor(BAR);
+	    g.fillRect(x, y, percentage_bar_width, height);
+	}
+    
+    public static void renderText(Graphics g, int x, int y, int width, float percent, String text) {
+        
+       int text_x = x + (width - g.getFont().getWidth(text)) / 2;
+       int text_y = y + TEXT_OFFSET;
+       int height = g.getFont().getLineHeight()+2*TEXT_OFFSET;
+       renderBar(g, x, y, width, height, percent);
+       g.setColor(VALUE);
+       g.drawString(text, text_x, text_y);
+	}
+	
+	public static void renderLabel(Graphics g, int x, int y, String text) {
+        g.setColor(LABEL);
+        g.drawString(text, x, y);
 	}
 }
