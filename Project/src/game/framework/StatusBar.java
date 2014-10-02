@@ -49,21 +49,14 @@ public class StatusBar {
         text_y = RPG.SCREEN_HEIGHT - RPG.PANEL_HEIGHT + 25;
         g.setColor(LABEL);
         g.drawString("Health:", text_x, text_y);
-        text = ((Integer)player.getCurrentHealth()).toString()+"/"+((Integer)player.getHealth()).toString();                                 // TODO: HP / Max-HP
-
+                
+        text = ((Integer)player.getCurrentHealth()).toString()+"/"+((Integer)player.getHealth()).toString();                          
         bar_x = 90;
         bar_y = RPG.SCREEN_HEIGHT - RPG.PANEL_HEIGHT + 20;
         bar_width = 90;
-        bar_height = 30;
+        bar_height = 30; // TODO remove
         percent = (float)player.getCurrentHealth()/player.getHealth(); // TODO: HP / Max-HP
-        percentage_bar_width = (int) (bar_width * percent);
-        text_x = bar_x + (bar_width - g.getFont().getWidth(text)) / 2;
-        g.setColor(BAR_BG);
-        g.fillRect(bar_x, bar_y, bar_width, bar_height);
-        g.setColor(BAR);
-        g.fillRect(bar_x, bar_y, percentage_bar_width, bar_height);
-        g.setColor(VALUE);
-        g.drawString(text, text_x, text_y);
+        TextRenderer.renderBar(g, bar_x, bar_y, bar_width, percent, text);
 
         // Display the player's damage and cooldown
         text_x = 190;
