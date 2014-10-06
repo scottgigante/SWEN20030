@@ -22,7 +22,7 @@ public class RPG extends BasicGame
     private World world;
     
     /** Controls various debug features */
-    public static final boolean DEBUG = false;
+    public static final boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
     
     /** Height of the display panel, in pixels */
     public static final int PANEL_HEIGHT = 70;
@@ -98,7 +98,7 @@ public class RPG extends BasicGame
     throws SlickException
     {
         AppGameContainer app = new AppGameContainer(new RPG());
-        app.setShowFPS(DEBUG);
+        app.setShowFPS(isDebug);
         app.setDisplayMode(SCREEN_WIDTH, SCREEN_HEIGHT, false);
         app.start();
     }

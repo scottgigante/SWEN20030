@@ -46,7 +46,6 @@ public class Draelic extends AggressiveMonster {
 	}
 	
 	/** Constructor creates an object of the class
-	 * @param pos Position at which it is created
 	 * @param world The world in which it lives
 	 */
 	public Draelic(World world) {

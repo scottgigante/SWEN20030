@@ -170,7 +170,7 @@ public abstract class Character extends GameObject {
         Color VALUE = new Color(1.0f, 1.0f, 1.0f);          // White
         Color BAR_BG = new Color(0.0f, 0.0f, 0.0f, 0.8f);   // Black, transp
         
-        if (camera.isOnScreen(this) && !(this instanceof Player)) {
+        if (camera.isOnScreen(this) && !((this instanceof Player) || ((this instanceof NPC) && ((NPC) this).getSpeakTime() > 0))) {
 			TextRenderer.renderText(g, getCenterX()-camera.getMinX(), getMinY()-camera.getMinY(), (float)getCurrentHealth()/getHealth(), getName());
         }
 	}

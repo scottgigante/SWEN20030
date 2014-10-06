@@ -1,9 +1,12 @@
 package game.object.npc;
 
+import game.framework.Camera;
 import game.framework.GameObject;
 import game.framework.World;
 import game.object.NPC;
+import game.object.Player;
 
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
@@ -47,8 +50,13 @@ public class Aldric extends NPC {
 
 	@Override
 	public void interact(GameObject o) {
-		// TODO Auto-generated method stub
-
+		if (o instanceof Player) {
+			if (((Player) o).hasElixir()) {
+				speak(2);
+			} else {
+				speak(1);
+			}
+		}
 	}
 
 }

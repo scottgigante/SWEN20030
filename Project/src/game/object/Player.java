@@ -12,7 +12,10 @@ import org.newdawn.slick.geom.Vector2f;
 import game.framework.GameObject;
 import game.framework.RPG;
 import game.framework.World;
+import game.object.item.Amulet;
 import game.object.item.Elixir;
+import game.object.item.Sword;
+import game.object.item.Tome;
 
 import java.util.ArrayList;
 
@@ -92,14 +95,50 @@ public class Player extends Character {
 		return false;
 	}
 	
+	/** Checks if the player has the Amulet
+	 * @return True or false
+	 */
+	public boolean hasAmulet() {
+		for (Item o:itemList) {
+			if (o instanceof Amulet) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/** Checks if the player has the Tome
+	 * @return True or false
+	 */
+	public boolean hasTome() {
+		for (Item o:itemList) {
+			if (o instanceof Tome) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/** Checks if the player has the Sword
+	 * @return True or false
+	 */
+	public boolean hasSword() {
+		for (Item o:itemList) {
+			if (o instanceof Sword) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/** Constructor for the player class
 	 * @param world The world in which the player lives
 	 * @throws SlickException 
 	 */
 	public Player(World world) {
-		super(new Vector2f(SPAWN_X_POS,SPAWN_X_POS), getImage(), world, NAME, (RPG.DEBUG ? DEBUG_SPEED : MAX_SPEED), HEALTH, DAMAGE, COOLDOWN);
+		super(new Vector2f(SPAWN_X_POS,SPAWN_X_POS), getImage(), world, NAME, (RPG.isDebug ? DEBUG_SPEED : MAX_SPEED), HEALTH, DAMAGE, COOLDOWN);
 		itemList = new ArrayList<Item>();
-		setTerrainBlocking(!RPG.DEBUG);
+		setTerrainBlocking(!RPG.isDebug);
 	}
 	
 	/** Updates the player with a mouse press
@@ -134,10 +173,10 @@ public class Player extends Character {
 	 * @see game.GameObject#interact(game.GameObject)
 	 */
 	public void interact(GameObject o) {
-		if (isAttack && o instanceof Monster) {
-			attack((Monster) o);
+		if (isAttack && o instanceof Character) {
+			attack((Character) o);
 		} else if (isSpeak && o instanceof NPC) {
-			
+			o.interact(this);
 		} else if (o instanceof Item) {
 			o.interact(this);
 		}
@@ -160,6 +199,16 @@ public class Player extends Character {
 	 * @see game.GameObject#destroy()
 	 */
 	public void destroy() {
+		// drop the elixir TODO fix
+		for (Item o:itemList) {
+			if (o instanceof Elixir) {
+				o.setCenterX(getCenterX());
+				o.setCenterY(getCenterY());
+				world.addObject(o);
+				itemList.remove(o);
+			}
+		}
+		// respawn
 		setCenterX(SPAWN_X_POS);
 		setCenterY(SPAWN_Y_POS);
 		setCurrentHealth(getHealth());

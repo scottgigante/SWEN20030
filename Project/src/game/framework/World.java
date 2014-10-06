@@ -13,6 +13,7 @@ import org.newdawn.slick.geom.Vector2f;
 import game.object.AggressiveMonster;
 import game.object.Character;
 import game.object.Monster;
+import game.object.NPC;
 import game.object.Player;
 import game.object.item.Amulet;
 import game.object.item.Elixir;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 public class World
 {	
 	/** Proximity, in pixels, to be considered 'near' */
-	private static final int NEAR_DISTANCE = 20;
+	private static final int NEAR_DISTANCE = 10;
 			
 	/** The map containing tiles, images etc */
 	private Map map;
@@ -92,6 +93,8 @@ public class World
     	for (GameObject o:objectList) {
     		if (o instanceof Monster) {
     			((Monster) o).update(player, delta);
+    		} else if (o instanceof NPC) {
+    			((NPC) o).update(delta);
     		}
     	}
     	camera.update();
@@ -181,6 +184,10 @@ public class World
 			}
 		}
 		return success;
+    }
+    
+    public void addObject(GameObject o) {
+    	objectList.add(o);
     }
     
     /** Remove an object from the object list
