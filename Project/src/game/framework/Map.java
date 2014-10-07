@@ -104,9 +104,10 @@ public class Map extends TiledMap {
 	 * @return An array of Vector2f as the path of tiles to visit
 	 */
 	public Path findPath(Vector2f start, Vector2f stop) {
+		Path path = new Path();
 		// initial check that the destination tile is walkable
 		if (!isWalkable(stop.x, stop.y)) {
-			return new Path();
+			return path;
 		}
 		
 		ArrayList<Node> closed = new ArrayList<Node>();
@@ -191,14 +192,13 @@ public class Map extends TiledMap {
 			}
 			if (lowest == -1) {
 				// open list is empty, path cannot be found
-				return null;
+				return path;
 			}
 			open.remove(current);
 			closed.add(current);
 		}
 		
 		// found the best path, now to return it
-		Path path = new Path();
 		// skip first and last tiles, don't need to actually go to them
 		current = current.getParent();
 		while (current != null && current != node_list[(int)start_block.x][(int)start_block.y]) {

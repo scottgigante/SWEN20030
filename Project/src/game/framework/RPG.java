@@ -5,24 +5,27 @@
  */
 
 package game.framework;
+import java.awt.Font;
+
 import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.Font;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.TrueTypeFont;
 
 /** Main class for the Role-Playing Game engine.
  * Handles initialisation, input and rendering.
  */
+@SuppressWarnings("deprecation")
 public class RPG extends BasicGame
 {
     private World world;
     
     /** Controls various debug features */
-    public static final boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
+    public static boolean IS_DEBUG = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
     
     /** Height of the display panel, in pixels */
     public static final int PANEL_HEIGHT = 70;
@@ -32,9 +35,11 @@ public class RPG extends BasicGame
     protected static final int SCREEN_HEIGHT = 600;
     /** Location of font file */
     private static final String FONT_LOC = "assets/DejaVuSans-Bold.ttf";
+    /** Size of the font */
+    private static final int FONT_SIZE = 15;
     
     /** Font to display character names, etc */
-    Font font;
+	TrueTypeFont ttf;
 
     /** Create a new RPG object. */
     public RPG()
@@ -45,11 +50,12 @@ public class RPG extends BasicGame
     /** Initialise the game state.
      * @param gc The Slick game container object.
      */
-    @Override
+	@Override
     public void init(GameContainer gc)
     throws SlickException
     {
-    	// TODO load font
+    	Font font = new Font(FONT_LOC, Font.PLAIN, FONT_SIZE);
+    	ttf = new TrueTypeFont(font, true);
         world = new World(SCREEN_WIDTH, SCREEN_HEIGHT-PANEL_HEIGHT);
     }
 
@@ -87,7 +93,7 @@ public class RPG extends BasicGame
     throws SlickException
     {
         // Let World.render handle the rendering.
-    	// TODO set font
+    	g.setFont(ttf);
         world.render(g);
     }
 
@@ -98,7 +104,7 @@ public class RPG extends BasicGame
     throws SlickException
     {
         AppGameContainer app = new AppGameContainer(new RPG());
-        app.setShowFPS(isDebug);
+        app.setShowFPS(IS_DEBUG);
         app.setDisplayMode(SCREEN_WIDTH, SCREEN_HEIGHT, false);
         app.start();
     }

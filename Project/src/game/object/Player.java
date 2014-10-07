@@ -136,9 +136,9 @@ public class Player extends Character {
 	 * @throws SlickException 
 	 */
 	public Player(World world) {
-		super(new Vector2f(SPAWN_X_POS,SPAWN_X_POS), getImage(), world, NAME, (RPG.isDebug ? DEBUG_SPEED : MAX_SPEED), HEALTH, DAMAGE, COOLDOWN);
+		super(new Vector2f(SPAWN_X_POS,SPAWN_X_POS), getImage(), world, NAME, (RPG.IS_DEBUG ? DEBUG_SPEED : MAX_SPEED), HEALTH, DAMAGE, COOLDOWN);
 		itemList = new ArrayList<Item>();
-		setTerrainBlocking(!RPG.isDebug);
+		setTerrainBlocking(!RPG.IS_DEBUG);
 	}
 	
 	/** Updates the player with a mouse press
@@ -200,13 +200,17 @@ public class Player extends Character {
 	 */
 	public void destroy() {
 		// drop the elixir TODO fix
+		Item drop = null;
 		for (Item o:itemList) {
 			if (o instanceof Elixir) {
-				o.setCenterX(getCenterX());
-				o.setCenterY(getCenterY());
-				world.addObject(o);
-				itemList.remove(o);
+				drop = o;
 			}
+		}
+		if (drop != null) {
+			drop.setCenterX(getCenterX());
+			drop.setCenterY(getCenterY());
+			world.createObject(drop);
+			itemList.remove(drop);
 		}
 		// respawn
 		setCenterX(SPAWN_X_POS);

@@ -45,8 +45,10 @@ public abstract class Monster extends Character {
 		}
 		// scale to size
 		float len = dir.length();
-		dir.x /= len;
-		dir.y /= len;
+		if (len != 0) {
+			dir.x /= len;
+			dir.y /= len;
+		}
 		super.update(dir, delta);
 	}
 }

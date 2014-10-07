@@ -10,9 +10,13 @@ import org.newdawn.slick.SlickException;
 
 public class StatusBar {
 	
+	/** Location of background file */
 	private static final String IMAGE_LOC = "assets/panel.png";
+	private static final int SPACE = 10;
 	
+	/** Image to be displayed as background */
 	private Image panel;
+	/** Player whose stats are to be monitored */
 	private Player player;
 	
 	public StatusBar(Player player) throws SlickException {
@@ -40,40 +44,44 @@ public class StatusBar {
         // Display the player's health
         text_x = 15;
         text_y = RPG.SCREEN_HEIGHT - RPG.PANEL_HEIGHT + 25;
-        TextRenderer.renderLabel(g, text_x, text_y, "Health:");
-                
-        text = ((Integer)player.getCurrentHealth()).toString()+"/"+((Integer)player.getHealth()).toString();                          
-        bar_x = 90;
+        text = "Health:";
+        TextRenderer.renderLabel(g, text_x, text_y, text);
+        
+bar_x = text_x + g.getFont().getWidth(text)+SPACE;
+        text = ((Integer)player.getCurrentHealth()).toString()+"/"+((Integer)player.getHealth()).toString();
         bar_y = RPG.SCREEN_HEIGHT - RPG.PANEL_HEIGHT + 20;
         bar_width = 90;
         percent = (float)player.getCurrentHealth()/player.getHealth();
         TextRenderer.renderText(g, bar_x, bar_y, bar_width, percent, text);
 
         // Display the player's damage and cooldown
-        text_x = 190;
-        TextRenderer.renderLabel(g, text_x, text_y, "Damage:");
-        
+        text_x = bar_x+bar_width+SPACE;
+        text = "Damage:";
+        TextRenderer.renderLabel(g, text_x, text_y, text);
+
+        bar_x = text_x+g.getFont().getWidth(text)+SPACE;
         text = ((Integer)player.getDamage()).toString();
-        bar_x = text_x+70;
         bar_width = g.getFont().getWidth(text)+30;
         percent = (float)player.getLastDamage()/player.getDamage();
         TextRenderer.renderText(g, bar_x, bar_y, bar_width, percent, text);
         
-        text_x = bar_x + 60;
-        TextRenderer.renderLabel(g, text_x, text_y, "Rate:");
-        
+        text_x = bar_x + bar_width+SPACE;
+        text = "Rate:";
+        TextRenderer.renderLabel(g, text_x, text_y, text);
+
+        bar_x = text_x+g.getFont().getWidth(text)+SPACE;
         text = ((Integer)player.getCooldown()).toString();
-        bar_x = text_x+55;
         bar_width = g.getFont().getWidth(text)+30;
         percent = (float)player.getCurrentCooldown()/player.getCooldown();
         TextRenderer.renderText(g, bar_x, bar_y, bar_width, percent, text);
 
         // Display the player's inventory
-        text_x = bar_x + 65;
-        TextRenderer.renderLabel(g, text_x, text_y, "Items:");
-        bar_x = text_x + 60;
+        text_x = bar_x + bar_width+SPACE;
+        text = "Items:";
+        TextRenderer.renderLabel(g, text_x, text_y, text);
+        bar_x = text_x + g.getFont().getWidth(text)+SPACE;
         bar_y = RPG.SCREEN_HEIGHT - RPG.PANEL_HEIGHT + 10;
-        bar_width = 288;
+        bar_width = RPG.SCREEN_WIDTH-bar_x-SPACE;
         bar_height = 50;
         TextRenderer.renderBar(g, bar_x, bar_y, bar_width, bar_height, 0);
 

@@ -37,6 +37,8 @@ public class World
 {	
 	/** Proximity, in pixels, to be considered 'near' */
 	private static final int NEAR_DISTANCE = 10;
+	/** Factor by which to scale tile width for line of sight */
+	private static final float SCALE_FACTOR = 0.25f;
 			
 	/** The map containing tiles, images etc */
 	private Map map;
@@ -50,6 +52,8 @@ public class World
 	private ArrayList<GameObject> objectList;
 	/** List of all GameObjects to be destroyed this frame */
 	private ArrayList<GameObject> destroyList;
+	/** List of all GameObjects to be created this frame */
+	private ArrayList<GameObject> createList;
 	
     /** Create a new World object. */
     public World(int screenwidth, int screenheight)
@@ -60,6 +64,12 @@ public class World
         status = new StatusBar(player);
         objectList = new ArrayList<GameObject>();
         destroyList = new ArrayList<GameObject>();
+        createList = new ArrayList<GameObject>();
+        GameObject elixir = new Elixir(this);
+        objectList.add(elixir);
+        objectList.add(new Amulet(this));
+        objectList.add(new Sword(this));
+        objectList.add(new Tome(this));
         objectList.add(new Aldric(this));
         objectList.add(new Elvira(this));
         objectList.add(new Garth(this));
@@ -67,11 +77,7 @@ public class World
         objectList.addAll(Zombie.spawnAll(this));
         objectList.addAll(Skeleton.spawnAll(this));
         objectList.addAll(Bat.spawnAll(this));
-        objectList.add(new Draelic(this));
-        objectList.add(new Amulet(this));
-        objectList.add(new Sword(this));
-        objectList.add(new Tome(this));
-        objectList.add(new Elixir(this));
+        objectList.add(new Draelic(this, elixir));
         camera = new Camera(player, map, screenwidth, screenheight);
     }
     
@@ -107,7 +113,9 @@ public class World
     		}
     	}
     	objectList.removeAll(destroyList);
+    	objectList.addAll(createList);
     	destroyList.clear();
+    	createList.clear();
     }
 
     /** Render the entire screen, so it reflects the current game state.
@@ -168,14 +176,14 @@ public class World
 		float scaleX, scaleY;
 		if (Math.abs(distX) > Math.abs(distY)) {
 			// x is the bounding coordinate, scale the y
-			scaleX = 1/2;
-			scaleY = Math.abs(distY/distX)/2;
+			scaleX = SCALE_FACTOR;
+			scaleY = Math.abs(distY/distX)*SCALE_FACTOR;
 		} else {
 			// y is the bounding coordinate
-			scaleX = Math.abs(distX/distY)/2;
-			scaleY = 1/2;
+			scaleX = Math.abs(distX/distY)*SCALE_FACTOR;
+			scaleY = SCALE_FACTOR;
 		}
-		while (Math.abs(o1.getCenterX()-o2.getCenterX()-x) > map.getTileWidth() || Math.abs(o1.getCenterY()-o2.getCenterY()-y) > map.getTileHeight()) {
+		while (Math.abs(distX-x) > map.getTileWidth() || Math.abs(distY-y) > map.getTileHeight() && Math.abs(x) < Math.abs(distX)) {
 			x += map.getTileWidth()*Math.signum(distX)*scaleX;
 			y += map.getTileHeight()*Math.signum(distY)*scaleY;
 			if (!map.canMove(o2, x, y)) {
@@ -186,8 +194,8 @@ public class World
 		return success;
     }
     
-    public void addObject(GameObject o) {
-    	objectList.add(o);
+    public void createObject(GameObject o) {
+    	createList.add(o);
     }
     
     /** Remove an object from the object list

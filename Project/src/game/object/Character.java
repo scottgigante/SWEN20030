@@ -10,9 +10,7 @@ import game.framework.Path;
 import game.framework.TextRenderer;
 import game.framework.World;
 
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
@@ -28,9 +26,6 @@ public abstract class Character extends GameObject {
 	private Path path;
 	/** Allows debugging removal of terrain blocking (or perhaps flying creatures) */
 	private boolean terrainBlocking = true;
-	
-	/** Tolerance, relative to speed, which will be accepted in a radius around the destination of a path */
-	private static final double PATH_TOLERANCE = 20;
 	
 	/** Constructor for character class
 	 * @param x The initial central x-coordinate
@@ -76,6 +71,13 @@ public abstract class Character extends GameObject {
 		return path;
 	}
 
+	/** Set the path of the character to reach a GameObject on the map
+	 * @param o The GameObject to be followed
+	 */
+	public void setPath(GameObject o) {		
+		setPath(o.getCenterX(), o.getCenterY());
+	}
+	
 	/** Set the path of the character to reach position x,y on the map
 	 * @param x Float representing mouse x-position
 	 * @param y Float representing mouse y-position
@@ -89,7 +91,7 @@ public abstract class Character extends GameObject {
 			path = newPath;
 			if (newPath.length() > 1) {
 				// we're already at the first node on the path, don't need to go there.
-				path.next();
+				//path.next();
 			}
 		}
 	}
@@ -166,9 +168,6 @@ public abstract class Character extends GameObject {
 	@Override
 	public void render(Graphics g, Camera camera) {
 		super.render(g, camera);
-        Color BAR = new Color(0.8f, 0.0f, 0.0f, 0.8f);      // Red, transp
-        Color VALUE = new Color(1.0f, 1.0f, 1.0f);          // White
-        Color BAR_BG = new Color(0.0f, 0.0f, 0.0f, 0.8f);   // Black, transp
         
         if (camera.isOnScreen(this) && !((this instanceof Player) || ((this instanceof NPC) && ((NPC) this).getSpeakTime() > 0))) {
 			TextRenderer.renderText(g, getCenterX()-camera.getMinX(), getMinY()-camera.getMinY(), (float)getCurrentHealth()/getHealth(), getName());

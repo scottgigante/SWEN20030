@@ -1,5 +1,6 @@
 package game.object.monster;
 
+import game.framework.GameObject;
 import game.framework.World;
 import game.object.AggressiveMonster;
 import game.object.Character;
@@ -28,6 +29,8 @@ public class Draelic extends AggressiveMonster {
 	
 	/** Marks whether or not Draelic is chasing the player */
 	private Character chase = null;
+	/** The item to be guarded */
+	private GameObject guard;
 	
 	/** Fetches the pre-generated image for the class, or if it has not yet been generated, does so.
 	 * @return Image for the draelic's sprite
@@ -48,8 +51,9 @@ public class Draelic extends AggressiveMonster {
 	/** Constructor creates an object of the class
 	 * @param world The world in which it lives
 	 */
-	public Draelic(World world) {
+	public Draelic(World world, GameObject guard) {
 		super(new Vector2f(SPAWN_X_POS, SPAWN_Y_POS), getImage(), world, NAME, MAX_SPEED, HEALTH, DAMAGE, COOLDOWN);
+		this.guard = guard;		
 	}
 	
 	/* (non-Javadoc)
@@ -60,7 +64,7 @@ public class Draelic extends AggressiveMonster {
 	public boolean attack(Character o) {
 		chase = o;
 		if (super.attack(o)) {
-			setPath(SPAWN_X_POS, SPAWN_Y_POS);
+			setPath(guard.getCenterX(), guard.getCenterY());
 			chase = null;
 			return true;
 		}
@@ -68,13 +72,16 @@ public class Draelic extends AggressiveMonster {
 	}
 	
 	/* (non-Javadoc)
-	 * Either chase the player until it is dead, or stay put.
+	 * Either chase the player until it is dead, or return to the elixir.
 	 * @see game.Monster#wander()
 	 */
 	@Override
 	public Vector2f wander() {
 		if (chase != null) {
-			setPath(chase.getCenterX(), chase.getCenterY());
+			setPath(chase);
+		}
+		if (!getPath().hasPath()) {
+			setPath(guard);
 		}
 		return new Vector2f(0,0);
 	}
