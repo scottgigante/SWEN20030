@@ -12,6 +12,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
 public class Skeleton extends AggressiveMonster {
+	private static final long serialVersionUID = 7938227035760180122L;
 	/** Location of file description spawn positions */
 	private static final String SPAWN_FILE = "assets/spawn/skeleton.txt";
 	/** The location of the image */

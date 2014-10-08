@@ -8,6 +8,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
 public class Tome extends Item {
+	private static final long serialVersionUID = 3567334509864012503L;
 	/** Beginning x position */
 	private static final int SPAWN_X_POS = 546;
 	/** Beginning y position */

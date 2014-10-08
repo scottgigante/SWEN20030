@@ -22,7 +22,7 @@ public abstract class Character extends GameObject {
 	private int currentHealth;
 	/** Time left before next possible attack */
 	private int currentCooldown;
-	/** The path currently being followed, if any */
+	/** The path currently being followed */
 	private Path path;
 	/** Allows debugging removal of terrain blocking (or perhaps flying creatures) */
 	private boolean terrainBlocking = true;
@@ -39,7 +39,7 @@ public abstract class Character extends GameObject {
 		this.speed = speed;
 		currentHealth = getHealth();
 		currentCooldown = 0;
-		path = new Path();
+		path = new Path(world);
 	}
 	
 	/* Getters and setters */
@@ -86,14 +86,7 @@ public abstract class Character extends GameObject {
 		// Find a path to position x,y
 		Vector2f start = new Vector2f((float)getCenterX(),(float)getCenterY());
 		Vector2f stop = new Vector2f(x,y);
-		Path newPath = world.findPath(start, stop);
-		if (newPath.hasPath()) {
-			path = newPath;
-			if (newPath.length() > 1) {
-				// we're already at the first node on the path, don't need to go there.
-				//path.next();
-			}
-		}
+		world.findPath(start, stop, path);
 	}
 
 	/** Attacks the given Character if possible

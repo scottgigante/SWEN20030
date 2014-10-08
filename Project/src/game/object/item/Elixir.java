@@ -8,6 +8,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
 public class Elixir extends Item {
+	private static final long serialVersionUID = -3146546110467864298L;
 	/** Beginning x position */
 	private static final int SPAWN_X_POS = 1976;
 	/** Beginning y position */

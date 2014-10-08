@@ -34,7 +34,6 @@ public abstract class GameObject extends Rectangle {
 		this.health = health;
 		this.damage = damage;
 		this.cooldown = cooldown;
-		// TODO Auto-generated constructor stub
 	}
 	
 	/* Getters and setters */	

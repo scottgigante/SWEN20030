@@ -55,6 +55,10 @@ public class World
 	/** List of all GameObjects to be created this frame */
 	private ArrayList<GameObject> createList;
 	
+	protected Map getMap() {
+		return this.map;
+	}
+	
     /** Create a new World object. */
     public World(int screenwidth, int screenheight)
     throws SlickException
@@ -137,8 +141,8 @@ public class World
      * @param stop The ending position of the path
      * @return Vector2f[] describing path
      */
-    public Path findPath(Vector2f start, Vector2f stop) {
-    	return map.findPath(start, stop);
+    public void findPath(Vector2f start, Vector2f stop, Path path) {
+    	path.setPath(start, stop);
     }
     
     /** Checks if a rectangle can legally move in a direction

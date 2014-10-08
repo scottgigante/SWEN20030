@@ -12,6 +12,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
 public class Zombie extends AggressiveMonster {
+	private static final long serialVersionUID = 1921378895919035582L;
 	/** Location of file description spawn positions */
 	private static final String SPAWN_FILE = "assets/spawn/zombie.txt";
 	/** The location of the image */

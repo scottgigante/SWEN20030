@@ -8,6 +8,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
 public class Sword extends Item {
+	private static final long serialVersionUID = -2381008989866895301L;
 	/** Beginning x position */
 	private static final int SPAWN_X_POS = 4791;
 	/** Beginning y position */

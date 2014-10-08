@@ -1,18 +1,16 @@
 package game.object.npc;
 
-import game.framework.Camera;
 import game.framework.GameObject;
 import game.framework.World;
 import game.object.NPC;
 import game.object.Player;
 
-import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
 public class Elvira extends NPC {
-
+	private static final long serialVersionUID = 4593640772629059085L;
 	/** Beginning x position */
 	private static final float SPAWN_X_POS = 738;
 	/** Beginning y position */

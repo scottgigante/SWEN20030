@@ -2,7 +2,6 @@ package game.object;
 
 import game.framework.Camera;
 import game.framework.FileReader;
-import game.framework.GameObject;
 import game.framework.TextRenderer;
 import game.framework.World;
 

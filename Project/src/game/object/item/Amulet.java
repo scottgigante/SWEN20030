@@ -8,6 +8,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
 public class Amulet extends Item {
+	private static final long serialVersionUID = -1752682954197805482L;
 	/** Beginning x position */
 	private static final int SPAWN_X_POS = 965;
 	/** Beginning y position */
