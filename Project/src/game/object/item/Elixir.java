@@ -43,7 +43,10 @@ public class Elixir extends Item {
 			return null;
 		}
 	}
-	
+
+	/** Creates a new Elixir object
+	 * @param world The world to be created in
+	 */
 	public Elixir(World world) {
 		super(new Vector2f(SPAWN_X_POS,SPAWN_Y_POS), getImage(), world, NAME, HEALTH, DAMAGE, COOLDOWN);
 	}

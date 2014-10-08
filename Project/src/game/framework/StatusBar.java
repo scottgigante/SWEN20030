@@ -11,6 +11,7 @@ public class StatusBar {
 	
 	/** Location of background file */
 	private static final String IMAGE_LOC = "assets/panel.png";
+	/** Space between items on the status bar, in pixels */
 	private static final int SPACE = 10;
 	
 	/** Image to be displayed as background */
@@ -26,7 +27,7 @@ public class StatusBar {
 	/** Renders the player's status panel.
      * @param g The current Slick graphics context.
      */
-    public void render(Graphics g)
+    protected void render(Graphics g)
     {
         // Variables for layout
         String text;                // Text to display

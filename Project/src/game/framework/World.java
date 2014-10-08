@@ -92,14 +92,16 @@ public class World
      * @param mouseX The x position of the mouse.
      * @param mouseY The y position of the mouse.
      */
-    public void update(Vector2f dir, int delta, boolean mousePressed, int mouseX, int mouseY, boolean aPressed, boolean tPressed)
+    protected void update(Vector2f dir, int delta, boolean mousePressed, int mouseX, int mouseY, boolean aPressed, boolean tPressed)
     throws SlickException
     {
+    	// Update the player with I/O
     	if (mousePressed) {
-    		player.update(dir, delta, camera.getMinX()+mouseX, camera.getMinY()+mouseY, aPressed, tPressed);
+    		player.update(dir, delta, new Vector2f(camera.getMinX()+mouseX, camera.getMinY()+mouseY), aPressed, tPressed);
     	} else {
     		player.update(dir, delta, aPressed, tPressed);
         }
+    	// Update all objects
     	for (GameObject o:objectList) {
     		if (o instanceof Monster) {
     			((Monster) o).update(player, delta);
@@ -108,6 +110,7 @@ public class World
     		}
     	}
     	camera.update();
+    	// Deal with interactions between objects
     	for (GameObject o:objectList) {
     		if (o.dist(player) <= NEAR_DISTANCE) {
     			player.interact(o);
@@ -116,6 +119,7 @@ public class World
     			}
     		}
     	}
+    	// Update the object list
     	objectList.removeAll(destroyList);
     	objectList.addAll(createList);
     	destroyList.clear();
@@ -125,7 +129,7 @@ public class World
     /** Render the entire screen, so it reflects the current game state.
      * @param g The Slick graphics object, used for drawing.
      */
-    public void render(Graphics g)
+    protected void render(Graphics g)
     throws SlickException
     {
     	map.render(camera);
@@ -134,15 +138,6 @@ public class World
     		o.render(g, camera);
     	}
     	status.render(g);
-    }
-    
-    /** Passes on to map's find path algorithm
-     * @param start The starting position of the path
-     * @param stop The ending position of the path
-     * @return Vector2f[] describing path
-     */
-    public void findPath(Vector2f start, Vector2f stop, Path path) {
-    	path.setPath(start, stop);
     }
     
     /** Checks if a rectangle can legally move in a direction
@@ -198,6 +193,9 @@ public class World
 		return success;
     }
     
+    /** Add an object to the object list
+     * @param o GameObject to be added
+     */
     public void createObject(GameObject o) {
     	createList.add(o);
     }

@@ -44,6 +44,9 @@ public class Amulet extends Item {
 		}
 	}
 	
+	/** Creates a new Amulet object
+	 * @param world The world to be created in
+	 */
 	public Amulet(World world) {
 		super(new Vector2f(SPAWN_X_POS,SPAWN_Y_POS), getImage(), world, NAME, HEALTH, DAMAGE, COOLDOWN);
 	}

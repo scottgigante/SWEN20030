@@ -67,6 +67,7 @@ public class Player extends Character {
 		}
 	}
 	
+	/* Getters and setters */
 	public int getLastDamage() {
 		return lastDamage;
 	}
@@ -75,8 +76,12 @@ public class Player extends Character {
 		return itemList;
 	}
 	
-	public void addItem(Item o) {
+	/** Add an item to the player's inventory
+	 * @param o The item to be added
+	 */
+	protected void addItem(Item o) {
 		itemList.add(o);
+		// add bonus stats
 		setHealth(getHealth()+o.getHealth());
 		setCooldown(getCooldown()+o.getCooldown());
 		setDamage(getDamage()+o.getDamage());
@@ -150,8 +155,8 @@ public class Player extends Character {
 	 * @param aPressed Whether or not A has been pressed
 	 * @param tPressed Whether or not T has been pressed
 	 */
-	public void update(Vector2f dir, int delta, int mouseX, int mouseY, boolean aPressed, boolean tPressed) {
-		setPath(mouseX, mouseY);
+	public void update(Vector2f dir, int delta, Vector2f mousePos, boolean aPressed, boolean tPressed) {
+		setPath(mousePos);
 		update(dir,delta, aPressed,tPressed);
 	}
 	
@@ -170,6 +175,7 @@ public class Player extends Character {
 	
 	/* (non-Javadoc)
 	 * Interacts with GameObjects depending on their subclass
+	 * Attacks characters, speaks to NPCs, picks up items
 	 * @see game.GameObject#interact(game.GameObject)
 	 */
 	public void interact(GameObject o) {
@@ -183,10 +189,11 @@ public class Player extends Character {
 	}
 	
 	/* (non-Javadoc)
+	 * Sets last damage in order to be retrieved for display purposes
 	 * @see game.Character#attack(game.Character)
 	 */
 	@Override
-	public boolean attack(Character o) {
+	protected boolean attack(Character o) {
 		if (getCurrentCooldown() <= 0 || getCurrentCooldown() == getCooldown()) {
 			lastDamage = (int)(Math.random()*getDamage());
 			setCurrentCooldown(getCooldown());
@@ -194,12 +201,13 @@ public class Player extends Character {
 		}
 		return false;
 	}
+	
 	/* (non-Javadoc)
 	 * Rather than destroying the player, it respawns
 	 * @see game.GameObject#destroy()
 	 */
-	public void destroy() {
-		// drop the elixir TODO fix
+	protected void destroy() {
+		// drop the elixir
 		Item drop = null;
 		for (Item o:itemList) {
 			if (o instanceof Elixir) {

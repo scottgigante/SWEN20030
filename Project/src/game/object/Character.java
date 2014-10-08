@@ -34,7 +34,6 @@ public abstract class Character extends GameObject {
 	 * @param map The map upon which it exists
 	 */
 	public Character(Vector2f pos, Image sprite, World world, String name, float speed, int health, int damage, int cooldown) {
-		// Super constructor takes arguments to uppermost and rightmost coords, not centre
 		super(pos, sprite, world, name, health, damage, cooldown);
 		this.speed = speed;
 		currentHealth = getHealth();
@@ -55,7 +54,7 @@ public abstract class Character extends GameObject {
 		return currentCooldown;
 	}
 
-	public void setCurrentCooldown(int currentCooldown) {
+	protected void setCurrentCooldown(int currentCooldown) {
 		this.currentCooldown = currentCooldown;
 	}
 	
@@ -63,37 +62,35 @@ public abstract class Character extends GameObject {
 		return terrainBlocking;
 	}
 
-	public void setTerrainBlocking(boolean terrainBlocking) {
+	protected void setTerrainBlocking(boolean terrainBlocking) {
 		this.terrainBlocking = terrainBlocking;
 	}
 	
-	public Path getPath() {
+	protected Path getPath() {
 		return path;
 	}
 
 	/** Set the path of the character to reach a GameObject on the map
 	 * @param o The GameObject to be followed
 	 */
-	public void setPath(GameObject o) {		
-		setPath(o.getCenterX(), o.getCenterY());
+	protected void setPath(GameObject o) {		
+		setPath(o.getVectorCenter());
 	}
 	
 	/** Set the path of the character to reach position x,y on the map
-	 * @param x Float representing mouse x-position
-	 * @param y Float representing mouse y-position
+	 * @param stop Vector2f representing x,y coords of end of path
 	 */
-	public void setPath(float x, float y) {		
+	protected void setPath(Vector2f stop) {		
 		// Find a path to position x,y
 		Vector2f start = new Vector2f((float)getCenterX(),(float)getCenterY());
-		Vector2f stop = new Vector2f(x,y);
-		world.findPath(start, stop, path);
+		path.setPath(start, stop);
 	}
 
 	/** Attacks the given Character if possible
 	 * @param o A character to be attacked
-	 * @return whether or not the attack was lethal
+	 * @return Whether or not the attack was lethal
 	 */
-	public boolean attack(Character o) {
+	protected boolean attack(Character o) {
 		if (getCurrentCooldown() <= 0) {
 			currentCooldown = getCooldown();
 			return o.takeDamage((int)(Math.random()*getDamage())+1, this);
@@ -105,7 +102,7 @@ public abstract class Character extends GameObject {
 	 * @param damage The amount of damage inflicted
 	 * @return Whether or not the damage was lethal
 	 */
-	public boolean takeDamage(int damage, Character attacker) {
+	protected boolean takeDamage(int damage, Character attacker) {
 		currentHealth -= damage;
 		if (currentHealth <= 0) {
 			destroy();
@@ -117,8 +114,7 @@ public abstract class Character extends GameObject {
 	/** Move the character in any direction specified either by keyboard or predefined path.
 	 * Check first that movement is not blocked by terrain
 	 * Updates whether or not to use flipped sprite
-	 * @param dirX Number of units to move along the x axis
-	 * @param dirY Number of units to move along the y axis
+	 * @param dir Number of units to move along the x, y axis
 	 * @param delta Number of milliseconds since last movement
 	 */
 	public void update(Vector2f dir, int delta) {
@@ -158,10 +154,15 @@ public abstract class Character extends GameObject {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * Render the Character's health bar
+	 * @see game.framework.GameObject#render(org.newdawn.slick.Graphics, game.framework.Camera)
+	 */
 	@Override
 	public void render(Graphics g, Camera camera) {
 		super.render(g, camera);
         
+		// Don't render a health bar for the player, or for NPC's who are talking
         if (camera.isOnScreen(this) && !((this instanceof Player) || ((this instanceof NPC) && ((NPC) this).getSpeakTime() > 0))) {
 			TextRenderer.renderText(g, getCenterX()-camera.getMinX(), getMinY()-camera.getMinY(), (float)getCurrentHealth()/getHealth(), getName());
         }

@@ -6,10 +6,10 @@ import org.newdawn.slick.geom.Vector2f;
 
 public class Path {
 	/** Horizontal cost of movement */
-	public static final int H_COST = 10;
+	private static final int H_COST = 10;
 	/** Diagonal cost of movement */
-	public static final int D_COST = 14;
-	/** Tolerance, relative to speed, which will be accepted in a radius around the destination of a path */
+	private static final int D_COST = 14;
+	/** Tolerance, in pixels, which will be accepted in a radius around the destination of a path */
 	private static final double PATH_TOLERANCE = 5;
 	
 	/** 2d list of nodes for easy construction of paths */
@@ -29,14 +29,14 @@ public class Path {
 	/** Adds a node to the start of a path
 	 * @param pos Vector2f representing the x and y coords of node
 	 */
-	public void addAtStart(Vector2f pos) {
+	private void addAtStart(Vector2f pos) {
 		path.add(0, pos);
 	}
 
 	/** Adds a node to the end of a path
 	 * @param pos Vector2f representing the x and y coords of node
 	 */
-	public void addAtEnd(Vector2f pos) {
+	private void addAtEnd(Vector2f pos) {
 		path.add(pos);
 	}
 	
@@ -45,13 +45,6 @@ public class Path {
 	 */
 	public boolean hasPath() {
 		return !path.isEmpty();
-	}
-	
-	/** Checks the current length of the path
-	 * @return
-	 */
-	public int length() {
-		return path.size();
 	}
 	
 	/** Checks the direction to be followed to arrive at the next node from a position
@@ -86,7 +79,7 @@ public class Path {
 	}
 	
 	/** Moves to the next node on the path */
-	public void next() {
+	private void next() {
 		path.remove(0);
 	}
 	

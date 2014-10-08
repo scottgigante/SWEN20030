@@ -5,7 +5,6 @@ import game.framework.World;
 import game.object.AggressiveMonster;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -32,21 +31,8 @@ public class Bandit extends AggressiveMonster {
 	 * @return An arraylist of the created bandits
 	 */
 	public static ArrayList<Bandit> spawnAll(World world) {
-		List<String> spawnList = FileReader.readFile(SPAWN_FILE);
 		ArrayList<Bandit> result = new ArrayList<Bandit>();
-		for (String s:spawnList) {
-			String[] coords = s.split(",");
-			Vector2f pos = new Vector2f();
-			try {
-				pos.x = Integer.parseInt(coords[0]);
-				pos.y = Integer.parseInt(coords[1]);
-			} catch (ArrayIndexOutOfBoundsException e) {
-				System.out.print(e.getMessage());
-				continue;
-			} catch (NumberFormatException e) {
-				System.out.print(e.getMessage());
-				continue;			
-			}
+		for (Vector2f pos:FileReader.spawnAll(SPAWN_FILE)) {
 			result.add(new Bandit(pos, world));
 		}
 		return result;
@@ -74,6 +60,5 @@ public class Bandit extends AggressiveMonster {
 	 */
 	public Bandit(Vector2f pos, World world) {
 		super(pos, getImage(), world, NAME, HEALTH, DAMAGE, COOLDOWN);
-		// TODO Auto-generated constructor stub
 	}
 }

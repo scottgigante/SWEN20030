@@ -11,8 +11,9 @@ import org.newdawn.slick.geom.Vector2f;
 
 public class Draelic extends AggressiveMonster {
 	private static final long serialVersionUID = -7883804689005203936L;
-	/** Location of file description spawn positions */
+	/** Initial x position, in pixels */
 	private static final int SPAWN_X_POS = 2069;
+	/** Initial y position, in pixels */
 	private static final int SPAWN_Y_POS = 510;
 	/** The location of the image */
 	private static final String IMAGE_LOC = "assets/units/necromancer.png";
@@ -61,10 +62,10 @@ public class Draelic extends AggressiveMonster {
 	 * @see game.Character#attack(game.Character)
 	 */
 	@Override
-	public boolean attack(Character o) {
+	protected boolean attack(Character o) {
 		chase = o;
 		if (super.attack(o)) {
-			setPath(guard.getCenterX(), guard.getCenterY());
+			setPath(guard.getVectorCenter());
 			chase = null;
 			return true;
 		}
@@ -76,7 +77,7 @@ public class Draelic extends AggressiveMonster {
 	 * @see game.Monster#wander()
 	 */
 	@Override
-	public Vector2f wander() {
+	protected Vector2f wander() {
 		if (chase != null) {
 			setPath(chase);
 		}

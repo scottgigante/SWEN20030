@@ -6,7 +6,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.newdawn.slick.geom.Vector2f;
 
 public final class FileReader {
 	
@@ -25,5 +28,29 @@ public final class FileReader {
 			System.exit(1);
 			return null;
 		}
+	}
+	
+	/** Load spawn locations from a file
+	 * @return An arraylist of positions to create objects at
+	 */
+	public static ArrayList<Vector2f> spawnAll(String spawnFile) {
+		List<String> spawnList = readFile(spawnFile);
+		ArrayList<Vector2f> result = new ArrayList<Vector2f>();
+		for (String s:spawnList) {
+			String[] coords = s.split(",");
+			Vector2f pos = new Vector2f();
+			try {
+				pos.x = Integer.parseInt(coords[0]);
+				pos.y = Integer.parseInt(coords[1]);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				System.out.print(e.getMessage());
+				continue;
+			} catch (NumberFormatException e) {
+				System.out.print(e.getMessage());
+				continue;			
+			}
+			result.add(pos);
+		}
+		return result;
 	}
 }

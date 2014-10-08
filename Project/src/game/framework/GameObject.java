@@ -7,9 +7,13 @@ import org.newdawn.slick.Graphics;
 
 public abstract class GameObject extends Rectangle {
 	private static final long serialVersionUID = -7779997954127083405L;
+	/* Object's statistics */
 	private int health;
 	private int damage;
 	private int cooldown;
+	/** Object's name */
+	private String name;
+	/** Current image representing the character, flipped or unflipped */
 	private Image sprite;
 	/** The world in which the character exists */
 	protected World world;
@@ -17,14 +21,18 @@ public abstract class GameObject extends Rectangle {
 	private Image spriteNf;
 	/** The image facing the opposite direction */
 	private Image spriteF;
-	private String name;
 	
 	/** Constructor creates a GameObject
-	 * @param x The central x coordinate
-	 * @param y The central y coordinate
+	 * @param pos The central coordinates, in x and y
 	 * @param sprite Image of the object
+	 * @param world World in which object lives
+	 * @param name Object's name
+	 * @param health Object's max health
+	 * @param damage Object's max damage
+	 * @param cooldown Object's max cooldown
 	 */
 	public GameObject(Vector2f pos, Image sprite, World world, String name, int health, int damage, int cooldown) {
+		// Super constructor takes arguments to uppermost and rightmost coords, not centre
 		super(pos.x - sprite.getWidth()/2, pos.y-sprite.getHeight()/2, sprite.getWidth(), sprite.getHeight());
 		this.sprite = sprite;
 		spriteNf = sprite;
@@ -58,24 +66,21 @@ public abstract class GameObject extends Rectangle {
 		this.cooldown = cooldown;
 	}
 
-	public String getName() {
+	protected String getName() {
 		return name;
 	}
-	public void setName(String name) {
-		this.name = name;
-	}
 
-	public Image getSprite() {
+	protected Image getSprite() {
 		return sprite;
 	}
-	public void setSprite(Image sprite) {
+	protected void setSprite(Image sprite) {
 		this.sprite = sprite;
 	}
 	
-	public Image getSpriteNf() {
+	protected Image getSpriteNf() {
 		return spriteNf;
 	}
-	public Image getSpriteF() {
+	protected Image getSpriteF() {
 		return spriteF;
 	}
 	
@@ -86,7 +91,7 @@ public abstract class GameObject extends Rectangle {
 	/** Render an object within the scope of the camera
      * @param camera The viewport in which to draw
      */
-    public void render(Graphics g, Camera camera) {
+	protected void render(Graphics g, Camera camera) {
     	if (camera.isOnScreen(this)) {
     		// character is on-screen, draw it
     		sprite.draw(getMinX()-camera.getMinX(),getMinY()-camera.getMinY());
@@ -94,7 +99,7 @@ public abstract class GameObject extends Rectangle {
     }
 	
 	/** Object removes itself from the world and disappears */
-	public void destroy() {
+	protected void destroy() {
 		world.removeObject(this);
 	}
 	
@@ -102,7 +107,7 @@ public abstract class GameObject extends Rectangle {
 	 * @param o The GameObject to be checked
 	 * @return True or false.
 	 */
-	public double dist(GameObject o) {
+	protected double dist(GameObject o) {
 		return Math.sqrt(Math.pow(Math.max(Math.abs(getCenterX()-o.getCenterX())-getBoundingCircleRadius()-o.getBoundingCircleRadius(),0), 2) + Math.pow(Math.max(Math.abs(getCenterY()-o.getCenterY())-getBoundingCircleRadius()-o.getBoundingCircleRadius(),0), 2));
 	}
 	

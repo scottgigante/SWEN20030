@@ -8,9 +8,6 @@ package game.framework;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.tiled.TiledMap;
-import org.newdawn.slick.geom.Vector2f;
-
-import java.util.ArrayList;
 
 public class Map extends TiledMap {
 	/** The location of the file containing map data */
@@ -18,18 +15,25 @@ public class Map extends TiledMap {
 	/** The location of the resources relating to the map */
 	private static final String RESOURCE_LOC = "assets";
 	
-	
 	/** Constructor creates a new Map object */
 	public Map() throws SlickException {
 		super(MAP_LOC, RESOURCE_LOC);
 	}
 	
-	public int getPixelWidth() {
+	/** Gets the width of the map, in pixels
+	 * @return Integer width of map
+	 */
+	protected int getPixelWidth() {
 		return getWidth()*getTileWidth();
 	}
-	public int getPixelHeight() {
+	
+	/** Gets the height of the map, in pixels
+	 * @return Integer height of map
+	 */
+	protected int getPixelHeight() {
 		return getHeight()*getTileHeight();
 	}
+	
 	/** Checks if the tile at x, y is walkable or not
 	 * @param x Integer representing tile grid position
 	 * @param y Integer representing tile grid position
@@ -76,7 +80,7 @@ public class Map extends TiledMap {
 	/** Renders a tiled map behind within the constraints of the camera's view.
 	 * @param camera The viewport in which to draw
      */
-    public void render(Camera camera) {
+	protected void render(Camera camera) {
     	// Calculate which tiles to start drawing from
     	int sx = camera.getMinX() / getTileWidth();
     	int sy = camera.getMinY() / getTileHeight();

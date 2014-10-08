@@ -22,13 +22,12 @@ import org.newdawn.slick.TrueTypeFont;
 @SuppressWarnings("deprecation")
 public class RPG extends BasicGame
 {
-    private World world;
     
     /** Controls various debug features */
     public static boolean IS_DEBUG = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
     
     /** Height of the display panel, in pixels */
-    public static final int PANEL_HEIGHT = 70;
+    protected static final int PANEL_HEIGHT = 70;
     /** Screen width, in pixels. */
     protected static final int SCREEN_WIDTH = 800;
     /** Screen height, in pixels. */
@@ -37,9 +36,11 @@ public class RPG extends BasicGame
     private static final String FONT_LOC = "assets/DejaVuSans-Bold.ttf";
     /** Size of the font */
     private static final int FONT_SIZE = 15;
-    
+
+    /** World controlling the game */
+    private World world;
     /** Font to display character names, etc */
-	TrueTypeFont ttf;
+	private TrueTypeFont ttf;
 
     /** Create a new RPG object. */
     public RPG()

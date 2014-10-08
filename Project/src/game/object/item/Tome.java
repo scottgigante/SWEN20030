@@ -43,7 +43,10 @@ public class Tome extends Item {
 			return null;
 		}
 	}
-	
+
+	/** Creates a new Tome object
+	 * @param world The world to be created in
+	 */
 	public Tome(World world) {
 		super(new Vector2f(SPAWN_X_POS,SPAWN_Y_POS), getImage(), world, NAME, HEALTH, DAMAGE, COOLDOWN);
 	}
