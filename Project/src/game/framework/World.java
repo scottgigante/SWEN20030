@@ -74,6 +74,7 @@ public class World
     {
         map = new Map();
         player = new Player(this);
+        camera = new Camera(player, map, screenwidth, screenheight);
         status = new StatusBar(player);
         objectList = new ArrayList<GameObject>();
         destroyList = new ArrayList<GameObject>();
@@ -92,7 +93,6 @@ public class World
         objectList.addAll(Bat.spawnAll(this));
         // Draelic protects the elixir
         objectList.add(new Draelic(this, elixir));
-        camera = new Camera(player, map, screenwidth, screenheight);
         currentSplashTime = SPLASH_TIME;
         splashText = FileReader.readFile(SPLASH_LOC);
         

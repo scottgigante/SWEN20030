@@ -33,7 +33,7 @@ public abstract class GameObject extends Rectangle {
 	 */
 	public GameObject(Vector2f pos, Image sprite, World world, String name, int health, int damage, int cooldown) {
 		// Super constructor takes arguments to uppermost and rightmost coords, not centre
-		super(pos.x - sprite.getWidth()/2, pos.y-sprite.getHeight()/2, sprite.getWidth(), sprite.getHeight());
+		super(pos.x - sprite.getWidth()/2.0f, pos.y-sprite.getHeight()/2.0f, sprite.getWidth(), sprite.getHeight());
 		this.sprite = sprite;
 		spriteNf = sprite;
 		spriteF = sprite.getFlippedCopy(true, false);

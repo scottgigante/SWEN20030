@@ -112,7 +112,7 @@ public class Camera
     /** Tells the camera to follow a given unit and updates to that position
      * @param unit The Character object to be followed
      */
-    protected void followUnit(GameObject unit)
+    private void followUnit(GameObject unit)
     throws SlickException
     {
         unitFollow = unit;

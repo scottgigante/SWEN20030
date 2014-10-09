@@ -5,10 +5,12 @@
 
 package game.object;
 
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
+import game.framework.Camera;
 import game.framework.GameObject;
 import game.framework.RPG;
 import game.framework.World;
@@ -227,5 +229,14 @@ public class Player extends Character {
 		setCurrentCooldown(0);
 		lastDamage = 0;
 		getPath().clear();
+	}
+	
+	/* (non-Javadoc)
+	 * Player doesn't have health bar
+	 * @see game.object.Character#renderHealthBar(org.newdawn.slick.Graphics, game.framework.Camera)
+	 */
+	@Override
+	protected void renderHealthBar(Graphics g, Camera camera) {
+		// do nothing, health bar not rendered for player
 	}
 }

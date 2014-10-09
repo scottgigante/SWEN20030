@@ -160,11 +160,16 @@ public abstract class Character extends GameObject {
 	 */
 	@Override
 	public void render(Graphics g, Camera camera) {
-		super.render(g, camera);
-        
-		// Don't render a health bar for the player, or for NPC's who are talking
-        if (camera.isOnScreen(this) && !((this instanceof Player) || ((this instanceof NPC) && ((NPC) this).getSpeakTime() > 0))) {
-			TextRenderer.renderText(g, getCenterX()-camera.getMinX(), getMinY()-camera.getMinY(), (float)getCurrentHealth()/getHealth(), getName());
+        if (camera.isOnScreen(this)) {
+    		super.render(g, camera);
+			renderHealthBar(g, camera);
         }
+	}
+	
+	/** Render the health bar above the sprite
+	 * @param g The current graphics object
+	 */
+	protected void renderHealthBar(Graphics g, Camera camera) {
+		TextRenderer.renderText(g, getCenterX()-camera.getMinX(), getMinY()-camera.getMinY(), (float)getCurrentHealth()/getHealth(), getName());
 	}
 }

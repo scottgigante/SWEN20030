@@ -85,5 +85,16 @@ public abstract class NPC extends Character {
 			TextRenderer.renderText(g, getCenterX()-camera.getMinX(), getMinY()-camera.getMinY(), 0, dialogue.get(speakLine));
 		}
 	}
-
+	
+	/* (non-Javadoc)
+	 * NPC doesn't have health bar while speaking
+	 * @see game.object.Character#renderHealthBar(org.newdawn.slick.Graphics, game.framework.Camera)
+	 */
+	@Override
+	protected void renderHealthBar(Graphics g, Camera camera) {
+		if (speakTime <= 0) {
+			// not speaking, draw the health bar
+			super.renderHealthBar(g, camera);
+		}
+	}
 }
