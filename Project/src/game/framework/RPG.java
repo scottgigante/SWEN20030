@@ -36,6 +36,8 @@ public class RPG extends BasicGame
     private static final String FONT_LOC = "assets/DejaVuSans-Bold.ttf";
     /** Size of the font */
     private static final int FONT_SIZE = 15;
+    /** Game name, to be displayed on window */
+    private static final String NAME = "Shadow Quest";
 
     /** World controlling the game */
     private World world;
@@ -45,7 +47,7 @@ public class RPG extends BasicGame
     /** Create a new RPG object. */
     public RPG()
     {
-        super("RPG Game Engine");
+        super(NAME);
     }
 
     /** Initialise the game state.

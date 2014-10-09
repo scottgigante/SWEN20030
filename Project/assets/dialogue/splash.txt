@@ -1,0 +1,2 @@
+Welcome to Shadow Quest!
+Use the arrow keys or mouse to move, A to attack and T to talk.

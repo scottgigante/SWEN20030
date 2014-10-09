@@ -48,7 +48,7 @@ public abstract class GameObject extends Rectangle {
 	public int getHealth() {
 		return health;
 	}
-	public void setHealth(int health) {
+	protected void setHealth(int health) {
 		this.health = health;
 	}
 	

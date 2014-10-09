@@ -29,6 +29,7 @@ import game.object.npc.Elvira;
 import game.object.npc.Garth;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /** Represents the entire game world.
  * (Designed to be instantiated just once for the whole game).
@@ -39,6 +40,10 @@ public class World
 	private static final int NEAR_DISTANCE = 10;
 	/** Factor by which to scale tile width for line of sight */
 	private static final float SCALE_FACTOR = 0.25f;
+	/** Time to display the splash screen */
+	private static final int SPLASH_TIME = 5000;
+	/** Location of the splash text file */
+	private static final String SPLASH_LOC = "assets/dialogue/splash.txt";
 			
 	/** The map containing tiles, images etc */
 	private Map map;
@@ -54,6 +59,10 @@ public class World
 	private ArrayList<GameObject> destroyList;
 	/** List of all GameObjects to be created this frame */
 	private ArrayList<GameObject> createList;
+	/** Time remaining to display the splash screen */
+	private int currentSplashTime;
+	/** Text to be displayed as splash */
+	private List<String> splashText;
 	
 	protected Map getMap() {
 		return this.map;
@@ -81,13 +90,16 @@ public class World
         objectList.addAll(Zombie.spawnAll(this));
         objectList.addAll(Skeleton.spawnAll(this));
         objectList.addAll(Bat.spawnAll(this));
+        // Draelic protects the elixir
         objectList.add(new Draelic(this, elixir));
         camera = new Camera(player, map, screenwidth, screenheight);
+        currentSplashTime = SPLASH_TIME;
+        splashText = FileReader.readFile(SPLASH_LOC);
+        
     }
     
     /** Update the game state for a frame when the mouse button is pressed
-     * @param dir_x The player's movement in the x axis (-1, 0 or 1).
-     * @param dir_y The player's movement in the y axis (-1, 0 or 1).
+     * @param dir The player's movement in the x, y axis (-1, 0 or 1).
      * @param delta Time passed since last frame (milliseconds).
      * @param mouseX The x position of the mouse.
      * @param mouseY The y position of the mouse.
@@ -124,6 +136,9 @@ public class World
     	objectList.addAll(createList);
     	destroyList.clear();
     	createList.clear();
+    	if (currentSplashTime > 0) {
+    		currentSplashTime -= delta;
+    	}
     }
 
     /** Render the entire screen, so it reflects the current game state.
@@ -138,6 +153,9 @@ public class World
     		o.render(g, camera);
     	}
     	status.render(g);
+    	if (currentSplashTime > 0) {
+    		TextRenderer.renderLines(g, RPG.SCREEN_WIDTH/2, RPG.SCREEN_HEIGHT/2, splashText);
+    	}
     }
     
     /** Checks if a rectangle can legally move in a direction
