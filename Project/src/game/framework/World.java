@@ -7,7 +7,6 @@ package game.framework;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
 import game.object.AggressiveMonster;
@@ -127,6 +126,7 @@ public class World
     		if (o.dist(player) <= NEAR_DISTANCE) {
     			player.interact(o);
     			if (o instanceof AggressiveMonster) {
+    				// AggressiveMonster interacts of its own accord
     				o.interact(player);
     			}
     		}
@@ -164,14 +164,32 @@ public class World
      * @param y Float to be moved in the y direction
      * @return Boolean whether or not the rectangle can legally move
      */
-    public boolean canMove(Rectangle rect, float x, float y) {
-		if (x != 0 || y != 0) {
+    public boolean canMove(Character c, float x, float y) {
+		if ((x != 0 || y != 0) && c.isTerrainBlocking()) {
 			// check map legality
-			if (!map.canMove(rect,x,y) && (!(rect instanceof Character) || ((Character)rect).isTerrainBlocking())) {
+			if (!map.canMove(c,x,y)) {
 				return false;
 			}
 			
-			// TODO check collisions
+			// check collisions by moving, checking intersection, then moving back
+			c.setX(c.getX()+x);
+			c.setY(c.getY()+y);
+			for (GameObject o:objectList) {
+				if (o.intersects(c) && o != c) {
+					c.setX(c.getX()-x);
+					c.setY(c.getY()-y);
+					return false;
+				}
+			}
+			// check player separately, it's not in objectList
+			if (player.intersects(c) && player != c) {
+				c.setX(c.getX()-x);
+				c.setY(c.getY()-y);
+				return false;
+			}
+			c.setX(c.getX()-x);
+			c.setY(c.getY()-y);
+			
 		}
 
 		return true;
