@@ -42,6 +42,7 @@ public class ComputeSquareRoot {
 		// print result
 		DecimalFormat f = new DecimalFormat("0.00");
 		System.out.println("The square root of " + (negative ? "-" : "") + n + " is " + f.format(guess) + (negative ? "i" : "") + "!");
+		s.close();
 	}
 
 }

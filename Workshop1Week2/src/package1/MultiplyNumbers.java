@@ -6,6 +6,7 @@ public class MultiplyNumbers {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Scanner inputScanner = new Scanner(System.in);

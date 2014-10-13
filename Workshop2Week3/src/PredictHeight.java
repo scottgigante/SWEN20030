@@ -80,6 +80,7 @@ public class PredictHeight {
 				System.out.printf("The child is predicted to be %.2f inches tall.\n", child);
 			}
 		}
+		s.close();
 	}
 
 }
