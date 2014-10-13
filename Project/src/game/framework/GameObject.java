@@ -1,4 +1,4 @@
-package framework;
+package game.framework;
 
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.Image;

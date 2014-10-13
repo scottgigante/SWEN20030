@@ -4,11 +4,11 @@
  */
 
 package game.object;
-import framework.Camera;
-import framework.GameObject;
-import framework.Path;
-import framework.TextRenderer;
-import framework.World;
+import game.framework.Camera;
+import game.framework.GameObject;
+import game.framework.Path;
+import game.framework.TextRenderer;
+import game.framework.World;
 
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.Graphics;

@@ -1,4 +1,4 @@
-package framework;
+package game.framework;
 
 import game.object.Item;
 import game.object.Player;

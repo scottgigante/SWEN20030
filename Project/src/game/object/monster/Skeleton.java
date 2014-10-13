@@ -1,7 +1,7 @@
 package game.object.monster;
 
-import framework.FileReader;
-import framework.World;
+import game.framework.FileReader;
+import game.framework.World;
 import game.object.AggressiveMonster;
 
 import java.util.ArrayList;

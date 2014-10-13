@@ -10,10 +10,10 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
-import framework.Camera;
-import framework.GameObject;
-import framework.RPG;
-import framework.World;
+import game.framework.Camera;
+import game.framework.GameObject;
+import game.framework.RPG;
+import game.framework.World;
 import game.object.item.Amulet;
 import game.object.item.Elixir;
 import game.object.item.Sword;

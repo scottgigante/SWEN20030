@@ -4,7 +4,7 @@
  * Modified: Scott Gigante <gigantes>
  */
 
-package framework;
+package game.framework;
 import java.awt.Font;
 
 import org.newdawn.slick.AppGameContainer;

@@ -1,9 +1,9 @@
 package game.object;
 
-import framework.Camera;
-import framework.FileReader;
-import framework.TextRenderer;
-import framework.World;
+import game.framework.Camera;
+import game.framework.FileReader;
+import game.framework.TextRenderer;
+import game.framework.World;
 
 import java.util.List;
 

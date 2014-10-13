@@ -1,6 +1,6 @@
 package game.object.item;
 
-import framework.World;
+import game.framework.World;
 import game.object.Item;
 
 import org.newdawn.slick.Image;
