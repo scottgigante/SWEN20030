@@ -1,4 +1,4 @@
-package game.framework;
+package framework;
 
 import java.util.List;
 

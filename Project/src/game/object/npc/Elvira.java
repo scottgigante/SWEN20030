@@ -1,7 +1,7 @@
 package game.object.npc;
 
-import game.framework.GameObject;
-import game.framework.World;
+import framework.GameObject;
+import framework.World;
 import game.object.NPC;
 import game.object.Player;
 

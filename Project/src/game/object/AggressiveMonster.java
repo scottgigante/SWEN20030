@@ -1,7 +1,7 @@
 package game.object;
 
-import game.framework.GameObject;
-import game.framework.World;
+import framework.GameObject;
+import framework.World;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Vector2f;

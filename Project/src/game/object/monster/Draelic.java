@@ -1,7 +1,7 @@
 package game.object.monster;
 
-import game.framework.GameObject;
-import game.framework.World;
+import framework.GameObject;
+import framework.World;
 import game.object.AggressiveMonster;
 import game.object.Character;
 

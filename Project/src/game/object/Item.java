@@ -1,9 +1,9 @@
 package game.object;
 
-import game.framework.Camera;
-import game.framework.GameObject;
-import game.framework.TextRenderer;
-import game.framework.World;
+import framework.Camera;
+import framework.GameObject;
+import framework.TextRenderer;
+import framework.World;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;

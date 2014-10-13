@@ -3,7 +3,7 @@
  * Author: Scott Gigante <gigantes>
  */
 
-package game.framework;
+package framework;
 
 import game.object.Character;
 
