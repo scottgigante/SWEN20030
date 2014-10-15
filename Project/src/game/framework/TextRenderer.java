@@ -5,7 +5,7 @@ import java.util.List;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
-public class TextRenderer {
+public final class TextRenderer {
 	
     /** Color for plain text labels */
     private static final Color LABEL = new Color(0.9f, 0.9f, 0.4f);          // Gold
@@ -20,7 +20,11 @@ public class TextRenderer {
     private static final int TEXT_OFFSET = 5;
     /** Minimum width of a text bar where specific width is not given */
     private static final int MIN_BAR_WIDTH = 70;
-    
+
+	/** Don't let anyone instantiate this class */
+	private TextRenderer() {
+	}
+	
 	/** Render a bar with a percentage foreground, and the remainder only background
 	 * @param g The current Graphics object
 	 * @param x Leftmost x position, in pixels

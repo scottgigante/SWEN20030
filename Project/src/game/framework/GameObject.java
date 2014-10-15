@@ -16,7 +16,7 @@ public abstract class GameObject extends Rectangle {
 	/** Current image representing the character, flipped or unflipped */
 	private Image sprite;
 	/** The world in which the character exists */
-	protected World world;
+	private World world;
 	/** The image representing the character, not flipped */
 	private Image spriteNf;
 	/** The image facing the opposite direction */
@@ -82,6 +82,10 @@ public abstract class GameObject extends Rectangle {
 	}
 	protected Image getSpriteF() {
 		return spriteF;
+	}
+	
+	protected World getWorld() {
+		return world;
 	}
 	
 	public Vector2f getVectorCenter() {

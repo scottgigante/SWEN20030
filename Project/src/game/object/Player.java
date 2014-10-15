@@ -219,7 +219,7 @@ public class Player extends Character {
 		if (drop != null) {
 			drop.setCenterX(getCenterX());
 			drop.setCenterY(getCenterY());
-			world.createObject(drop);
+			getWorld().createObject(drop);
 			itemList.remove(drop);
 		}
 		// respawn

@@ -144,11 +144,11 @@ public abstract class Character extends GameObject {
 			}
 		}
 		
-		if (world.canMove(this,speed*dir.x*delta,0)) {
+		if (getWorld().canMove(this,speed*dir.x*delta,0)) {
 			// Movement okay in x direction
 			setCenterX(getCenterX() + (float)(speed*dir.x*delta));		
 		}
-		if (world.canMove(this,0,speed*dir.y*delta)) {
+		if (getWorld().canMove(this,0,speed*dir.y*delta)) {
 			// Movement okay in y direction
 			setCenterY(getCenterY() + (float)(speed*dir.y*delta));	
 		}

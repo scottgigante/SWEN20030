@@ -58,7 +58,7 @@ public abstract class Monster extends Character {
 		// update wander time
 		currentWanderTime -= delta;
 		Vector2f dir;
-		if (dist(player) < SEE_DISTANCE && world.hasLineOfSight(player, this)) {
+		if (dist(player) < SEE_DISTANCE && getWorld().hasLineOfSight(player, this)) {
 			// player is close enough to be seen and has line of sight
 			dir = see(player);
 		} else {

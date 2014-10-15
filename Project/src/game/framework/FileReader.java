@@ -15,6 +15,10 @@ public final class FileReader {
 	
 	final static Charset ENCODING = StandardCharsets.UTF_8;
 	
+	/** Don't let anyone instantiate this class */
+	private FileReader() {
+	}
+	
 	/** Reads all lines in a text file
 	 * @param fileLoc A string referring to the location of the file
 	 * @return A list of strings, one for each line
