@@ -25,6 +25,8 @@ public class Aldric extends NPC {
 	/** Image file imported one and then stored statically */
 	private static Image image;
 	
+	private boolean hasElixir = false;
+	
 	/** Fetches the pre-generated image for the class, or if it has not yet been generated, does so.
 	 * @return Image for Aldric's sprite
 	 */
@@ -46,10 +48,18 @@ public class Aldric extends NPC {
 		super(new Vector2f(SPAWN_X_POS, SPAWN_Y_POS), getImage(), world, NAME, DIALOGUE_LOC);
 	}
 
+	/* (non-Javadoc)
+	 * Speaks line 1 if player does not yet have elixir
+	 * Otherwise, speaks line 2 and takes it.
+	 * @see game.framework.GameObject#interact(game.framework.GameObject)
+	 */
 	@Override
 	public void interact(GameObject o) {
 		if (o instanceof Player) {
 			if (((Player) o).hasElixir()) {
+				hasElixir = true;
+			}
+			if (hasElixir) {
 				speak(2);
 			} else {
 				speak(1);

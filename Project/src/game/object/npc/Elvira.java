@@ -46,6 +46,10 @@ public class Elvira extends NPC {
 		super(new Vector2f(SPAWN_X_POS, SPAWN_Y_POS), getImage(), world,  NAME, DIALOGUE_LOC);
 	}
 	
+	/* (non-Javadoc)
+	 * Speaks line 1 if player is fully healed. If not, heals and speaks line 2
+	 * @see game.framework.GameObject#interact(game.framework.GameObject)
+	 */
 	@Override
 	public void interact(GameObject o) {
 		if (o instanceof Player) {

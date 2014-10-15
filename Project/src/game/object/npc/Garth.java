@@ -46,6 +46,13 @@ public class Garth extends NPC {
 		super(new Vector2f(SPAWN_X_POS, SPAWN_Y_POS), getImage(), world, NAME, DIALOGUE_LOC);
 	}
 
+	/* (non-Javadoc)
+	 * Speaks line 1 if the player does not have the amulet
+	 * Speaks line 2 if the player does not have the tome
+	 * Line 3, sword
+	 * Otherwise line 4
+	 * @see game.framework.GameObject#interact(game.framework.GameObject)
+	 */
 	@Override
 	public void interact(GameObject o) {
 		if (o instanceof Player) {
