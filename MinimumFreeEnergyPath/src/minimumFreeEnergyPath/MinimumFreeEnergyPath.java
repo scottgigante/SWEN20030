@@ -12,7 +12,7 @@ public class MinimumFreeEnergyPath {
 	
 	private static final String filename = "dat/data.dat";
 	
-	private static SimpleWeightedGraph<Vertex, DefaultWeightedEdge> g;
+	private static SimpleWeightedGraph<WeightedVertex, DefaultWeightedEdge> g;
 
 	public static void main(String[] args) {
 		try {
@@ -22,7 +22,7 @@ public class MinimumFreeEnergyPath {
 			System.exit(0);
 		}
 		
-		PrimMinimumSpanningTree<Vertex, DefaultWeightedEdge> prim = new PrimMinimumSpanningTree<Vertex, DefaultWeightedEdge>(g);
+		PrimMinimumSpanningTree<WeightedVertex, DefaultWeightedEdge> prim = new PrimMinimumSpanningTree<WeightedVertex, DefaultWeightedEdge>(g);
 		
 		Set<DefaultWeightedEdge> tree = prim.getMinimumSpanningTreeEdgeSet();		
 		

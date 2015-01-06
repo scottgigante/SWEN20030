@@ -1,7 +1,7 @@
 package minimumFreeEnergyPath;
 
 /* A vertex object with specified weight */
-public class Vertex {
+public class WeightedVertex {
 	
 	private final double x;
 	private final double y;
@@ -19,7 +19,7 @@ public class Vertex {
 		return weight;
 	}
 
-	public Vertex(double x, double y, double weight) {
+	public WeightedVertex(double x, double y, double weight) {
 		super();
 		this.x = x;
 		this.y = y;

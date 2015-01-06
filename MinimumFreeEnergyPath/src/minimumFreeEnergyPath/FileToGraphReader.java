@@ -21,7 +21,7 @@ public final class FileToGraphReader {
 	}
 	
 	/* Reads TSV input file, outputs a graph */
-	protected static SimpleWeightedGraph<Vertex,DefaultWeightedEdge> readGraph(String filename) throws FileNotFoundException {
+	protected static WeightedVertexGraph<DefaultWeightedEdge> readGraph(String filename) throws FileNotFoundException {
 		
 		// read in input file
 		Scanner scanner = new Scanner(new FileReader(filename));
@@ -44,7 +44,7 @@ public final class FileToGraphReader {
 			
 			for (int i=1;i<line.length;i++) {
 				try {
-					vertexArray.add(new Vertex(xHeader.get(i-1),y,parseDouble(line[i])));
+					vertexArray.add(new WeightedVertex(xHeader.get(i-1),y,parseDouble(line[i])));
 				} catch (NumberFormatException e) {
 					// Inf found, ignore it
 				}
@@ -55,25 +55,24 @@ public final class FileToGraphReader {
 		vertexArray.setYHeader(yHeader);
 		
 		// add the root node to the graph - this helps with Prim's alg later
-		SimpleWeightedGraph<Vertex, DefaultWeightedEdge> g = new SimpleWeightedGraph<Vertex, DefaultWeightedEdge>(DefaultWeightedEdge.class);
-		for (Vertex v : vertexArray) {
+		WeightedVertexGraph<DefaultWeightedEdge> g = new WeightedVertexGraph<DefaultWeightedEdge>(DefaultWeightedEdge.class);
+		for (WeightedVertex v : vertexArray) {
 			if (vertexArray.isRoot(v)) {
 				g.addVertex(v);
 			}
 		}
 		// now add the rest of them
-		for (Vertex v : vertexArray) {
+		for (WeightedVertex v : vertexArray) {
 			g.addVertex(v);
 		}
 		
 		// add edges to graph
-		for (Vertex v1 : vertexArray) {
-			for (Vertex v2 : vertexArray) {
+		for (WeightedVertex v1 : vertexArray) {
+			for (WeightedVertex v2 : vertexArray) {
 				// avoid doing this twice for every edge
 				if (vertexArray.indexOf(v2) > vertexArray.indexOf(v1)) {
 					if (vertexArray.isAdjacent(v1, v2)) {
-						DefaultWeightedEdge e = g.addEdge(v1, v2);
-						g.setEdgeWeight(e, Math.abs(v1.getWeight()-v2.getWeight()));
+						g.addEdge(v1, v2);
 					}
 				}
 			}
