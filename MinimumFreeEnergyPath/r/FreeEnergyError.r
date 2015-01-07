@@ -146,6 +146,9 @@ ComputeFreeEnergy = function(filename,sample=TRUE) {
   colnames(O_error) = y
   write.table(t(O_error),sprintf("%s%s_error_%s",DAT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
   
+  ## Run Java code to find shortest path
+  system(paste0("java ../bin/minimumFreeEnergyPath/MinimumFreeEnergyPath ",DAT_PREFIX,filename,x[length(x)],y[1]))
+  
   pdf(sprintf("%s%s_%s.pdf",PDF_PREFIX,OUTPUT_PREFIX,filename))
   filled.contour(x,y,z_energy,main=filename,xlab="End-to-End Distance (Å)",ylab="Alpha Helicity", zlim=c(0,20), color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100)
   dev.off()

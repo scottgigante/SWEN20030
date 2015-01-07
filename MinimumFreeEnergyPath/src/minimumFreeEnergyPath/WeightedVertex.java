@@ -27,7 +27,7 @@ public class WeightedVertex {
 	}
 	
 	public String toString() {
-		return getX() + " " + getY() + " " + getWeight();
+		return getX() + "\t" + getY() + "\t" + getWeight();
 	}
 	
 }

@@ -16,7 +16,7 @@ public class MinimumFreeEnergyPath {
 	private static final String filename = "dat/free_energy_select_above_delete_yes_10_not-normalized.dat";
 	
 	// constants
-	private static final String OUTPUT_SUFFIX = "_path";
+	private static final String OUTPUT_SUFFIX = "_path.dat";
 	
 	private static WeightedVertexGraph g;
 
