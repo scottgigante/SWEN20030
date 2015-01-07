@@ -1,30 +1,56 @@
 package minimumFreeEnergyPath;
 
 import java.io.FileNotFoundException;
-import java.util.Set;
+import java.util.List;
 
-import org.jgrapht.alg.PrimMinimumSpanningTree;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
 
 
+/** Finds the molecular shortest path between a point on the free energy surface and the minimum
+ * @author Scott Gigante
+ * @since 07-Jan-2015
+ */
 public class MinimumFreeEnergyPath {
 	
-	private static final String filename = "dat/data.dat";
+	// debug ONLY
+	private static final String filename = "dat/free_energy_select_above_delete_yes_10_not-normalized.dat";
 	
-	private static SimpleWeightedGraph<WeightedVertex, DefaultWeightedEdge> g;
+	// constants
+	private static final String OUTPUT_SUFFIX = "_path";
+	
+	private static WeightedVertexGraph g;
 
+	/** Main method run from command line. Requires tabulated free energy surface and x and y coordinates of the starting position
+	 * @param args Command line arguments. Usage: java MinimumFreeEnergyPath <filename> <xcoord> <ycoord>
+	 */
 	public static void main(String[] args) {
+		if (args.length != 3) {
+			//printUsageMessage();
+			args = new String[3];
+			args[0] = filename;
+			args[1] = "32";
+			args[2] = "0";
+		}
 		try {
-			g = FileToGraphReader.readGraph(filename);
+			String fileName = args[0];
+			double xStart = Double.parseDouble(args[1]);
+			double yStart = Double.parseDouble(args[2]);
+			g = FileUtility.readToGraph(fileName, xStart, yStart);
+			
+			List<DefaultWeightedEdge> path = MolecularShortestPath.findPathBetween(g, g.getStartVertex(), g.getEndVertex());
+			
+			FileUtility.writeFromPath(fileName + OUTPUT_SUFFIX, g, path);
+		} catch (NumberFormatException e) {
+			System.out.println("Coordinates must be numeric.");
+			printUsageMessage();
 		} catch (FileNotFoundException e) {
-			System.out.println("File " + filename + " not found.");
+			System.out.println("File " + args[0] + " not found.");
 			System.exit(0);
 		}
-		
-		PrimMinimumSpanningTree<WeightedVertex, DefaultWeightedEdge> prim = new PrimMinimumSpanningTree<WeightedVertex, DefaultWeightedEdge>(g);
-		
-		Set<DefaultWeightedEdge> tree = prim.getMinimumSpanningTreeEdgeSet();		
-		
+	}
+	
+	private static void printUsageMessage() {
+		System.out.println("Usage: java MinimumFreeEnergyPath <filename> <xcoord> <ycoord>");
+		System.exit(0);
 	}
 }

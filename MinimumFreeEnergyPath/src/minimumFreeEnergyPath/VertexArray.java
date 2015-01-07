@@ -8,8 +8,6 @@ public class VertexArray extends ArrayList<WeightedVertex> {
 	private ArrayList<Double> xHeader;
 	private ArrayList<Double> yHeader;
 	
-	private WeightedVertex root;
-	
 	public void setXHeader(ArrayList<Double> xHeader) {
 		this.xHeader = xHeader;
 	}
@@ -18,23 +16,33 @@ public class VertexArray extends ArrayList<WeightedVertex> {
 		this.yHeader = yHeader;
 	}
 	
-	/** Checks if the vertex fullfils hard coded requirement for the 'root node', in this case top right
-	 * @param v The vertex to be checked
-	 * @return True, it's the root. False, it's not.
+	/** Finds the vertex at given coordinates, if it exists
+	 * @return The vertex at (x,y), or null if there isn't one
 	 */
-	public boolean isRoot(WeightedVertex v) {
-		if (root != null) {
-			return v == root;
-		} else {
-			if (v.getX() == xHeader.get(xHeader.size()-1) && v.getY() == yHeader.get(0)) {
-				root = v;
-				return true;
-			} else {
-				return false;
+	public WeightedVertex getAtCoords(double x, double y) {
+		for (WeightedVertex v : this) {
+			if (v.getX() == x && v.getY() == y) {
+				return v;
 			}
 		}
+		return null;
 	}
 	
+	/** Finds the vertex at given weight, if it exists
+	 * @return The vertex with given weight, or null if there isn't one
+	 */
+	public WeightedVertex getAtWeight(double weight) {
+		for (WeightedVertex v : this) {
+			if (v.getWeight() == weight) {
+				return v;
+			}
+		}
+		return null;
+	}
+	
+	/** Checks if two vertices are adjacent
+	 * @return True if they are adjacent, false otherwise
+	 */
 	public boolean isAdjacent(WeightedVertex v1, WeightedVertex v2) {
 		return Math.abs(xHeader.indexOf(v1.getX()) - xHeader.indexOf(v2.getX())) <= 1 &&  Math.abs(yHeader.indexOf(v1.getY()) - yHeader.indexOf(v2.getY())) <= 1;
 	}

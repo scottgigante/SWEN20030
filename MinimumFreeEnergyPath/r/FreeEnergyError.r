@@ -118,35 +118,40 @@ ComputeFreeEnergy = function(filename,sample=TRUE) {
   R = R[is.finite(G)]
   G = G[is.finite(G)]
 
-  source("writeLog.r")
   q_sd = if (sample) SampleStandardDeviation(u,n) else CalculateStandardDeviation(u,w,T,n,q)
   G_sd = K*t*sqrt((q_sd/q)^2+(q_sd[which.max(q)]/max(q))^2)
   
   ## Convert to meaningful format. Cluster 235 refers to d=23, a=0.5
   d = floor(R/ALPHA_SCALE)
   a = R%%ALPHA_SCALE
-  z = matrix(Inf,nrow=max(d),ncol=ALPHA_SCALE) # free energy infinite where inaccessible
-  e = matrix(Inf,nrow=max(d),ncol=ALPHA_SCALE) 
+  z_energy = matrix(Inf,nrow=max(d),ncol=ALPHA_SCALE) # free energy infinite where inaccessible
+  z_error = matrix(Inf,nrow=max(d),ncol=ALPHA_SCALE) 
   x = 1:max(d)
   y = (0:(ALPHA_SCALE-1))/ALPHA_SCALE
-  O = matrix("",nrow=max(d),ncol=ALPHA_SCALE)
+  O_energy = matrix("",nrow=max(d),ncol=ALPHA_SCALE)
+  O_error = matrix("",nrow=max(d),ncol=ALPHA_SCALE)
   for (i in 1:length(G)) {
-    z[d[i],a[i]+1]=G[i]
-    e[d[i],a[i]+1]=G_sd[i]
-    O[d[i],a[i]+1]=sprintf("%f ± %f",G[i],G_sd[i])
+    z_energy[d[i],a[i]+1]=G[i]
+    z_error[d[i],a[i]+1]=G_sd[i]
+    O_energy[d[i],a[i]+1]=sprintf("%f",G[i])
+    O_error[d[i],a[i]+1]=sprintf("%f ± %f",G[i],G_sd[i])
   }
   
   ## Print to a data file
-  rownames(O) = x
-  colnames(O) = y
-  write.table(t(O),sprintf("%s%s_%s",DAT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
+  rownames(O_energy) = x
+  colnames(O_energy) = y
+  write.table(t(O_energy),sprintf("%s%s_%s",DAT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
+  
+  rownames(O_error) = x
+  colnames(O_error) = y
+  write.table(t(O_error),sprintf("%s%s_error_%s",DAT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
   
   pdf(sprintf("%s%s_%s.pdf",PDF_PREFIX,OUTPUT_PREFIX,filename))
-  filled.contour(x,y,z,main=filename,xlab="End-to-End Distance (Å)",ylab="Alpha Helicity", zlim=c(0,20), color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100)
+  filled.contour(x,y,z_energy,main=filename,xlab="End-to-End Distance (Å)",ylab="Alpha Helicity", zlim=c(0,20), color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100)
   dev.off()
 
   pdf(sprintf("%s%s_error_%s.pdf",PDF_PREFIX,OUTPUT_PREFIX, filename))
-  filled.contour(x,y,e,main=filename,xlab="End-to-End Distance (Å)",ylab="Alpha Helicity", zlim=c(0,1), color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100)
+  filled.contour(x,y,z_error,main=filename,xlab="End-to-End Distance (Å)",ylab="Alpha Helicity", zlim=c(0,1), color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100)
   dev.off()
 }
 

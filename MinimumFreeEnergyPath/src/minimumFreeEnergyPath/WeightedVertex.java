@@ -26,6 +26,8 @@ public class WeightedVertex {
 		this.weight = weight;
 	}
 	
-	
+	public String toString() {
+		return getX() + " " + getY() + " " + getWeight();
+	}
 	
 }
