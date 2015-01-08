@@ -1,3 +1,6 @@
+## Writes and reads logs of variables in R
+## Scott Gigante, scottgigante@gmail.com, Dec 2014
+
 INPUT_PREFIX = "../dat/"
 
 writeLog = function(M,name=deparse(substitute(M))) {

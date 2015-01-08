@@ -1,6 +1,6 @@
 # Computes the Gibbs free energy of all given states from a Markov
 # transition matrix of probabilities between said states
-# Scott Gigante, gigantes@student.unimelb.edu.au, Nov 2014
+# Scott Gigante, scottgigante@gmail.com, Nov 2014
 
 library(matrixStats)
 library(gtools)
@@ -8,14 +8,15 @@ library(gtools)
 ## Constants
 DEFAULT_TEMP = 300 # temperature if none is given
 DEFAULT_FILENAME = "select_above_delete_yes_05.dat"
+DEFAULT_ALPHA_SCALE = 10 # number of possible alpha values
 R_OFFSET = 1 # rows in input given from 0, r counts from 1 (wut)
 TOLERANCE = 0.01 # tolerance for error
 K = 0.001987204118 # Boltzmann constant in kcal/mol/K
 DAT_PREFIX = "../dat/"
 PDF_PREFIX = "../pdf/"
-OUTPUT_PREFIX = "free_energy" # to be prepended to input file name for output
+OUTPUT_PREFIX = "free_energy_" # to be prepended to input file name for output
+PATH_SUFFIX = "_path.dat" # to be appended to path file
 DEBUG = TRUE # toggles debug functions
-ALPHA_SCALE = 10 # number of possible alpha values
 
 ## Define functions
 
@@ -71,7 +72,7 @@ SampleStandardDeviation = function(u,n=nrow(u),samples=1000) {
 
 # Reads transition data from a file
 # Prints free energy and error values in text and plot form
-ComputeFreeEnergy = function(filename,sample=TRUE) {
+ComputeFreeEnergy = function(filename,t,alpha_scale,sample=TRUE) {
   A = read.table(paste0(DAT_PREFIX,filename))  
   
   ## For especially large data sets, better to remove all zero data first
@@ -122,14 +123,14 @@ ComputeFreeEnergy = function(filename,sample=TRUE) {
   G_sd = K*t*sqrt((q_sd/q)^2+(q_sd[which.max(q)]/max(q))^2)
   
   ## Convert to meaningful format. Cluster 235 refers to d=23, a=0.5
-  d = floor(R/ALPHA_SCALE)
-  a = R%%ALPHA_SCALE
-  z_energy = matrix(Inf,nrow=max(d),ncol=ALPHA_SCALE) # free energy infinite where inaccessible
-  z_error = matrix(Inf,nrow=max(d),ncol=ALPHA_SCALE) 
+  d = floor(R/alpha_scale)
+  a = R%%alpha_scale
+  z_energy = matrix(Inf,nrow=max(d),ncol=alpha_scale) # free energy infinite where inaccessible
+  z_error = matrix(Inf,nrow=max(d),ncol=alpha_scale) 
   x = 1:max(d)
-  y = (0:(ALPHA_SCALE-1))/ALPHA_SCALE
-  O_energy = matrix("",nrow=max(d),ncol=ALPHA_SCALE)
-  O_error = matrix("",nrow=max(d),ncol=ALPHA_SCALE)
+  y = (0:(alpha_scale-1))/alpha_scale
+  O_energy = matrix("",nrow=max(d),ncol=alpha_scale)
+  O_error = matrix("",nrow=max(d),ncol=alpha_scale)
   for (i in 1:length(G)) {
     z_energy[d[i],a[i]+1]=G[i]
     z_error[d[i],a[i]+1]=G_sd[i]
@@ -140,21 +141,28 @@ ComputeFreeEnergy = function(filename,sample=TRUE) {
   ## Print to a data file
   rownames(O_energy) = x
   colnames(O_energy) = y
-  write.table(t(O_energy),sprintf("%s%s_%s",DAT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
+  write.table(t(O_energy),sprintf("%s%s%s",DAT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
   
   rownames(O_error) = x
   colnames(O_error) = y
-  write.table(t(O_error),sprintf("%s%s_error_%s",DAT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
+  write.table(t(O_error),sprintf("%s%serror_%s",DAT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
   
   ## Run Java code to find shortest path
-  system(paste0("java ../bin/minimumFreeEnergyPath/MinimumFreeEnergyPath ",DAT_PREFIX,filename,x[length(x)],y[1]))
+  system(sprintf("java -jar ../MinimumFreeEnergyPath.jar %s%s%s %f %f",DAT_PREFIX,OUTPUT_PREFIX,filename,x[length(x)],y[1]))
+  # Plot the shortest path line graph
+  path = read.table(paste0(DAT_PREFIX,OUTPUT_PREFIX,filename,PATH_SUFFIX))
+  pathx = c(0:(nrow(path)-1))
+  pathy = path[,3]
   
-  pdf(sprintf("%s%s_%s.pdf",PDF_PREFIX,OUTPUT_PREFIX,filename))
-  filled.contour(x,y,z_energy,main=filename,xlab="End-to-End Distance (Å)",ylab="Alpha Helicity", zlim=c(0,20), color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100)
+  plot = qplot(pathx, pathy, geom="line",xlab="Path Length (bins)",ylab="Gibbs Free Energy (kcal/mol)", color=pathy)
+  ggsave(sprintf("%s%s.pdf",PDF_PREFIX,filename), plot)
+  
+  pdf(sprintf("%s%s%s.pdf",PDF_PREFIX,OUTPUT_PREFIX,filename))
+  filled.contour(x,y,z_energy,main="Free Energy (kcal/mol)", sub=filename,xlab="End-to-End Distance (Å)",ylab="Alpha Helicity", zlim=c(0,10), color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100, plot.axes={lines(path[,1],path[,2],type="l",col="purple",lty=1,lwd=3); axis(1); axis(2)})
   dev.off()
 
-  pdf(sprintf("%s%s_error_%s.pdf",PDF_PREFIX,OUTPUT_PREFIX, filename))
-  filled.contour(x,y,z_error,main=filename,xlab="End-to-End Distance (Å)",ylab="Alpha Helicity", zlim=c(0,1), color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100)
+  pdf(sprintf("%s%serror_%s.pdf",PDF_PREFIX,OUTPUT_PREFIX, filename))
+  filled.contour(x,y,z_error,main="Free Energy Error (kcal/mol)", sub=filename,xlab="End-to-End Distance (Å)",ylab="Alpha Helicity", zlim=c(0,1), color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100)
   dev.off()
 }
 
@@ -179,22 +187,29 @@ checkDetailedBalance = function(T) {
 # Read in command line arguments
 args = commandArgs(trailingOnly=TRUE)
 if (length(args) < 1) {
-	message("Usage: RScript ComputeFreeEnergy.r <inputfiles> <temperature>")
-	message(paste0("Using default filename: ", DEFAULT_FILENAME))
+  message("Usage: RScript ComputeFreeEnergy.r <inputfiles> <temperature>")
+  message(paste0("Using default filename: ", DEFAULT_FILENAME))
   args=c(DEFAULT_FILENAME)
 }
-if (suppressWarnings(is.na(as.numeric(args[length(args)])))) {
+if (suppressWarnings(is.na(as.numeric(args[1])))) {
   message("Usage: RScript ComputeFreeEnergy.r <inputfiles> <temperature>")
   message(paste0("Using default temperature: ", DEFAULT_TEMP))
-  args = c(args, DEFAULT_TEMP)
+  args = c(DEFAULT_TEMP, args)
 }
-t = as.numeric(args[length(args)])
+if (suppressWarnings(is.na(as.numeric(args[2])))) {
+  message("Usage: RScript ComputeFreeEnergy.r <inputfiles> <temperature>")
+  message(paste0("Using default alpha scale: ", DEFAULT_ALPHA_SCALE))
+  args = c(DEFAULT_ALPHA_SCALE, args)
+}
+t = as.numeric(args[1])
+alpha_scale = as.numeric(args[2])
 
 # Run!
 message(sprintf("Temperature = %d K",t))
-for (i in 1:(length(args)-1)) {
+message(sprintf("Alpha Scale = %d",alpha_scale))
+for (i in 3:(length(args))) {
   message(paste0(args[i],": Calculating free energies"))
-  message(sprintf("%s: Complete in %f s", args[i], system.time(ComputeFreeEnergy(args[i]))[1]))
+  message(sprintf("%s: Complete in %f s", args[i], system.time(ComputeFreeEnergy(args[i], t, alpha_scale))[1]))
   #message(paste0(args[i],": Calculating free energies without sampling"))
   #message(sprintf("%s: Complete in %f s", args[i], system.time(ComputeFreeEnergy(args[i],FALSE))[1]))
 }

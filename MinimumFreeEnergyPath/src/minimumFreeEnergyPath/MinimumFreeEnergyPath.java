@@ -12,9 +12,6 @@ import org.jgrapht.graph.DefaultWeightedEdge;
  */
 public class MinimumFreeEnergyPath {
 	
-	// debug ONLY
-	private static final String filename = "dat/free_energy_select_above_delete_yes_10_not-normalized.dat";
-	
 	// constants
 	private static final String OUTPUT_SUFFIX = "_path.dat";
 	
@@ -25,11 +22,7 @@ public class MinimumFreeEnergyPath {
 	 */
 	public static void main(String[] args) {
 		if (args.length != 3) {
-			//printUsageMessage();
-			args = new String[3];
-			args[0] = filename;
-			args[1] = "32";
-			args[2] = "0";
+			printUsageMessage();
 		}
 		try {
 			String fileName = args[0];
@@ -42,6 +35,7 @@ public class MinimumFreeEnergyPath {
 			FileUtility.writeFromPath(fileName + OUTPUT_SUFFIX, g, path);
 		} catch (NumberFormatException e) {
 			System.out.println("Coordinates must be numeric.");
+			e.printStackTrace(System.out);
 			printUsageMessage();
 		} catch (FileNotFoundException e) {
 			System.out.println("File " + args[0] + " not found.");

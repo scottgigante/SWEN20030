@@ -42,6 +42,7 @@ package minimumFreeEnergyPath;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Set;
 
 import org.jgrapht.GraphPath;
@@ -182,6 +183,8 @@ public final class MolecularShortestPath
         List<WeightedVertex> visited = new ArrayList<WeightedVertex>();
         WeightedVertex currentVertex = startVertex;
         double pathLength = 0;
+        PriorityQueue<Double> weightList = new PriorityQueue<Double>();
+        weightList.add(Double.POSITIVE_INFINITY);
         
         while (currentVertex != endVertex) {
         	visited.add(currentVertex);
@@ -200,15 +203,27 @@ public final class MolecularShortestPath
         		}
         	}
         	
-        	if (!init) {
-        		// reached a dead end; all adjacent nodes have been visited
+        	// for all the vertices we didn't visit, add their weights to a sorted list
+        	for (DefaultWeightedEdge e : edgeSet) {
+        		WeightedVertex v = graph.getEdgeTarget(e);
+        		if (e != minEdge && !visited.contains(v)) {
+        			weightList.add(v.getWeight());
+        		}
+        	}
+        	
+        	if (!init || graph.getEdgeTarget(minEdge).getWeight() > weightList.peek()) {
+        		// reached a dead end; all adjacent nodes have been visited or a previous node is a better choice
         		DefaultWeightedEdge previousEdge = edgeList.remove(edgeList.size()-1);
+	        	pathLength -= Math.abs(graph.getEdgeWeight(previousEdge));
         		currentVertex = graph.getEdgeSource(previousEdge);
         	} else {        	
 	        	// proceed to the next node
 	        	edgeList.add(minEdge);
 	        	pathLength += Math.abs(graph.getEdgeWeight(minEdge));
 	        	currentVertex = graph.getEdgeTarget(minEdge);
+	        	if (currentVertex.getWeight() == weightList.peek()) {
+	        		weightList.poll();
+	        	}
         	}
         }
 
