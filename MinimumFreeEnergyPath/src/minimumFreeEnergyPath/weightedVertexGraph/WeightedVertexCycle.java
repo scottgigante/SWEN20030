@@ -19,19 +19,20 @@ public class WeightedVertexCycle {
 	 */
 	public WeightedVertexCycle(WeightedVertexGraph graph, WeightedVertex start) {
 		vertices = new ArrayList<WeightedVertex>();
-		this.add(start);
 		
-		// add all other connected vertices
+		// add all connected vertices
 		WeightedVertex next = start;
 		do {
+        	this.add(next);
             DefaultWeightedEdge minEdge = graph.getMinEdge(next);
         	
         	next = graph.getEdgeTarget(minEdge);
         	
-        	if (next.getCycle() != null) {
+        	WeightedVertexCycle cycle = next.getCycle();
+        	if (cycle != null && cycle != this) {
         		// already part of another cycle, merge them
+        		this.merge(cycle);
         	}
-        	this.add(next);
 		} while (!this.contains(next));
 	}
 	
@@ -49,5 +50,21 @@ public class WeightedVertexCycle {
 	
 	public boolean contains(WeightedVertex v) {
 		return vertices.contains(v);
+	}
+	
+	private void merge(WeightedVertexCycle cycle) {
+		for (WeightedVertex v : vertices) {
+			cycle.add(v);
+		}
+		vertices.clear();
+	}
+	
+	public void merge(WeightedVertex vertex) {
+		WeightedVertexCycle cycle = vertex.getCycle();
+		if (cycle != null) {
+			merge(cycle);
+		} else {
+			add(vertex);
+		}
 	}
 }

@@ -1,6 +1,7 @@
 package minimumFreeEnergyPath.weightedVertexGraph;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -42,16 +43,20 @@ public class WeightedVertexGraph extends SimpleDirectedWeightedGraph<WeightedVer
 	 * @param vertex The vertex to begin from
 	 * @return A set of edges
 	 */
-	public Set<DefaultWeightedEdge> outgoingEdgesOfCycle(WeightedVertex vertex) {
-		Set<DefaultWeightedEdge> edgeSet = new HashSet<DefaultWeightedEdge>();
+	private Set<DefaultWeightedEdge> outgoingEdgesOfCycle(WeightedVertex vertex) {
 		WeightedVertexCycle cycle = vertex.getCycle();
 		if (cycle != null) {
+			Set<DefaultWeightedEdge> edgeSet = new HashSet<DefaultWeightedEdge>();
+			// add all outgoing edges
 			for (WeightedVertex v : cycle.getVertices()) {
 				edgeSet.addAll(super.outgoingEdgesOf(v));
 			}
-			for (DefaultWeightedEdge e : edgeSet) {
-				if (cycle.contains(this.getEdgeTarget(e))) {
-					edgeSet.remove(e);
+			
+			// remove internal edges
+			for (Iterator<DefaultWeightedEdge> i = edgeSet.iterator(); i.hasNext();) {
+			    DefaultWeightedEdge e = i.next();
+			    if (cycle.contains(this.getEdgeTarget(e))) {
+					i.remove();
 				}
 			}
 			return edgeSet;
@@ -60,16 +65,12 @@ public class WeightedVertexGraph extends SimpleDirectedWeightedGraph<WeightedVer
 		}
 	}
 	
-	/** Finds the lowest (or most negative) weighted edge outgoing from a vertex
-	 * @param vertex The vertex to be searched
-	 * @return The lowest weighted edge
-	 */
-	public DefaultWeightedEdge getMinEdge(WeightedVertex vertex) {
+	private DefaultWeightedEdge minEdgeOfSet(Set<DefaultWeightedEdge> edgeSet) {
 		double minWeight = Double.POSITIVE_INFINITY;
     	DefaultWeightedEdge minEdge = null;
     	
     	// take the smallest edge attached to current node
-    	for (DefaultWeightedEdge e : this.outgoingEdgesOf(vertex)) {
+    	for (DefaultWeightedEdge e : edgeSet) {
     		double w = this.getEdgeWeight(e);
     		if (w < minWeight) {
     			minEdge = e;
@@ -80,26 +81,19 @@ public class WeightedVertexGraph extends SimpleDirectedWeightedGraph<WeightedVer
     	return minEdge;
 	}
 	
+	/** Finds the lowest (or most negative) weighted edge outgoing from a vertex
+	 * @param vertex The vertex to be searched
+	 * @return The lowest weighted edge
+	 */
+	public DefaultWeightedEdge getMinEdge(WeightedVertex vertex) {
+		return minEdgeOfSet(this.outgoingEdgesOf(vertex));
+	}
+	
 	/** Finds the lowest (or most negative) weighted edge outgoing from a cycle
 	 * @param vertex Any one of the vertices contained in the cycle
 	 * @return The lowest weighted edge
 	 */
 	public DefaultWeightedEdge getMinEdgeInCycle(WeightedVertex vertex) {
-    	DefaultWeightedEdge minEdge = getMinEdge(vertex);
-		double minWeight = this.getEdgeWeight(minEdge);
-    	
-		WeightedVertexCycle cycle = vertex.getCycle();
-		if (cycle != null) {		
-			for (WeightedVertex v : cycle.getVertices()) {
-				DefaultWeightedEdge e = getMinEdge(v);
-				double w = this.getEdgeWeight(e);
-				if (w < minWeight) {
-					minEdge = e;
-					minWeight = w;
-				}
-			}
-		}
-		
-		return minEdge;
+    	return minEdgeOfSet(this.outgoingEdgesOfCycle(vertex));
 	}
 }

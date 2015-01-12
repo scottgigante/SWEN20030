@@ -26,7 +26,7 @@ public class MinimumFreeEnergyPath {
 		if (args.length != 3) {
 			//printUsageMessage();
 			args = new String[3];
-			args[0] = "dat/free_energy_select_above_delete_yes_20_not-normalized.dat";
+			args[0] = "dat/free_energy_select_above_delete_yes_5_not-normalized.dat";
 			args[1] = "30";
 			args[2] = "0";
 		}

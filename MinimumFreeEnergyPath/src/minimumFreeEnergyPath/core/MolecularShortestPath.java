@@ -192,6 +192,7 @@ public final class MolecularShortestPath
         List<DefaultWeightedEdge> edgeList = new ArrayList<DefaultWeightedEdge>();
         List<WeightedVertex> visited = new ArrayList<WeightedVertex>();
         WeightedVertex currentVertex = startVertex;
+        int reverse = 1;
         
         while (currentVertex != endVertex) {
         	visited.add(currentVertex);
@@ -199,31 +200,47 @@ public final class MolecularShortestPath
         	DefaultWeightedEdge minEdge = graph.getMinEdge(currentVertex);
         	DefaultWeightedEdge minCycleEdge = graph.getMinEdgeInCycle(currentVertex);
         	
-        	if (minEdge != null && visited.contains(graph.getEdgeTarget(minEdge))) {
+        	WeightedVertex minCycleEdgeTarget = graph.getEdgeTarget(minCycleEdge);
+        	while (minEdge != null && visited.contains(minCycleEdgeTarget)) {
         		// we've found a cycle!
-        		currentVertex.setCycle(new WeightedVertexCycle(graph, currentVertex));
-        	} else if (minEdge == null) {
-        		// reached a dead end
-        		DefaultWeightedEdge previousEdge = edgeList.remove(edgeList.size()-1);
-        		currentVertex = graph.getEdgeSource(previousEdge);
-        	} else if (minEdge != minCycleEdge) {
-        		// a previous node within the cycle is a better choice
+        		WeightedVertexCycle currentCycle = currentVertex.getCycle();
+        		WeightedVertexCycle targetCycle = minCycleEdgeTarget.getCycle();
+        		if (currentCycle != null) {
+        			currentCycle.merge(minCycleEdgeTarget);
+        		} else if (targetCycle != null) {
+        			targetCycle.merge(currentVertex);
+        		} else {
+        			currentCycle = new WeightedVertexCycle(graph, currentVertex);
+        		}
+        		minCycleEdge = graph.getMinEdgeInCycle(currentVertex);
+        		minCycleEdgeTarget = graph.getEdgeTarget(minCycleEdge);
+        	}
+        	
+        	if (minEdge == null) {
+        		// reached a dead end, go back
         		DefaultWeightedEdge previousEdge = edgeList.get(edgeList.size()-1);
+        		minCycleEdge = graph.getEdge(currentVertex, graph.getEdgeSource(previousEdge));
+        	}
+        	
+        	if (!graph.outgoingEdgesOf(currentVertex).contains(minCycleEdge)) {
+        		// a previous node within the cycle is a better choice
+        		DefaultWeightedEdge previousEdge = edgeList.get(edgeList.size()-reverse);
         		WeightedVertex outVertex = graph.getEdgeSource(minCycleEdge);
         		if (outVertex.getCycle().contains(graph.getEdgeSource(previousEdge))) {
         			// we're still within the cycle, step back
-        			edgeList.remove(edgeList.size()-1);
-            		currentVertex = graph.getEdgeSource(previousEdge);
+        			minCycleEdge = graph.getEdge(currentVertex, graph.getEdgeSource(previousEdge));
         		} else {
-        			// going back would cause us to leave the cycle, find a new path
-        			edgeList.addAll(this.createEdgeList(graph, currentVertex, outVertex, radius));
-        			currentVertex = outVertex;
+        			// this shouldn't happen anymore
+        			System.out.println("uh oh");
         		}
-        	} else {        	
-	        	// proceed to the next node
-	        	edgeList.add(minEdge);
-	        	currentVertex = graph.getEdgeTarget(minEdge);
+        		reverse += 2;
+        	} else {
+        		reverse = 1;
         	}
+        	
+        	// proceed to the next node
+        	edgeList.add(minCycleEdge);
+        	currentVertex = graph.getEdgeTarget(minCycleEdge);
         }
 
     	return edgeList;
