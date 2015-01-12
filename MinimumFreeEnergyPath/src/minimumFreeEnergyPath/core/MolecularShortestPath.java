@@ -42,6 +42,7 @@ package minimumFreeEnergyPath.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import minimumFreeEnergyPath.weightedVertexGraph.WeightedVertex;
 import minimumFreeEnergyPath.weightedVertexGraph.WeightedVertexCycle;
@@ -107,6 +108,8 @@ public final class MolecularShortestPath
         }
 
         List<DefaultWeightedEdge> edgeList = createEdgeList(graph, startVertex, endVertex, radius);
+        
+        removeDeadEnds(graph, edgeList);
         
         path =
                 new GraphPathImpl<WeightedVertex, DefaultWeightedEdge>(
@@ -245,6 +248,32 @@ public final class MolecularShortestPath
 
     	return edgeList;
         
+    }
+
+    /** Removes any dead-end paths from a list of edges in order to remove noise
+     * @param edgeList The list of edges to be parsed
+     */
+    public void removeDeadEnds(WeightedVertexGraph graph, List<DefaultWeightedEdge> edgeList) {
+	    ListIterator<DefaultWeightedEdge> i = edgeList.listIterator();
+	    if (i.hasNext()) {
+	    	DefaultWeightedEdge currentEdge = i.next();
+	    	while (i.hasNext()) {
+	    		DefaultWeightedEdge previousEdge = currentEdge;
+	    		currentEdge = i.next();
+	    		if (graph.getEdgeSource(currentEdge) == graph.getEdgeTarget(previousEdge) && graph.getEdgeTarget(currentEdge) == graph.getEdgeSource(previousEdge)) {
+	    			// dead end! remove currentEdge
+	    			i.remove();
+	    			// and remove previousEdge
+	    			i.previous();
+	    			i.remove();
+	    			// and now step back 
+	    			if (i.hasPrevious()) {
+	    				currentEdge = i.previous();
+	    				i.next();
+	    			}
+	    		}
+	    	}
+	    }
     }
 }
 
