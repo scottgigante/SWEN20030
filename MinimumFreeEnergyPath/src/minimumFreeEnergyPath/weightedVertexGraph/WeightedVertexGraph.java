@@ -1,4 +1,4 @@
-package minimumFreeEnergyPath;
+package minimumFreeEnergyPath.weightedVertexGraph;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;

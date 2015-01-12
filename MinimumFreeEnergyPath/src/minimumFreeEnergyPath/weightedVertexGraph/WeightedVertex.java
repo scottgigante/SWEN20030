@@ -1,4 +1,4 @@
-package minimumFreeEnergyPath;
+package minimumFreeEnergyPath.weightedVertexGraph;
 
 /* A vertex object with specified weight */
 public class WeightedVertex {

@@ -1,4 +1,4 @@
-package minimumFreeEnergyPath;
+package minimumFreeEnergyPath.weightedVertexGraph;
 
 import java.util.ArrayList;
 

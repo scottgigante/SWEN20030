@@ -1,7 +1,9 @@
-package minimumFreeEnergyPath;
+package minimumFreeEnergyPath.core;
 
 import java.io.FileNotFoundException;
 import java.util.List;
+
+import minimumFreeEnergyPath.weightedVertexGraph.WeightedVertexGraph;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 
@@ -22,7 +24,11 @@ public class MinimumFreeEnergyPath {
 	 */
 	public static void main(String[] args) {
 		if (args.length != 3) {
-			printUsageMessage();
+			//printUsageMessage();
+			args = new String[3];
+			args[0] = "dat/free_energy_select_above_delete_yes_20_not-normalized.dat";
+			args[1] = "30";
+			args[2] = "0";
 		}
 		try {
 			String fileName = args[0];
