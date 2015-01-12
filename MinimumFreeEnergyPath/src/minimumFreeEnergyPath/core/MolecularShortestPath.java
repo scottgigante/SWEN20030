@@ -42,9 +42,9 @@ package minimumFreeEnergyPath.core;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import minimumFreeEnergyPath.weightedVertexGraph.WeightedVertex;
+import minimumFreeEnergyPath.weightedVertexGraph.WeightedVertexCycle;
 import minimumFreeEnergyPath.weightedVertexGraph.WeightedVertexGraph;
 
 import org.jgrapht.GraphPath;
@@ -106,7 +106,15 @@ public final class MolecularShortestPath
                 "graph must contain the end vertex");
         }
 
-        createEdgeList(graph, startVertex, endVertex, radius);
+        List<DefaultWeightedEdge> edgeList = createEdgeList(graph, startVertex, endVertex, radius);
+        
+        path =
+                new GraphPathImpl<WeightedVertex, DefaultWeightedEdge>(
+                    graph,
+                    startVertex,
+                    endVertex,
+                    edgeList,
+                    0);
     }
 
     
@@ -174,7 +182,7 @@ public final class MolecularShortestPath
         return alg.getPathEdgeList();
     }
 
-    private void createEdgeList(
+    private List<DefaultWeightedEdge> createEdgeList(
         WeightedVertexGraph graph,
         WeightedVertex startVertex,
         WeightedVertex endVertex, double radius)
@@ -184,53 +192,42 @@ public final class MolecularShortestPath
         List<DefaultWeightedEdge> edgeList = new ArrayList<DefaultWeightedEdge>();
         List<WeightedVertex> visited = new ArrayList<WeightedVertex>();
         WeightedVertex currentVertex = startVertex;
-        double pathLength = 0;
         
         while (currentVertex != endVertex) {
         	visited.add(currentVertex);
         	
-        	// find all the possible outgoing edges on the path so far
-            Set<DefaultWeightedEdge> currentEdgeSet = graph.outgoingEdgesOf(currentVertex);
-            List<DefaultWeightedEdge> edgeSet = new ArrayList<DefaultWeightedEdge>();
-            for (DefaultWeightedEdge e : edgeList) {
-            	edgeSet.addAll(graph.outgoingEdgesOf(graph.getEdgeSource(e)));
-            }
-            edgeSet.addAll(currentEdgeSet);
-            
-        	double minWeight = Double.POSITIVE_INFINITY;
-        	boolean init = false;
-        	DefaultWeightedEdge minEdge = new DefaultWeightedEdge();
+        	DefaultWeightedEdge minEdge = graph.getMinEdge(currentVertex);
+        	DefaultWeightedEdge minCycleEdge = graph.getMinEdgeInCycle(currentVertex);
         	
-        	// take the smallest edge attached to current node
-        	for (DefaultWeightedEdge e : edgeSet) {
-        		if (graph.getEdgeWeight(e) < minWeight && !visited.contains(graph.getEdgeTarget(e))) {
-        			init = true;
-        			minEdge = e;
-        			minWeight = graph.getEdgeWeight(e);
-        		}
-        	}
-        	
-        	if (!init || !currentEdgeSet.contains(minEdge)) {
-        		// reached a dead end; all adjacent nodes have been visited or a previous node is a better choice
+        	if (minEdge != null && visited.contains(graph.getEdgeTarget(minEdge))) {
+        		// we've found a cycle!
+        		currentVertex.setCycle(new WeightedVertexCycle(graph, currentVertex));
+        	} else if (minEdge == null) {
+        		// reached a dead end
         		DefaultWeightedEdge previousEdge = edgeList.remove(edgeList.size()-1);
-	        	pathLength -= Math.abs(graph.getEdgeWeight(previousEdge));
         		currentVertex = graph.getEdgeSource(previousEdge);
+        	} else if (minEdge != minCycleEdge) {
+        		// a previous node within the cycle is a better choice
+        		DefaultWeightedEdge previousEdge = edgeList.get(edgeList.size()-1);
+        		WeightedVertex outVertex = graph.getEdgeSource(minCycleEdge);
+        		if (outVertex.getCycle().contains(graph.getEdgeSource(previousEdge))) {
+        			// we're still within the cycle, step back
+        			edgeList.remove(edgeList.size()-1);
+            		currentVertex = graph.getEdgeSource(previousEdge);
+        		} else {
+        			// going back would cause us to leave the cycle, find a new path
+        			edgeList.addAll(this.createEdgeList(graph, currentVertex, outVertex, radius));
+        			currentVertex = outVertex;
+        		}
         	} else {        	
 	        	// proceed to the next node
 	        	edgeList.add(minEdge);
-	        	pathLength += Math.abs(graph.getEdgeWeight(minEdge));
 	        	currentVertex = graph.getEdgeTarget(minEdge);
         	}
         }
 
-    	
-        path =
-            new GraphPathImpl<WeightedVertex, DefaultWeightedEdge>(
-                graph,
-                startVertex,
-                endVertex,
-                edgeList,
-                pathLength);
+    	return edgeList;
+        
     }
 }
 

@@ -6,6 +6,7 @@ public class WeightedVertex {
 	private final double x;
 	private final double y;
 	private final double weight;
+	private WeightedVertexCycle cycle;
 	
 	public double getX() {
 		return x;
@@ -17,6 +18,14 @@ public class WeightedVertex {
 
 	public double getWeight() {
 		return weight;
+	}
+
+	public WeightedVertexCycle getCycle() {
+		return cycle;
+	}
+
+	public void setCycle(WeightedVertexCycle cycle) {
+		this.cycle = cycle;
 	}
 
 	public WeightedVertex(double x, double y, double weight) {
