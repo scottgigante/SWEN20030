@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import minimumFreeEnergyPath.weightedVertexGraph.VertexArray;
 import minimumFreeEnergyPath.weightedVertexGraph.WeightedVertex;
 import minimumFreeEnergyPath.weightedVertexGraph.WeightedVertexGraph;
 

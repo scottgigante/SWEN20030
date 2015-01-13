@@ -11,7 +11,13 @@ import org.jgrapht.graph.DefaultWeightedEdge;
  */
 public class WeightedVertexCycle {
 	
+	/** List of vertices belonging to the cycle */
 	private ArrayList<WeightedVertex> vertices;
+	
+	// Getters and setters
+	public List<WeightedVertex> getVertices() {
+        return vertices;
+	}
 	
 	/** Create a new cycle object
 	 * @param graph The graph in which the cycle lies
@@ -23,16 +29,19 @@ public class WeightedVertexCycle {
 		// add all connected vertices
 		WeightedVertex next = start;
 		do {
-        	this.add(next);
+			WeightedVertexCycle cycle = next.getCycle();
+        	if (cycle != null && cycle != this) {
+        		// already part of another cycle, merge them
+        		this.merge(cycle);
+        		break;
+        	}
+			
+			this.add(next);
             DefaultWeightedEdge minEdge = graph.getMinEdge(next);
         	
         	next = graph.getEdgeTarget(minEdge);
         	
-        	WeightedVertexCycle cycle = next.getCycle();
-        	if (cycle != null && cycle != this) {
-        		// already part of another cycle, merge them
-        		this.merge(cycle);
-        	}
+        	
 		} while (!this.contains(next));
 	}
 	
@@ -44,14 +53,18 @@ public class WeightedVertexCycle {
 		v.setCycle(this);
 	}
 	
-	public List<WeightedVertex> getVertices() {
-        return vertices;
-	}
-	
+	/** Check if a particular vertex belongs to this cycle
+	 * @param v The vertex to be checked
+	 * @return True if the vertex is contained, false otherwise
+	 */
 	public boolean contains(WeightedVertex v) {
 		return vertices.contains(v);
 	}
 	
+	/** Merge this cycle with another one
+	 * This cycle is made redundant
+	 * @param cycle The cycle to be merged
+	 */
 	private void merge(WeightedVertexCycle cycle) {
 		for (WeightedVertex v : vertices) {
 			cycle.add(v);
@@ -59,9 +72,14 @@ public class WeightedVertexCycle {
 		vertices.clear();
 	}
 	
+	/** Merge this cycle with the cycle belonging to another vertex
+	 * This cycle is made redundant
+	 * If no cycle exists, the vertex is added to this cycle
+	 * @param vertex The vertex whose cycle is to be merged
+	 */
 	public void merge(WeightedVertex vertex) {
 		WeightedVertexCycle cycle = vertex.getCycle();
-		if (cycle != null) {
+		if (cycle != null && !this.contains(vertex)) {
 			merge(cycle);
 		} else {
 			add(vertex);

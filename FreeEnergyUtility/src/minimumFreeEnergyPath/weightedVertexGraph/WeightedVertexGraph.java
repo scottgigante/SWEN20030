@@ -7,22 +7,19 @@ import java.util.Set;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
+/** A graph containing vertices with specified weight
+ * @author Scott Gigante
+ *
+ */
 public class WeightedVertexGraph extends SimpleDirectedWeightedGraph<WeightedVertex, DefaultWeightedEdge> {
 	private static final long serialVersionUID = 1L;
 	
+	/** Specified starting point for pathfinding */
 	private WeightedVertex startVertex;
+	/** Specified ending point for pathfinding */
 	private WeightedVertex endVertex;
 
-	public WeightedVertexGraph() {
-		super(DefaultWeightedEdge.class);
-	}
-	
-	public DefaultWeightedEdge addEdge(WeightedVertex sourceVertex, WeightedVertex targetVertex) {
-		DefaultWeightedEdge e = super.addEdge(sourceVertex, targetVertex);
-		this.setEdgeWeight(e, targetVertex.getWeight()-sourceVertex.getWeight());
-		return e;
-	}
-	
+	// Getters and setters
 	public void setStartVertex(WeightedVertex v) {
 		this.startVertex = v;
 	}
@@ -39,6 +36,22 @@ public class WeightedVertexGraph extends SimpleDirectedWeightedGraph<WeightedVer
 		return endVertex;
 	}
 
+	/** Constructor creates a new WeightedVertexGraph object */
+	public WeightedVertexGraph() {
+		super(DefaultWeightedEdge.class);
+	}
+	
+	/* (non-Javadoc)
+	 * Add a new edge to the graph
+	 * Automatically sets the edge weight based on its source and taregt vertices
+	 * @see org.jgrapht.graph.AbstractBaseGraph#addEdge(java.lang.Object, java.lang.Object)
+	 */
+	public DefaultWeightedEdge addEdge(WeightedVertex sourceVertex, WeightedVertex targetVertex) {
+		DefaultWeightedEdge e = super.addEdge(sourceVertex, targetVertex);
+		this.setEdgeWeight(e, targetVertex.getWeight()-sourceVertex.getWeight());
+		return e;
+	}
+	
 	/** Gets the outgoing edges from a vertex and its attributed cycle if one exists
 	 * @param vertex The vertex to begin from
 	 * @return A set of edges
@@ -65,6 +78,10 @@ public class WeightedVertexGraph extends SimpleDirectedWeightedGraph<WeightedVer
 		}
 	}
 	
+	/** Finds the smallest edge of a set of edges
+	 * @param edgeSet The set to be searched
+	 * @return The smallest edge within edgeSet
+	 */
 	private DefaultWeightedEdge minEdgeOfSet(Set<DefaultWeightedEdge> edgeSet) {
 		double minWeight = Double.POSITIVE_INFINITY;
     	DefaultWeightedEdge minEdge = null;

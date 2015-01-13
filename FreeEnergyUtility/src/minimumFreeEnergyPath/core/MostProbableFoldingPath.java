@@ -41,8 +41,9 @@
 package minimumFreeEnergyPath.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import minimumFreeEnergyPath.weightedVertexGraph.WeightedVertex;
 import minimumFreeEnergyPath.weightedVertexGraph.WeightedVertexCycle;
@@ -55,13 +56,13 @@ import org.jgrapht.graph.GraphPathImpl;
 
 
 /**
- * An implementation of Molecular Shortest Path 
- * Follows lowest edge weight until target node is reached, ignoring all dead ends
+ * An implementation of Most Probable Folding Path 
+ * Follows lowest edge weight until target node is reached, ignoring all dead ends and cycles
  *
- * @author John V. Sichi
+ * @author John V. Sichi, modified by Scott Gigante
  * @since Sep 2, 2003
  */
-public final class MolecularShortestPath
+public final class MostProbableFoldingPath
 {
     
 
@@ -69,7 +70,7 @@ public final class MolecularShortestPath
 
 
     /**
-     * Creates and executes a new MolecularShortestPath algorithm instance. An
+     * Creates and executes a new MostProbableFoldingPath algorithm instance. An
      * instance is only good for a single search; after construction, it can be
      * accessed to retrieve information about the path found.
      *
@@ -78,7 +79,7 @@ public final class MolecularShortestPath
      * @param endVertex the vertex at which the path should end
      * Double.POSITIVE_INFINITY for unbounded search
      */
-    public MolecularShortestPath(
+    public MostProbableFoldingPath(
         WeightedVertexGraph graph,
         WeightedVertex startVertex,
         WeightedVertex endVertex)
@@ -128,20 +129,6 @@ public final class MolecularShortestPath
     }
 
     /**
-     * Return the weighted length of the path found.
-     *
-     * @return path length, or Double.POSITIVE_INFINITY if no path exists
-     */
-    public double getPathLength()
-    {
-        if (path == null) {
-            return Double.POSITIVE_INFINITY;
-        } else {
-            return path.getWeight();
-        }
-    }
-
-    /**
      * Convenience method to find the shortest path via a single static method
      * call. If you need a more advanced search (e.g. limited by radius, or
      * computation of the path length), use the constructor instead.
@@ -157,8 +144,8 @@ public final class MolecularShortestPath
         WeightedVertex startVertex,
         WeightedVertex endVertex)
     {
-        MolecularShortestPath alg =
-            new MolecularShortestPath(
+        MostProbableFoldingPath alg =
+            new MostProbableFoldingPath(
                 graph,
                 startVertex,
                 endVertex);
@@ -166,6 +153,14 @@ public final class MolecularShortestPath
         return alg.getPathEdgeList();
     }
 
+    /**
+     * The core of the algorithm
+     * 
+     * @param graph The graph within which to search
+     * @param startVertex The vertex at which to start
+     * @param endVertex The vertex at which to end
+     * @return A list of edges indicating the path to be taken
+     */
     private List<DefaultWeightedEdge> createEdgeList(
         WeightedVertexGraph graph,
         WeightedVertex startVertex,
@@ -176,10 +171,11 @@ public final class MolecularShortestPath
         List<DefaultWeightedEdge> edgeList = new ArrayList<DefaultWeightedEdge>();
         List<WeightedVertex> visited = new ArrayList<WeightedVertex>();
         WeightedVertex currentVertex = startVertex;
-        int reverse = 1;
         
         while (currentVertex != endVertex) {
-        	visited.add(currentVertex);
+        	if (!visited.contains(currentVertex)) {
+        		visited.add(currentVertex);
+        	}
         	
         	DefaultWeightedEdge minEdge = graph.getMinEdge(currentVertex);
         	DefaultWeightedEdge minCycleEdge = graph.getMinEdgeInCycle(currentVertex);
@@ -206,21 +202,14 @@ public final class MolecularShortestPath
         		minCycleEdge = graph.getEdge(currentVertex, graph.getEdgeSource(previousEdge));
         	}
         	
-        	if (!graph.outgoingEdgesOf(currentVertex).contains(minCycleEdge)) {
+        	/*if (!graph.outgoingEdgesOf(currentVertex).contains(minCycleEdge)) {
         		// a previous node within the cycle is a better choice
         		DefaultWeightedEdge previousEdge = edgeList.get(edgeList.size()-reverse);
-        		WeightedVertex outVertex = graph.getEdgeSource(minCycleEdge);
-        		if (outVertex.getCycle().contains(graph.getEdgeSource(previousEdge))) {
-        			// we're still within the cycle, step back
-        			minCycleEdge = graph.getEdge(currentVertex, graph.getEdgeSource(previousEdge));
-        		} else {
-        			// this shouldn't happen anymore
-        			System.out.println("uh oh");
-        		}
+        		minCycleEdge = graph.getEdge(currentVertex, graph.getEdgeSource(previousEdge));
         		reverse += 2;
         	} else {
         		reverse = 1;
-        	}
+        	}*/
         	
         	// proceed to the next node
         	edgeList.add(minCycleEdge);
@@ -236,27 +225,22 @@ public final class MolecularShortestPath
      * @param edgeList The list of edges to be parsed
      */
     public void removeDeadEnds(WeightedVertexGraph graph, List<DefaultWeightedEdge> edgeList) {
-	    ListIterator<DefaultWeightedEdge> i = edgeList.listIterator();
+	    Collections.reverse(edgeList);
+    	Iterator<DefaultWeightedEdge> i = edgeList.iterator();
 	    if (i.hasNext()) {
 	    	DefaultWeightedEdge currentEdge = i.next();
 	    	while (i.hasNext()) {
 	    		DefaultWeightedEdge previousEdge = currentEdge;
 	    		currentEdge = i.next();
-	    		if (graph.getEdgeSource(currentEdge) == graph.getEdgeTarget(previousEdge) && graph.getEdgeTarget(currentEdge) == graph.getEdgeSource(previousEdge)) {
+	    		if (graph.getEdgeTarget(currentEdge) != graph.getEdgeSource(previousEdge)) {
 	    			// dead end! remove currentEdge
 	    			i.remove();
-	    			// and remove previousEdge
-	    			i.previous();
-	    			i.remove();
-	    			// and now step back 
-	    			if (i.hasPrevious()) {
-	    				currentEdge = i.previous();
-	    				i.next();
-	    			}
+	    			currentEdge = previousEdge;
 	    		}
 	    	}
 	    }
+	    Collections.reverse(edgeList);
     }
 }
 
-// End MolecularShortestPath.java
+// End MostProbableFoldingPath.java

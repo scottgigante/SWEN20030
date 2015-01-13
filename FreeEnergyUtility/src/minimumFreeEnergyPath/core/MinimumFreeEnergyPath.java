@@ -8,35 +8,36 @@ import minimumFreeEnergyPath.weightedVertexGraph.WeightedVertexGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 
-/** Finds the molecular shortest path between a point on the free energy surface and the minimum
+/** Finds the most likely folding path between a point on the free energy 
+ * surface and the point of minimum free energy
  * @author Scott Gigante
  * @since 07-Jan-2015
  */
 public class MinimumFreeEnergyPath {
 	
-	// constants
+	/** Suffix to be appended to output filename */
 	private static final String OUTPUT_SUFFIX = "_path.dat";
-	
-	private static WeightedVertexGraph g;
 
-	/** Main method run from command line. Requires tabulated free energy surface and x and y coordinates of the starting position
-	 * @param args Command line arguments. Usage: java MinimumFreeEnergyPath <filename> <xcoord> <ycoord>
+	/** Main method run from command line. Requires tabulated free energy 
+	 * surface and x and y coordinates of the starting position
+	 * @param args Command line arguments. 
+	 * Usage: java MinimumFreeEnergyPath filename xcoord ycoord
 	 */
 	public static void main(String[] args) {
 		if (args.length != 3) {
 			//printUsageMessage();
 			args = new String[3];
-			args[0] = "dat/free_energy_select_above_delete_yes_5_not-normalized.dat";
-			args[1] = "30";
+			args[0] = "dat/random.dat";
+			args[1] = "528";
 			args[2] = "0";
 		}
 		try {
 			String fileName = args[0];
 			double xStart = Double.parseDouble(args[1]);
 			double yStart = Double.parseDouble(args[2]);
-			g = FileUtility.readToGraph(fileName, xStart, yStart);
+			WeightedVertexGraph g = FileUtility.readToGraph(fileName, xStart, yStart);
 			
-			List<DefaultWeightedEdge> path = MolecularShortestPath.findPathBetween(g, g.getStartVertex(), g.getEndVertex());
+			List<DefaultWeightedEdge> path = MostProbableFoldingPath.findPathBetween(g, g.getStartVertex(), g.getEndVertex());
 			
 			FileUtility.writeFromPath(fileName + OUTPUT_SUFFIX, g, path);
 		} catch (NumberFormatException e) {
@@ -49,8 +50,11 @@ public class MinimumFreeEnergyPath {
 		}
 	}
 	
+	/** Prints a message indicating the program was run incorrectly and quits */
 	private static void printUsageMessage() {
 		System.out.println("Usage: java MinimumFreeEnergyPath <filename> <xcoord> <ycoord>");
 		System.exit(0);
 	}
 }
+
+//End MinimumFreeEnergyPath.java

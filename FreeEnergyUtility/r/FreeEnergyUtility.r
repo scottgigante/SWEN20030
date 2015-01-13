@@ -119,7 +119,7 @@ ComputeFreeEnergy = function(filename,t,alpha_scale,sample=TRUE) {
   R = R[is.finite(G)]
   G = G[is.finite(G)]
 
-  q_sd = if (sample) SampleStandardDeviation(u,n, samples=100) else CalculateStandardDeviation(u,w,T,n,q)
+  q_sd = if (sample) SampleStandardDeviation(u,n) else CalculateStandardDeviation(u,w,T,n,q)
   G_sd = K*t*sqrt((q_sd/q)^2+(q_sd[which.max(q)]/max(q))^2)
   
   ## Convert to meaningful format. Cluster 235 refers to d=23, a=0.5
@@ -160,11 +160,11 @@ ComputeFreeEnergy = function(filename,t,alpha_scale,sample=TRUE) {
   ggsave(sprintf("%s%s%s%s.pdf",PDF_PREFIX,OUTPUT_PREFIX,PATH_PREFIX,filename), plot)
   
   pdf(sprintf("%s%s%s.pdf",PDF_PREFIX,OUTPUT_PREFIX,filename))
-  filled.contour(x,y,z_energy,main="Free Energy (kcal/mol)", sub=filename,xlab="End-to-End Distance (Å)",ylab="Alpha Helicity", zlim=c(0,10), color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100, plot.axes={lines(path[,1],path[,2],type="l",col="purple",lty=1,lwd=3); axis(1); axis(2)})
+  filled.contour(x,y,z_energy,main="Free Energy (kcal/mol)", sub=filename,xlab="End-to-End Distance (Å)",ylab="Alpha Helicity", color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100, plot.axes={lines(path[,1],path[,2],type="l",col="black",lty=1,lwd=3); axis(1); axis(2)})
   dev.off()
 
   pdf(sprintf("%s%serror_%s.pdf",PDF_PREFIX,OUTPUT_PREFIX, filename))
-  filled.contour(x,y,z_error,main="Free Energy Error (kcal/mol)", sub=filename,xlab="End-to-End Distance (Å)",ylab="Alpha Helicity", zlim=c(0,1), color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100)
+  filled.contour(x,y,z_error,main="Free Energy Error (kcal/mol)", sub=filename,xlab="End-to-End Distance (Å)",ylab="Alpha Helicity", color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100)
   dev.off()
 }
 

@@ -26,4 +26,4 @@ Maintenance:
 If any modifications to the Java project MinimumFreeEnergyPath, export Java 
 project to MinimumFreeEnergyPath.jar as Runnable JAR file. This project 
 publicly available at 
-https://github.com/scottgigante/SWEN20030/tree/master/MinimumFreeEnergyPath
+https://github.com/scottgigante/SWEN20030/tree/master/FreeEnergyUtility
