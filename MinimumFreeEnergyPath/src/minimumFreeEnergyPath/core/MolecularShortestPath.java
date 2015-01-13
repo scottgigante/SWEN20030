@@ -67,7 +67,6 @@ public final class MolecularShortestPath
 
     private GraphPath<WeightedVertex, DefaultWeightedEdge> path;
 
-    
 
     /**
      * Creates and executes a new MolecularShortestPath algorithm instance. An
@@ -77,37 +76,19 @@ public final class MolecularShortestPath
      * @param graph the graph to be searched
      * @param startVertex the vertex at which the path should start
      * @param endVertex the vertex at which the path should end
-     */
-    public MolecularShortestPath(WeightedVertexGraph graph,
-        WeightedVertex startVertex,
-        WeightedVertex endVertex)
-    {
-        this(graph, startVertex, endVertex, Double.POSITIVE_INFINITY);
-    }
-
-    /**
-     * Creates and executes a new MolecularShortestPath algorithm instance. An
-     * instance is only good for a single search; after construction, it can be
-     * accessed to retrieve information about the path found.
-     *
-     * @param graph the graph to be searched
-     * @param startVertex the vertex at which the path should start
-     * @param endVertex the vertex at which the path should end
-     * @param radius limit on weighted path length, or
      * Double.POSITIVE_INFINITY for unbounded search
      */
     public MolecularShortestPath(
         WeightedVertexGraph graph,
         WeightedVertex startVertex,
-        WeightedVertex endVertex,
-        double radius)
+        WeightedVertex endVertex)
     {
         if (!graph.containsVertex(endVertex)) {
             throw new IllegalArgumentException(
                 "graph must contain the end vertex");
         }
 
-        List<DefaultWeightedEdge> edgeList = createEdgeList(graph, startVertex, endVertex, radius);
+        List<DefaultWeightedEdge> edgeList = createEdgeList(graph, startVertex, endVertex);
         
         removeDeadEnds(graph, edgeList);
         
@@ -188,7 +169,7 @@ public final class MolecularShortestPath
     private List<DefaultWeightedEdge> createEdgeList(
         WeightedVertexGraph graph,
         WeightedVertex startVertex,
-        WeightedVertex endVertex, double radius)
+        WeightedVertex endVertex)
     {
     	
     	// iterate through graph
@@ -251,6 +232,7 @@ public final class MolecularShortestPath
     }
 
     /** Removes any dead-end paths from a list of edges in order to remove noise
+     * Uses ListIterator instead of Iterator to avoid comodification from deleting previous element
      * @param edgeList The list of edges to be parsed
      */
     public void removeDeadEnds(WeightedVertexGraph graph, List<DefaultWeightedEdge> edgeList) {

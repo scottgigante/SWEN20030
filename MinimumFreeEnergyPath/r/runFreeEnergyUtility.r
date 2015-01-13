@@ -2,6 +2,6 @@
 ## Scott Gigante, scottgigante@gmail.com, December 2014
 
 filename = "../dat/readfile.dat"
-args = readLines(filename)
+args = scan(file=filename, what=character(),sep="\t", flush=TRUE, quiet=TRUE)
 commandArgs = function(trailingOnly) args
-source("FreeEnergyError.r")
+source("FreeEnergyUtility.r")

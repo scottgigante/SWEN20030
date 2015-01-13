@@ -1,5 +1,6 @@
 # Computes the Gibbs free energy of all given states from a Markov
 # transition matrix of probabilities between said states
+# Also computes associated error and the most likely folding path
 # Scott Gigante, scottgigante@gmail.com, Nov 2014
 
 library(matrixStats)
@@ -10,14 +11,13 @@ library(ggplot2)
 DEFAULT_TEMP = 300 # temperature if none is given
 DEFAULT_FILENAME = "select_above_delete_yes_05.dat"
 DEFAULT_ALPHA_SCALE = 10 # number of possible alpha values
-R_OFFSET = 1 # rows in input given from 0, r counts from 1 (wut)
 TOLERANCE = 0.01 # tolerance for error
 K = 0.001987204118 # Boltzmann constant in kcal/mol/K
 DAT_PREFIX = "../dat/"
 PDF_PREFIX = "../pdf/"
 OUTPUT_PREFIX = "free_energy_" # to be prepended to input file name for output
+PATH_PREFIX = "path_"
 PATH_SUFFIX = "_path.dat" # to be appended to path file
-DEBUG = TRUE # toggles debug functions
 
 ## Define functions
 
@@ -44,10 +44,9 @@ CalculateStandardDeviation = function(u,w,T=u/w,n=nrow(T),q=eigen(T)$vectors[,1]
   return(sqrt(var))
 }
 
-# Use beta sampling to calculate a distribution of the first eigenvector
+# Use dirichlet sampling to calculate a distribution of the first eigenvector
 # Note: n not required, but already calculated so may as well
-# w = rowSums(u), w[sapply(w, function(row) sum(row)==0)]=1 where u is a transition count matrix
-# T is a transition probability matrix of transitions from state i to state j
+# u is a transition count matrix of transitions from state i to state j
 # samples is the number of times to sample the distribution
 # Returns a vector of the standard deviation of each value in the first eigenvector of T
 SampleStandardDeviation = function(u,n=nrow(u),samples=1000) {
@@ -152,11 +151,13 @@ ComputeFreeEnergy = function(filename,t,alpha_scale,sample=TRUE) {
   system(sprintf("java -jar ../MinimumFreeEnergyPath.jar %s%s%s %f %f",DAT_PREFIX,OUTPUT_PREFIX,filename,x[length(x)],y[1]))
   # Plot the shortest path line graph
   path = read.table(paste0(DAT_PREFIX,OUTPUT_PREFIX,filename,PATH_SUFFIX))
-  pathx = c(0:(nrow(path)-1))
-  pathy = path[,3]
+  path_x = c(0:(nrow(path)-1))
+  path_y = path[,3]
+  path_sd = G_sd[match(alpha_scale*(path[,1]+path[,2]),R)]
   
-  plot = qplot(pathx, pathy, geom="line",xlab="Path Length (bins)",ylab="Gibbs Free Energy (kcal/mol)", color=pathy)
-  ggsave(sprintf("%s%s.pdf",PDF_PREFIX,filename), plot)
+  df = data.frame(path_x,path_y,path_sd)
+  plot = ggplot(df, aes(x=path_x, y=path_y)) + geom_line() + geom_errorbar(data = df, aes(x=path_x, y=path_y, ymin = path_y-path_sd, ymax = path_y+path_sd), colour = 'red', width=0.4) + xlab("Path Length (bins)") + ylab("Gibbs Free Energy (kcal/mol)") + ggtitle(paste0("Most Probable Folding Path\n\n",filename))
+  ggsave(sprintf("%s%s%s%s.pdf",PDF_PREFIX,OUTPUT_PREFIX,PATH_PREFIX,filename), plot)
   
   pdf(sprintf("%s%s%s.pdf",PDF_PREFIX,OUTPUT_PREFIX,filename))
   filled.contour(x,y,z_energy,main="Free Energy (kcal/mol)", sub=filename,xlab="End-to-End Distance (Å)",ylab="Alpha Helicity", zlim=c(0,10), color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100, plot.axes={lines(path[,1],path[,2],type="l",col="purple",lty=1,lwd=3); axis(1); axis(2)})
