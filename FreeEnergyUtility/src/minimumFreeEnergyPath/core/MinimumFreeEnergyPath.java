@@ -27,19 +27,19 @@ public class MinimumFreeEnergyPath {
 		if (args.length != 3) {
 			//printUsageMessage();
 			args = new String[3];
-			args[0] = "dat/random.dat";
-			args[1] = "528";
+			args[0] = "dat/free_energy_select_above_delete_yes_5_not-normalized.dat";
+			args[1] = "33";
 			args[2] = "0";
 		}
 		try {
 			String fileName = args[0];
 			double xStart = Double.parseDouble(args[1]);
 			double yStart = Double.parseDouble(args[2]);
-			WeightedVertexGraph g = FileUtility.readToGraph(fileName, xStart, yStart);
+			WeightedVertexGraph g = FileUtility.readToGraph(fileName, xStart, yStart); // O(n)
 			
-			List<DefaultWeightedEdge> path = MostProbableFoldingPath.findPathBetween(g, g.getStartVertex(), g.getEndVertex());
+			List<DefaultWeightedEdge> path = MostProbableFoldingPath.findPathBetween(g, g.getStartVertex(), g.getEndVertex()); // O(n)
 			
-			FileUtility.writeFromPath(fileName + OUTPUT_SUFFIX, g, path);
+			FileUtility.writeFromPath(fileName + OUTPUT_SUFFIX, g, path); // O(n)
 		} catch (NumberFormatException e) {
 			System.out.println("Coordinates must be numeric.");
 			e.printStackTrace(System.out);

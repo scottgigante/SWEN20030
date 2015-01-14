@@ -155,6 +155,8 @@ public final class MostProbableFoldingPath
 
     /**
      * The core of the algorithm
+     * touches each vertex once in visiting and potentially touches one other 
+     * vertex for each visited vertex in creating cycles - O(2n)
      * 
      * @param graph The graph within which to search
      * @param startVertex The vertex at which to start
@@ -179,9 +181,15 @@ public final class MostProbableFoldingPath
         	
         	DefaultWeightedEdge minEdge = graph.getMinEdge(currentVertex);
         	DefaultWeightedEdge minCycleEdge = graph.getMinEdgeInCycle(currentVertex);
+
+        	if (minEdge == null) {
+        		// reached a dead end, go back
+        		DefaultWeightedEdge previousEdge = edgeList.get(edgeList.size()-1);
+        		minCycleEdge = graph.getEdge(currentVertex, graph.getEdgeSource(previousEdge));
+        	}
         	
         	WeightedVertex minCycleEdgeTarget = graph.getEdgeTarget(minCycleEdge);
-        	while (minEdge != null && visited.contains(minCycleEdgeTarget)) {
+        	while (visited.contains(minCycleEdgeTarget)) {
         		// we've found a cycle!
         		WeightedVertexCycle currentCycle = currentVertex.getCycle();
         		WeightedVertexCycle targetCycle = minCycleEdgeTarget.getCycle();
@@ -196,21 +204,6 @@ public final class MostProbableFoldingPath
         		minCycleEdgeTarget = graph.getEdgeTarget(minCycleEdge);
         	}
         	
-        	if (minEdge == null) {
-        		// reached a dead end, go back
-        		DefaultWeightedEdge previousEdge = edgeList.get(edgeList.size()-1);
-        		minCycleEdge = graph.getEdge(currentVertex, graph.getEdgeSource(previousEdge));
-        	}
-        	
-        	/*if (!graph.outgoingEdgesOf(currentVertex).contains(minCycleEdge)) {
-        		// a previous node within the cycle is a better choice
-        		DefaultWeightedEdge previousEdge = edgeList.get(edgeList.size()-reverse);
-        		minCycleEdge = graph.getEdge(currentVertex, graph.getEdgeSource(previousEdge));
-        		reverse += 2;
-        	} else {
-        		reverse = 1;
-        	}*/
-        	
         	// proceed to the next node
         	edgeList.add(minCycleEdge);
         	currentVertex = graph.getEdgeTarget(minCycleEdge);
@@ -221,7 +214,7 @@ public final class MostProbableFoldingPath
     }
 
     /** Removes any dead-end paths from a list of edges in order to remove noise
-     * Uses ListIterator instead of Iterator to avoid comodification from deleting previous element
+     * Runs through edge array only once, max number of edges = number of vertices - O(n)
      * @param edgeList The list of edges to be parsed
      */
     public void removeDeadEnds(WeightedVertexGraph graph, List<DefaultWeightedEdge> edgeList) {

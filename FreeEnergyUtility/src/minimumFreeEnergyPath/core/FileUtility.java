@@ -51,7 +51,7 @@ public final class FileUtility {
 			xHeader.add(parseDouble(s));
 		}
 		
-		// read all values from table into vertex array
+		// read all values from table into vertex array - O(n)
 		VertexArray vertexArray = new VertexArray();
 		while (scanner.hasNextLine()) {
 			String[] line = scanner.nextLine().split("\\t");
@@ -67,20 +67,21 @@ public final class FileUtility {
 			}
 		}
 		
-		vertexArray.setXHeader(xHeader);
-		vertexArray.setYHeader(yHeader);
+		vertexArray.initialise(xHeader, yHeader);
 		
-		// create graph and add vertices
+		// create graph and add vertices - O(n)
 		WeightedVertexGraph g = new WeightedVertexGraph();
 		for (WeightedVertex v : vertexArray) {
 			g.addVertex(v);
 		}
 		
-		// add edges to graph
+		// add edges to graph - O(8n)
 		for (WeightedVertex v1 : vertexArray) {
-			for (WeightedVertex v2 : vertexArray) {
+			for (WeightedVertex v2 : vertexArray.getAdjacentVertices(v1)) {
 				if (v1 != v2 && vertexArray.isAdjacent(v1, v2)) {
 					g.addEdge(v1, v2);
+				} else {
+					System.out.println("fuck");
 				}
 			}
 		}
@@ -94,7 +95,7 @@ public final class FileUtility {
 		return g;
 	}
 	
-	/** Writes a path to file
+	/** Writes a path to file - O(n)
 	 * @param filename The file to be written to
 	 * @param g The graph on which the path lies
 	 * @param path The path to be parsed and written in List form
