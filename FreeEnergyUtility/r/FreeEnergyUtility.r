@@ -8,9 +8,6 @@ library(gtools)
 library(ggplot2)
 
 ## Constants
-DEFAULT_TEMP = 300 # temperature if none is given
-DEFAULT_FILENAME = "select_above_delete_yes_05.dat"
-DEFAULT_ALPHA_SCALE = 10 # number of possible alpha values
 TOLERANCE = 0.01 # tolerance for error
 K = 0.001987204118 # Boltzmann constant in kcal/mol/K
 DAT_PREFIX = "../dat/"
@@ -72,7 +69,7 @@ SampleStandardDeviation = function(u,n=nrow(u),samples=1000) {
 
 # Reads transition data from a file
 # Prints free energy and error values in text and plot form
-ComputeFreeEnergy = function(filename,t,alpha_scale,sample=TRUE) {
+ComputeFreeEnergy = function(filename,t,alpha_scale,x_coord,y_coord,x_lab, y_lab,sample=TRUE) {
   A = read.table(paste0(DAT_PREFIX,filename))  
   
   ## For especially large data sets, better to remove all zero data first
@@ -119,7 +116,7 @@ ComputeFreeEnergy = function(filename,t,alpha_scale,sample=TRUE) {
   R = R[is.finite(G)]
   G = G[is.finite(G)]
 
-  q_sd = if (sample) SampleStandardDeviation(u,n) else CalculateStandardDeviation(u,w,T,n,q)
+  q_sd = if (sample) SampleStandardDeviation(u,n, samples=10) else CalculateStandardDeviation(u,w,T,n,q)
   G_sd = K*t*sqrt((q_sd/q)^2+(q_sd[which.max(q)]/max(q))^2)
   
   ## Convert to meaningful format. Cluster 235 refers to d=23, a=0.5
@@ -135,7 +132,7 @@ ComputeFreeEnergy = function(filename,t,alpha_scale,sample=TRUE) {
     z_energy[d[i],a[i]+1]=G[i]
     z_error[d[i],a[i]+1]=G_sd[i]
     O_energy[d[i],a[i]+1]=sprintf("%f",G[i])
-    O_error[d[i],a[i]+1]=sprintf("%f Â± %f",G[i],G_sd[i])
+    O_error[d[i],a[i]+1]=sprintf("%f Â ± %f",G[i],G_sd[i])
   }
   
   ## Print to a data file
@@ -148,7 +145,9 @@ ComputeFreeEnergy = function(filename,t,alpha_scale,sample=TRUE) {
   write.table(t(O_error),sprintf("%s%serror_%s",DAT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
   
   ## Run Java code to find shortest path
-  system(sprintf("java -jar ../MinimumFreeEnergyPath.jar %s%s%s %f %f",DAT_PREFIX,OUTPUT_PREFIX,filename,x[length(x)],y[1]))
+  if (x_coord < 0) x_coord = length(x) + x_coord + 1 else x_coord = match(x_coord,x)
+  if (y_coord < 0) y_coord = length(y) + y_coord + 1 else y_coord = match(y_coord,y)
+  system(sprintf("java -jar ../MinimumFreeEnergyPath.jar %s%s%s %f %f",DAT_PREFIX,OUTPUT_PREFIX,filename,x[x_coord],y[y_coord]))
   # Plot the shortest path line graph
   path = read.table(paste0(DAT_PREFIX,OUTPUT_PREFIX,filename,PATH_SUFFIX))
   path_x = c(0:(nrow(path)-1))
@@ -157,14 +156,14 @@ ComputeFreeEnergy = function(filename,t,alpha_scale,sample=TRUE) {
   
   df = data.frame(path_x,path_y,path_sd)
   plot = ggplot(df, aes(x=path_x, y=path_y)) + geom_line() + geom_errorbar(data = df, aes(x=path_x, y=path_y, ymin = path_y-path_sd, ymax = path_y+path_sd), colour = 'red', width=0.4) + xlab("Path Length (bins)") + ylab("Gibbs Free Energy (kcal/mol)") + ggtitle(paste0("Most Probable Folding Path\n\n",filename))
-  ggsave(sprintf("%s%s%s%s.pdf",PDF_PREFIX,OUTPUT_PREFIX,PATH_PREFIX,filename), plot)
+  suppressMessages(ggsave(sprintf("%s%s%s%s.pdf",PDF_PREFIX,OUTPUT_PREFIX,PATH_PREFIX,filename), plot))
   
   pdf(sprintf("%s%s%s.pdf",PDF_PREFIX,OUTPUT_PREFIX,filename))
-  filled.contour(x,y,z_energy,main="Free Energy (kcal/mol)", sub=filename,xlab="End-to-End Distance (Ã…)",ylab="Alpha Helicity", color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100, plot.axes={lines(path[,1],path[,2],type="l",col="black",lty=1,lwd=3); axis(1); axis(2)})
+  filled.contour(x,y,z_energy,main="Free Energy (kcal/mol)", sub=filename,xlab=x_lab,ylab=y_lab, color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100, plot.axes={lines(path[,1],path[,2],type="l",col="black",lty=1,lwd=3); axis(1); axis(2)})
   dev.off()
 
   pdf(sprintf("%s%serror_%s.pdf",PDF_PREFIX,OUTPUT_PREFIX, filename))
-  filled.contour(x,y,z_error,main="Free Energy Error (kcal/mol)", sub=filename,xlab="End-to-End Distance (Ã…)",ylab="Alpha Helicity", color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100)
+  filled.contour(x,y,z_error,main="Free Energy Error (kcal/mol)", sub=filename,xlab=x_lab,ylab=y_lab, color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100)
   dev.off()
 }
 
@@ -188,30 +187,22 @@ checkDetailedBalance = function(T) {
 ## Main function
 # Read in command line arguments
 args = commandArgs(trailingOnly=TRUE)
-if (length(args) < 1) {
-  message("Usage: RScript ComputeFreeEnergy.r <inputfiles> <temperature>")
-  message(paste0("Using default filename: ", DEFAULT_FILENAME))
-  args=c(DEFAULT_FILENAME)
-}
-if (suppressWarnings(is.na(as.numeric(args[1])))) {
-  message("Usage: RScript ComputeFreeEnergy.r <inputfiles> <temperature>")
-  message(paste0("Using default temperature: ", DEFAULT_TEMP))
-  args = c(DEFAULT_TEMP, args)
-}
-if (suppressWarnings(is.na(as.numeric(args[2])))) {
-  message("Usage: RScript ComputeFreeEnergy.r <inputfiles> <temperature>")
-  message(paste0("Using default alpha scale: ", DEFAULT_ALPHA_SCALE))
-  args = c(DEFAULT_ALPHA_SCALE, args)
-}
 t = as.numeric(args[1])
 alpha_scale = as.numeric(args[2])
+x_coord = as.numeric(args[3])
+y_coord = as.numeric(args[4])
+x_lab = args[5]
+y_lab = args[6]
 
 # Run!
 message(sprintf("Temperature = %d K",t))
-message(sprintf("Alpha Scale = %d",alpha_scale))
-for (i in 3:(length(args))) {
+message(sprintf("%s scale = %d",y_lab,alpha_scale))
+message(sprintf("Path start = (%s, %s)",args[3],args[4]))
+message(sprintf("X axis label = %s",x_lab))
+message(sprintf("Y axis label = %s",y_lab))
+for (i in 7:(length(args))) {
   message(paste0(args[i],": Calculating free energies"))
-  message(sprintf("%s: Complete in %f s", args[i], system.time(ComputeFreeEnergy(args[i], t, alpha_scale))[1]))
+  message(sprintf("%s: Complete in %f s", args[i], system.time(ComputeFreeEnergy(args[i], t, alpha_scale, x_coord, y_coord,x_lab,y_lab))[1]))
   #message(paste0(args[i],": Calculating free energies without sampling"))
   #message(sprintf("%s: Complete in %f s", args[i], system.time(ComputeFreeEnergy(args[i],FALSE))[1]))
 }

@@ -1,6 +1,9 @@
 300	## Temperature (K)
 10	## Alpha Scale
-select_random.dat	## Data files
-select_above_delete_yes_5_not-normalized.dat	
+-1	## x coordinate for starting point of most likely folding path: -1 is equivalent to starting at the largest possible value
+0	"## y coordinate, as above"
+End-to-End Distance (Ņ)	## Label on x axis
+Alpha Helicity	## Label on y axis
+select_above_delete_yes_5_not-normalized.dat	## Data files
 select_above_delete_yes_10_not-normalized.dat	
 select_above_delete_yes_20_not-normalized.dat	

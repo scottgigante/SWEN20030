@@ -6,7 +6,9 @@ Author: Scott Gigante, scottgigante@gmail.com
 Since: Nov 2014
 
 This is a tool which generates a free energy surface, associated error and 
-most likely folding path from a table of transition counts. 
+most likely folding path from a table of transition counts. On current set-up,
+the x axis of the free energy surface is always made up of integer bins and
+the y axis of floating point bins between 0 and 1.
 
 How to install:
 cd r
