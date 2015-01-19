@@ -11,6 +11,7 @@ the x axis of the free energy surface is always made up of integer bins and
 the y axis of floating point bins between 0 and 1.
 
 How to install:
+copy pdf, dat, r, minimumFreeEnergy.jar
 cd r
 module load R
 R
@@ -19,6 +20,7 @@ source("setup.r")
 How to run:
 cd r
 module load R
+module load java/1.8.0
 R
 source("runFreeEnergyUtility.r")
 

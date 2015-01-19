@@ -69,21 +69,21 @@ SampleStandardDeviation = function(u,n=nrow(u),samples=1000) {
 
 # Reads transition data from a file
 # Prints free energy and error values in text and plot form
-ComputeFreeEnergy = function(filename,t,alpha_scale,x_coord,y_coord,x_lab, y_lab,sample=TRUE) {
+ComputeFreeEnergy = function(filename,t,x_scale,y_scale,x_coord,y_coord,x_lab, y_lab,sample=TRUE) {
   A = read.table(paste0(DAT_PREFIX,filename))  
   
   ## For especially large data sets, better to remove all zero data first
-  non_zero = apply(A, 1, function(row) row[3] !=0 )
+  non_zero = apply(A, 1, function(row) row[5] !=0 )
   A=A[non_zero,]
-  R = sort(unique(c(A[,1],A[,2]))) # record row numbers
+  ## Assuming 2D bin names, conjoin them to create 1D
+  y_max = max(c(A[,2],A[,4])/y_scale)+1
+  R = sort(unique((c(A[,1],A[,3])*y_max)/x_scale + c(A[,2],A[,4])/y_scale))
   
   ## Create count matrix including all possible states in data set
   n = length(R)
   Z = matrix(0,nrow=n,ncol=n)
-  rownames(Z)=R
-  colnames(Z)=R
   for (i in 1:nrow(A)) {
-    Z[match(A[i,1],R),match(A[i,2],R)]=A[i,3]
+    Z[match((A[i,1]*y_max)/x_scale + A[i,2]/y_scale,R),match((A[i,3]*y_max)/x_scale + A[i,4]/y_scale,R)]=A[i,5]
   }
   
   ## Remove empty rows
@@ -116,23 +116,23 @@ ComputeFreeEnergy = function(filename,t,alpha_scale,x_coord,y_coord,x_lab, y_lab
   R = R[is.finite(G)]
   G = G[is.finite(G)]
 
-  q_sd = if (sample) SampleStandardDeviation(u,n, samples=10) else CalculateStandardDeviation(u,w,T,n,q)
+  q_sd = if (sample) SampleStandardDeviation(u,n) else CalculateStandardDeviation(u,w,T,n,q)
   G_sd = K*t*sqrt((q_sd/q)^2+(q_sd[which.max(q)]/max(q))^2)
   
   ## Convert to meaningful format. Cluster 235 refers to d=23, a=0.5
-  d = floor(R/alpha_scale)
-  a = R%%alpha_scale
-  z_energy = matrix(Inf,nrow=max(d),ncol=alpha_scale) # free energy infinite where inaccessible
-  z_error = matrix(Inf,nrow=max(d),ncol=alpha_scale) 
-  x = 1:max(d)
-  y = (0:(alpha_scale-1))/alpha_scale
-  O_energy = matrix("",nrow=max(d),ncol=alpha_scale)
-  O_error = matrix("",nrow=max(d),ncol=alpha_scale)
+  d = floor(R/y_max)
+  a = round(R%%y_max)%%y_max
+  z_energy = matrix(Inf,nrow=max(d)+1,ncol=max(a)+1) # free energy infinite where inaccessible
+  z_error = matrix(Inf,nrow=nrow(z_energy),ncol=ncol(z_energy)) 
+  x = (0:(nrow(z_energy)-1))*x_scale
+  y = (0:(ncol(z_energy)-1))*y_scale
+  O_energy = matrix("",nrow=nrow(z_energy),ncol=ncol(z_energy))
+  O_error = matrix("",nrow=nrow(z_energy),ncol=ncol(z_energy))
   for (i in 1:length(G)) {
-    z_energy[d[i],a[i]+1]=G[i]
-    z_error[d[i],a[i]+1]=G_sd[i]
-    O_energy[d[i],a[i]+1]=sprintf("%f",G[i])
-    O_error[d[i],a[i]+1]=sprintf("%f Â ± %f",G[i],G_sd[i])
+    z_energy[d[i]+1,a[i]+1]=G[i]
+    z_error[d[i]+1,a[i]+1]=G_sd[i]
+    O_energy[d[i]+1,a[i]+1]=sprintf("%f",G[i])
+    O_error[d[i]+1,a[i]+1]=sprintf("%f +- %f",G[i],G_sd[i])
   }
   
   ## Print to a data file
@@ -152,7 +152,7 @@ ComputeFreeEnergy = function(filename,t,alpha_scale,x_coord,y_coord,x_lab, y_lab
   path = read.table(paste0(DAT_PREFIX,OUTPUT_PREFIX,filename,PATH_SUFFIX))
   path_x = c(0:(nrow(path)-1))
   path_y = path[,3]
-  path_sd = G_sd[match(alpha_scale*(path[,1]+path[,2]),R)]
+  path_sd = G_sd[match((path[,1]*y_max)/x_scale+path[,2]/y_scale,R)]
   
   df = data.frame(path_x,path_y,path_sd)
   plot = ggplot(df, aes(x=path_x, y=path_y)) + geom_line() + geom_errorbar(data = df, aes(x=path_x, y=path_y, ymin = path_y-path_sd, ymax = path_y+path_sd), colour = 'red', width=0.4) + xlab("Path Length (bins)") + ylab("Gibbs Free Energy (kcal/mol)") + ggtitle(paste0("Most Probable Folding Path\n\n",filename))
@@ -163,7 +163,7 @@ ComputeFreeEnergy = function(filename,t,alpha_scale,x_coord,y_coord,x_lab, y_lab
   dev.off()
 
   pdf(sprintf("%s%serror_%s.pdf",PDF_PREFIX,OUTPUT_PREFIX, filename))
-  filled.contour(x,y,z_error,main="Free Energy Error (kcal/mol)", sub=filename,xlab=x_lab,ylab=y_lab, color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100)
+  filled.contour(x,y,z_error,main="Free Energy Absolute Error (kcal/mol)", sub=filename,xlab=x_lab,ylab=y_lab, color.palette=colorRampPalette(c("red","yellow","green","cyan","blue","purple")), nlevels = 100)
   dev.off()
 }
 
@@ -188,21 +188,23 @@ checkDetailedBalance = function(T) {
 # Read in command line arguments
 args = commandArgs(trailingOnly=TRUE)
 t = as.numeric(args[1])
-alpha_scale = as.numeric(args[2])
-x_coord = as.numeric(args[3])
-y_coord = as.numeric(args[4])
-x_lab = args[5]
-y_lab = args[6]
+x_scale = as.numeric(args[2])
+y_scale = as.numeric(args[3])
+x_coord = as.numeric(args[4])
+y_coord = as.numeric(args[5])
+x_lab = args[6]
+y_lab = args[7]
 
 # Run!
 message(sprintf("Temperature = %d K",t))
-message(sprintf("%s scale = %d",y_lab,alpha_scale))
-message(sprintf("Path start = (%s, %s)",args[3],args[4]))
+message(sprintf("%s scale = %s",x_lab,args[2]))
+message(sprintf("%s scale = %s",y_lab,args[3]))
+message(sprintf("Path start = (%s, %s)",args[4],args[5]))
 message(sprintf("X axis label = %s",x_lab))
 message(sprintf("Y axis label = %s",y_lab))
-for (i in 7:(length(args))) {
+for (i in 8:(length(args))) {
   message(paste0(args[i],": Calculating free energies"))
-  message(sprintf("%s: Complete in %f s", args[i], system.time(ComputeFreeEnergy(args[i], t, alpha_scale, x_coord, y_coord,x_lab,y_lab))[1]))
+  message(sprintf("%s: Complete in %f s", args[i], system.time(ComputeFreeEnergy(args[i], t, x_scale, y_scale, x_coord, y_coord,x_lab,y_lab))[1]))
   #message(paste0(args[i],": Calculating free energies without sampling"))
   #message(sprintf("%s: Complete in %f s", args[i], system.time(ComputeFreeEnergy(args[i],FALSE))[1]))
 }
