@@ -10,7 +10,8 @@ library(ggplot2)
 ## Constants
 TOLERANCE = 0.01 # tolerance for error
 K = 0.001987204118 # Boltzmann constant in kcal/mol/K
-DAT_PREFIX = "../dat/"
+DAT_IN_PREFIX = "../dat/in/"
+DAT_OUT_PREFIX = "../dat/out/"
 PDF_PREFIX = "../pdf/"
 OUTPUT_PREFIX = "free_energy_" # to be prepended to input file name for output
 PATH_PREFIX = "path_"
@@ -70,7 +71,7 @@ SampleStandardDeviation = function(u,n=nrow(u),samples=1000) {
 # Reads transition data from a file
 # Prints free energy and error values in text and plot form
 ComputeFreeEnergy = function(filename,t,x_scale,y_scale,x_coord,y_coord,x_lab, y_lab,sample=TRUE) {
-  A = read.table(paste0(DAT_PREFIX,filename))  
+  A = read.table(paste0(DAT_IN_PREFIX,filename))  
   
   ## For especially large data sets, better to remove all zero data first
   non_zero = apply(A, 1, function(row) row[5] !=0 )
@@ -116,7 +117,7 @@ ComputeFreeEnergy = function(filename,t,x_scale,y_scale,x_coord,y_coord,x_lab, y
   R = R[is.finite(G)]
   G = G[is.finite(G)]
 
-  q_sd = if (sample) SampleStandardDeviation(u,n) else CalculateStandardDeviation(u,w,T,n,q)
+  q_sd = if (sample) SampleStandardDeviation(u,n,samples=10) else CalculateStandardDeviation(u,w,T,n,q)
   G_sd = K*t*sqrt((q_sd/q)^2+(q_sd[which.max(q)]/max(q))^2)
   
   ## Convert to meaningful format. Cluster 235 refers to d=23, a=0.5
@@ -138,18 +139,18 @@ ComputeFreeEnergy = function(filename,t,x_scale,y_scale,x_coord,y_coord,x_lab, y
   ## Print to a data file
   rownames(O_energy) = x
   colnames(O_energy) = y
-  write.table(t(O_energy),sprintf("%s%s%s",DAT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
+  write.table(t(O_energy),sprintf("%s%s%s",DAT_OUT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
   
   rownames(O_error) = x
   colnames(O_error) = y
-  write.table(t(O_error),sprintf("%s%serror_%s",DAT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
+  write.table(t(O_error),sprintf("%s%serror_%s",DAT_OUT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
   
   ## Run Java code to find shortest path
   if (x_coord < 0) x_coord = length(x) + x_coord + 1 else x_coord = match(x_coord,x)
   if (y_coord < 0) y_coord = length(y) + y_coord + 1 else y_coord = match(y_coord,y)
-  system(sprintf("java -jar ../MinimumFreeEnergyPath.jar %s%s%s %f %f",DAT_PREFIX,OUTPUT_PREFIX,filename,x[x_coord],y[y_coord]))
+  system(sprintf("java -jar ../MinimumFreeEnergyPath.jar %s%s%s %f %f",DAT_OUT_PREFIX,OUTPUT_PREFIX,filename,x[x_coord],y[y_coord]))
   # Plot the shortest path line graph
-  path = read.table(paste0(DAT_PREFIX,OUTPUT_PREFIX,filename,PATH_SUFFIX))
+  path = read.table(paste0(DAT_OUT_PREFIX,OUTPUT_PREFIX,filename,PATH_SUFFIX))
   path_x = c(0:(nrow(path)-1))
   path_y = path[,3]
   path_sd = G_sd[match((path[,1]*y_max)/x_scale+path[,2]/y_scale,R)]
