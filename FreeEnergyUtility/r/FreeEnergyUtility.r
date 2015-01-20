@@ -47,7 +47,7 @@ CalculateStandardDeviation = function(u,w,T=u/w,n=nrow(T),q=eigen(T)$vectors[,1]
 # u is a transition count matrix of transitions from state i to state j
 # samples is the number of times to sample the distribution
 # Returns a vector of the standard deviation of each value in the first eigenvector of T
-SampleStandardDeviation = function(u,n=nrow(u),samples=1000) {
+SampleStandardDeviation = function(u,n=nrow(u),samples) {
   
   TSample = array(0,dim=c(n,n,samples))
   qSample = matrix(0,nrow=n,ncol=samples)
@@ -70,7 +70,7 @@ SampleStandardDeviation = function(u,n=nrow(u),samples=1000) {
 
 # Reads transition data from a file
 # Prints free energy and error values in text and plot form
-ComputeFreeEnergy = function(filename,t,x_scale,y_scale,x_coord,y_coord,x_lab, y_lab,sample=TRUE) {
+ComputeFreeEnergy = function(filename,t,x_scale,y_scale,x_coord,y_coord,x_lab, y_lab,samples,sample=TRUE) {
   A = read.table(paste0(DAT_IN_PREFIX,filename))  
   
   ## For especially large data sets, better to remove all zero data first
@@ -117,7 +117,7 @@ ComputeFreeEnergy = function(filename,t,x_scale,y_scale,x_coord,y_coord,x_lab, y
   R = R[is.finite(G)]
   G = G[is.finite(G)]
 
-  q_sd = if (sample) SampleStandardDeviation(u,n) else CalculateStandardDeviation(u,w,T,n,q)
+  q_sd = if (sample) SampleStandardDeviation(u,n,samples) else CalculateStandardDeviation(u,w,T,n,q)
   G_sd = K*t*sqrt((q_sd/q)^2+(q_sd[which.max(q)]/max(q))^2)
   
   ## Convert to meaningful format. Cluster 235 refers to d=23, a=0.5
@@ -156,7 +156,7 @@ ComputeFreeEnergy = function(filename,t,x_scale,y_scale,x_coord,y_coord,x_lab, y
   path_sd = G_sd[match((path[,1]*y_max)/x_scale+path[,2]/y_scale,R)]
   
   df = data.frame(path_x,path_y,path_sd)
-  plot = ggplot(df, aes(x=path_x, y=path_y)) + geom_line() + geom_errorbar(data = df, aes(x=path_x, y=path_y, ymin = path_y-path_sd, ymax = path_y+path_sd), colour = 'red', width=0.4) + xlab("Path Length (bins)") + ylab("Gibbs Free Energy (kcal/mol)") + ggtitle(paste0("Most Probable Folding Path\n\n",filename))
+  plot = ggplot(df, aes(x=path_x, y=path_y)) + geom_line() + geom_errorbar(data = df, aes(x=path_x, y=path_y, ymin = path_y-path_sd, ymax = path_y+path_sd), colour = 'red', width=0.4) + xlab("Path Length (bins)") + ylab("Gibbs Free Energy (kcal/mol)") + ggtitle(paste0("Most Probable Folding Path\n\n",filename)) + scale_x_continuous(minor_breaks=seq(-floor(max(path_x)),max(path_x)*2,1)) + scale_y_continuous(minor_breaks=seq(-floor(max(path_y)),max(path_y)*2,0.1), breaks=seq(min(path_y),ceiling(max(path_y)),1))
   suppressMessages(ggsave(sprintf("%s%s%s%s.pdf",PDF_PREFIX,OUTPUT_PREFIX,PATH_PREFIX,filename), plot))
   
   pdf(sprintf("%s%s%s.pdf",PDF_PREFIX,OUTPUT_PREFIX,filename))
@@ -195,6 +195,7 @@ x_coord = as.numeric(args[4])
 y_coord = as.numeric(args[5])
 x_lab = args[6]
 y_lab = args[7]
+samples = round(as.numeric(args[8]))
 
 # Run!
 message(sprintf("Temperature = %d K",t))
@@ -203,9 +204,10 @@ message(sprintf("%s scale = %s",y_lab,args[3]))
 message(sprintf("Path start = (%s, %s)",args[4],args[5]))
 message(sprintf("X axis label = %s",x_lab))
 message(sprintf("Y axis label = %s",y_lab))
-for (i in 8:(length(args))) {
+message(sprintf("Number of samples = %d",samples))
+for (i in 9:(length(args))) {
   message(paste0(args[i],": Calculating free energies"))
-  message(sprintf("%s: Complete in %f s", args[i], system.time(ComputeFreeEnergy(args[i], t, x_scale, y_scale, x_coord, y_coord,x_lab,y_lab))[1]))
+  message(sprintf("%s: Complete in %f s", args[i], system.time(ComputeFreeEnergy(args[i], t, x_scale, y_scale, x_coord, y_coord,x_lab,y_lab, samples))[1]))
   #message(paste0(args[i],": Calculating free energies without sampling"))
   #message(sprintf("%s: Complete in %f s", args[i], system.time(ComputeFreeEnergy(args[i],FALSE))[1]))
 }
