@@ -117,7 +117,7 @@ ComputeFreeEnergy = function(filename,t,x_scale,y_scale,x_coord,y_coord,x_lab, y
   R = R[is.finite(G)]
   G = G[is.finite(G)]
 
-  q_sd = if (sample) SampleStandardDeviation(u,n,samples=10) else CalculateStandardDeviation(u,w,T,n,q)
+  q_sd = if (sample) SampleStandardDeviation(u,n) else CalculateStandardDeviation(u,w,T,n,q)
   G_sd = K*t*sqrt((q_sd/q)^2+(q_sd[which.max(q)]/max(q))^2)
   
   ## Convert to meaningful format. Cluster 235 refers to d=23, a=0.5
