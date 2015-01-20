@@ -15,6 +15,8 @@ import minimumFreeEnergyPath.weightedVertexGraph.WeightedVertexGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 /** Utility class for reading and writing WeightedVertexGraph and GraphPath objects to file
+ * 
+ * @author Scott Gigante
  *
  */
 public final class FileUtility {

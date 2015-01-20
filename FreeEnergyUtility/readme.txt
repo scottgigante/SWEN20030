@@ -23,7 +23,7 @@ module load java/1.8.0
 R
 source("runFreeEnergyUtility.r")
 
-Input arguments are stored in dat/readfile.dat
+Input arguments are stored in dat/in/readfile.dat
 
 Maintenance:
 If any modifications to the Java project MinimumFreeEnergyPath, export Java 

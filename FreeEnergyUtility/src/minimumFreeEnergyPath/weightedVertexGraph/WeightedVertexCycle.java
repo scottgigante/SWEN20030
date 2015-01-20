@@ -6,7 +6,7 @@ import java.util.List;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 /** Class representing a cycle in the Molecular Shortest Path algorithm
- * @author Scott
+ * @author Scott Gigante
  *
  */
 public class WeightedVertexCycle {
