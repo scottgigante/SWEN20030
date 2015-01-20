@@ -10,6 +10,27 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 
 /** Finds the most likely folding path between a point on the free energy 
  * surface and the point of minimum free energy
+ * 
+ * ==========================================
+ * This project uses JGraphT : a free Java graph-theory library
+ *
+ * JGraphT Project Info:  http://jgrapht.sourceforge.net/
+ * JGraphT Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
+ *
+ * JGraphT (C) Copyright 2003-2008, by Barak Naveh and Contributors.
+ *
+ * JGraphT and the accompanying materials are dual-licensed under
+ * either
+ *
+ * (a) the terms of the GNU Lesser General Public License version 2.1
+ * as published by the Free Software Foundation, or (at your option) any
+ * later version.
+ *
+ * or (per the licensee's choosing)
+ *
+ * (b) the terms of the Eclipse Public License v1.0 as published by
+ * the Eclipse Foundation.
+ * 
  * @author Scott Gigante
  * @since 07-Jan-2015
  */
