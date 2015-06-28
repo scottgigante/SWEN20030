@@ -13,7 +13,8 @@ K = 0.001987204118 # Boltzmann constant in kcal/mol/K
 DAT_IN_PREFIX = "../dat/in/"
 DAT_OUT_PREFIX = "../dat/out/"
 PDF_PREFIX = "../pdf/"
-OUTPUT_PREFIX = "free_energy_" # to be prepended to input file name for output
+OUTPUT_REDUNDANT_PREFIX = "free_energy_redundant_" # to be prepended to input file name for output
+OUTPUT_PREFIX = "free_energy_"
 PATH_PREFIX = "path_"
 PATH_SUFFIX = "_path.dat" # to be appended to path file
 
@@ -135,15 +136,24 @@ ComputeFreeEnergy = function(filename,t,x_scale,y_scale,x_coord,y_coord,x_lab, y
     O_energy[d[i]+1,a[i]+1]=sprintf("%f",G[i])
     O_error[d[i]+1,a[i]+1]=sprintf("%f +- %f",G[i],G_sd[i])
   }
+  out_energy = matrix(0,nrow=length(G),ncol=3)
+  out_energy[,1] = d*x_scale
+  out_energy[,2] = a*y_scale
+  out_error = out_energy
+  out_energy[,3] = G
+  out_error[,3] = G_sd
   
   ## Print to a data file
   rownames(O_energy) = x
   colnames(O_energy) = y
-  write.table(t(O_energy),sprintf("%s%s%s",DAT_OUT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
+  write.table(t(O_energy),sprintf("%s%s%s",DAT_OUT_PREFIX,OUTPUT_REDUNDANT_PREFIX,filename),sep="\t",col.names=NA)
   
   rownames(O_error) = x
   colnames(O_error) = y
-  write.table(t(O_error),sprintf("%s%serror_%s",DAT_OUT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",col.names=NA)
+  write.table(t(O_error),sprintf("%s%serror_%s",DAT_OUT_PREFIX,OUTPUT_REDUNDANT_PREFIX,filename),sep="\t",col.names=NA)
+  
+  write.table(out_energy,sprintf("%s%s%s",DAT_OUT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",row.names=FALSE, col.names=FALSE)
+  write.table(out_error,sprintf("%s%serror_%s",DAT_OUT_PREFIX,OUTPUT_PREFIX,filename),sep="\t",row.names=FALSE, col.names=FALSE)
   
   ## Run Java code to find shortest path
   if (x_coord < 0) x_coord = length(x) + x_coord + 1 else x_coord = match(x_coord,x)
@@ -154,6 +164,12 @@ ComputeFreeEnergy = function(filename,t,x_scale,y_scale,x_coord,y_coord,x_lab, y
   path_x = c(0:(nrow(path)-1))
   path_y = path[,3]
   path_sd = G_sd[match((path[,1]*y_max)/x_scale+path[,2]/y_scale,R)]
+  path_out = matrix(0,nrow=nrow(path),ncol=ncol(path)+1)
+  path_out[,1] = path[,1]
+  path_out[,2] = path[,2]
+  path_out[,3] = path[,3]
+  path_out[,4] = path_sd
+  write.table(path_out,paste0(DAT_OUT_PREFIX,OUTPUT_PREFIX,filename,PATH_SUFFIX),sep='\t',row.names=FALSE,col.names=FALSE)
   
   df = data.frame(path_x,path_y,path_sd)
   plot = ggplot(df, aes(x=path_x, y=path_y)) + geom_line() + geom_errorbar(data = df, aes(x=path_x, y=path_y, ymin = path_y-path_sd, ymax = path_y+path_sd), colour = 'red', width=0.4) + xlab("Path Length (bins)") + ylab("Gibbs Free Energy (kcal/mol)") + ggtitle(paste0("Most Probable Folding Path\n\n",filename)) + scale_x_continuous(minor_breaks=seq(-floor(max(path_x)),max(path_x)*2,1)) + scale_y_continuous(minor_breaks=seq(-floor(max(path_y)),max(path_y)*2,0.1), breaks=seq(min(path_y),ceiling(max(path_y)),1))
